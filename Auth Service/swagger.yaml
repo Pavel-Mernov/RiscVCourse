@@ -1,0 +1,28 @@
+
+openapi: 3.0.3
+info:
+  title: Auth Service API
+  version: 1.0.0
+paths:
+  /login:
+    post:
+      summary: Авторизация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+              required:
+                - login
+                - password
+      responses:
+        '200':
+          description: Успешный вход
+        '401':
+          description: Неверные данные аутентификации

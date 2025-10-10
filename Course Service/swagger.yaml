@@ -1,0 +1,304 @@
+
+openapi: 3.0.3
+info:
+  title: Course Service API
+  version: 1.1.0
+
+paths:
+  /courses:
+    get:
+      summary: Получить список курсов
+      responses:
+        '200':
+          description: Список курсов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+
+    post:
+      summary: Создать курс
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseCreate'
+      responses:
+        '201':
+          description: Курс создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+
+  /courses/{courseId}/tasks:
+    get:
+      summary: Получить все задачи курса
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Список задач курса
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+
+    post:
+      summary: Добавить задачу в курс
+      parameters:
+        - name: courseId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskCreate'
+      responses:
+        '201':
+          description: Задача создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+
+  /tasks/{taskId}:
+    get:
+      summary: Получить задачу по ID
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Данные задачи
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Задача не найдена
+
+    put:
+      summary: Обновить задачу
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Задача обновлена
+        '404':
+          description: Задача не найдена
+
+    delete:
+      summary: Удалить задачу
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Задача удалена
+        '404':
+          description: Задача не найдена
+
+  /tasks/{taskId}/tests:
+    get:
+      summary: Получить тесты задачи
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Список тестов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Test'
+
+    post:
+      summary: Добавить тест к задаче
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestCreate'
+      responses:
+        '201':
+          description: Тест добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+
+components:
+  schemas:
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+      required: [id, title]
+
+    CourseCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+      required: [title]
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        courseId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        numberInCourse:
+          type: integer
+        text:
+          type: string
+        deadline:
+          type: string
+          format: date-time
+        answerType:
+          type: string
+          enum: [выбор, текст, код]
+        timeLimitMs:
+          type: integer
+        memoryLimitKb:
+          type: integer
+        points:
+          type: integer
+        attempts:
+          type: integer
+      required: [id, courseId, name, text, answerType]
+
+    TaskCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        numberInCourse:
+          type: integer
+        text:
+          type: string
+        deadline:
+          type: string
+          format: date-time
+        answerType:
+          type: string
+          enum: [выбор, текст, код]
+        timeLimitMs:
+          type: integer
+        memoryLimitKb:
+          type: integer
+        points:
+          type: integer
+        attempts:
+          type: integer
+      required: [name, text, answerType]
+
+    TaskUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        numberInCourse:
+          type: integer
+        text:
+          type: string
+        deadline:
+          type: string
+          format: date-time
+        answerType:
+          type: string
+          enum: [выбор, текст, код]
+        timeLimitMs:
+          type: integer
+        memoryLimitKb:
+          type: integer
+        points:
+          type: integer
+        attempts:
+          type: integer
+
+    Test:
+      type: object
+      properties:
+        idTest:
+          type: string
+          format: uuid
+        taskId:
+          type: string
+          format: uuid
+        inputData:
+          type: string
+        outputData:
+          type: string
+      required: [idTest, taskId, inputData, outputData]
+
+    TestCreate:
+      type: object
+      properties:
+        inputData:
+          type: string
+        outputData:
+          type: string
+      required: [inputData, outputData]
