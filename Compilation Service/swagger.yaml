@@ -1,0 +1,127 @@
+
+openapi: 3.0.3
+info:
+  title: Compile Service API
+  version: 1.0.0
+  description: API для компиляции кода с разными типами входных данных
+paths:
+  /compile:
+    post:
+      summary: Компиляция кода из строки
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+                - type
+              properties:
+                code:
+                  type: string
+                  description: Исходный код для компиляции
+                input:
+                  type: string
+                  description: Входные данные для программы
+                type:
+                  type: string
+                  enum:
+                    - stdin
+                    - file
+                  description: Способ передачи входных данных
+      responses:
+        '200':
+          description: Результат компиляции
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  output:
+                    type: string
+                    description: Выходные данные программы
+                  error:
+                    type: string
+                    description: Сообщение об ошибке (если есть)
+  /compile/file:
+    post:
+      summary: Компиляция из исполняемого файла
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - type
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Исполняемый файл с кодом
+                input:
+                  type: string
+                  description: Входные данные для программы
+                type:
+                  type: string
+                  enum:
+                    - stdin
+                    - file
+                  description: Способ передачи входных данных
+      responses:
+        '200':
+          description: Результат компиляции
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  output:
+                    type: string
+                    description: Выходные данные программы
+                  error:
+                    type: string
+                    description: Сообщение об ошибке (если есть)
+  /compile/archive:
+    post:
+      summary: Компиляция кода из архива
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - archive
+                - type
+              properties:
+                archive:
+                  type: string
+                  format: binary
+                  description: Архив с исходным кодом (zip)
+                input:
+                  type: string
+                  description: Входные данные для программы
+                type:
+                  type: string
+                  enum:
+                    - stdin
+                    - file
+                  description: Способ передачи входных данных
+      responses:
+        '200':
+          description: Результат компиляции
+          content:
+            application/json:
+                          schema:
+                            type: object
+                            properties:
+                              output:
+                                type: string
+                                description: Выходные данные программы
+                              error:
+                                type: string
+                                description: Сообщение об ошибке (если есть)
+components: {}
