@@ -5,7 +5,7 @@ info:
   description: |
     Центральный swagger-файл, объединяющий все сервисы:
     - Auth Service
-    - User Service
+    
     - Course Service
     - Submission Service
 servers:
@@ -16,12 +16,10 @@ components:
   schemas: {}
 tags:
   - name: Auth Service
-  - name: User Service
   - name: Course Service
   - name: Submission Service
 externalDocs:
   description: Подробные спецификации сервисов
   url: ./Auth Service/swagger.yaml
   url: ./Course Service/swagger.yaml
-  url: ./User Service/swagger.yaml
   url: ./Submission Service/swagger.yaml
