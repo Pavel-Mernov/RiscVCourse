@@ -1,44 +1,44 @@
 
 openapi: 3.0.3
 info:
-  title: Course Service API
+  title: Contest Service API
   version: 1.1.0
 
 paths:
-  /courses:
+  /contests:
     get:
-      summary: Получить список курсов
+      summary: Получить список уроков
       responses:
         '200':
-          description: Список курсов
+          description: Список уроков
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Course'
+                  $ref: '#/components/schemas/Contest'
 
     post:
-      summary: Создать курс
+      summary: Создать урок
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CourseCreate'
+              $ref: '#/components/schemas/ContestCreate'
       responses:
         '201':
-          description: Курс создан
+          description: Урок создан
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Course'
+                $ref: '#/components/schemas/Contest'
 
-  /courses/{courseId}/tasks:
+  /contests/{contestId}/tasks:
     get:
-      summary: Получить все задачи курса
+      summary: Получить все задачи урока
       parameters:
-        - name: courseId
+        - name: contestId
           in: path
           required: true
           schema:
@@ -46,7 +46,7 @@ paths:
             format: uuid
       responses:
         '200':
-          description: Список задач курса
+          description: Список задач урока
           content:
             application/json:
               schema:
@@ -55,9 +55,9 @@ paths:
                   $ref: '#/components/schemas/Task'
 
     post:
-      summary: Добавить задачу в курс
+      summary: Добавить задачу в урок
       parameters:
-        - name: courseId
+        - name: contestId
           in: path
           required: true
           schema:
@@ -178,7 +178,7 @@ paths:
 
 components:
   schemas:
-    Course:
+    Contest:
       type: object
       properties:
         id:
@@ -190,7 +190,7 @@ components:
           type: string
       required: [id, title]
 
-    CourseCreate:
+    ContestCreate:
       type: object
       properties:
         title:
@@ -205,12 +205,12 @@ components:
         id:
           type: string
           format: uuid
-        courseId:
+        contestId:
           type: string
           format: uuid
         name:
           type: string
-        numberInCourse:
+        numberInContest:
           type: integer
         text:
           type: string
@@ -228,14 +228,14 @@ components:
           type: integer
         attempts:
           type: integer
-      required: [id, courseId, name, text, answerType]
+      required: [id, contestId, name, text, answerType]
 
     TaskCreate:
       type: object
       properties:
         name:
           type: string
-        numberInCourse:
+        numberInContest:
           type: integer
         text:
           type: string
@@ -260,7 +260,7 @@ components:
       properties:
         name:
           type: string
-        numberInCourse:
+        numberInContest:
           type: integer
         text:
           type: string
@@ -302,3 +302,5 @@ components:
         outputData:
           type: string
       required: [inputData, outputData]
+
+

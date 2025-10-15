@@ -5,8 +5,8 @@ info:
   description: |
     Центральный swagger-файл, объединяющий все сервисы:
     - Auth Service
-    
-    - Course Service
+    - Compilation Service    
+    - Contest Service
     - Submission Service
 servers:
   - url: http://localhost:8000
@@ -20,6 +20,7 @@ tags:
   - name: Submission Service
 externalDocs:
   description: Подробные спецификации сервисов
-  url: ./Auth Service/swagger.yaml
-  url: ./Course Service/swagger.yaml
-  url: ./Submission Service/swagger.yaml
+  url: ./AuthService/swagger.yaml
+  url: ./ContestService/swagger.yaml
+  url: ./CompilationService/swagger.yaml
+  url: ./SubmissionService/swagger.yaml
