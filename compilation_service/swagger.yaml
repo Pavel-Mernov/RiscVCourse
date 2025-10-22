@@ -16,7 +16,7 @@ paths:
               type: object
               required:
                 - code
-                - type
+                
               properties:
                 code:
                   type: string
@@ -24,11 +24,16 @@ paths:
                 input:
                   type: string
                   description: Входные данные для программы
+
+                input:
+                  type: filename
+                  description: Имя файла с входными данными для программы
                 type:
                   type: string
                   enum:
                     - stdin
                     - file
+                    - both
                   description: Способ передачи входных данных
       responses:
         '200':
