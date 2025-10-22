@@ -1,16 +1,19 @@
 import path from 'path';
 import { dirname } from 'path';
 
-import fs, { rm } from 'fs/promises';
+import fileSystem from "fs"
+import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { makeTempDir } from '../makeTempDir.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Путь к rars jar, поместите свой rars.jar в нужную папку
-const RARS_JAR_PATH = path.resolve(__dirname, '../../rars.jar');
+const RARS_JAR_PATH = path.resolve(__dirname, '../../rars/rars1_6.jar');
+
+const consoleLogFunc = console.log
 
 type Request = {
     body : {
@@ -24,6 +27,19 @@ type Request = {
 type Response = {
     status : (status : number) => Response,
     json : (obj : object) => Response,
+}
+
+function redirectInput(filename : string, inputData : string) {
+    // создаем поток записи в файл
+    const output = fileSystem.createWriteStream(filename);
+
+    // записываем входные данные в поток
+    output.write(inputData)
+
+    output.end(() => {})
+
+    // перенаправляем ввод из консоли в файл
+    process.stdin.pipe(output);
 }
 
 // Handler for POST: /compile endpoint
@@ -62,38 +78,52 @@ export async function compile(req : Request, res : Response) {
         
         tempDir = (await makeTempDir(__dirname, 'temp-', '..'))
         
-        console.log(tempDir)
+        // console.log(tempDir)
 
         const tempPath = path.resolve(tempDir, 'temp.s');
 
-        await fs.writeFile(tempPath, code, { encoding: 'utf-8' });
+        fs.writeFile(tempPath, code, { encoding: 'utf-8' });
 
         if (filename && input) {
             const tempInputPath = path.resolve(tempDir, filename);
-            await fs.writeFile(tempInputPath, input, { encoding: 'utf-8' });
+            fs.writeFile(tempInputPath, input, { encoding: 'utf-8' });
         }
 
-        
+        const redirectString = !(!filename && input) ? '' : (() => { 
+            const suffix = 'input.txt'
 
-        // Запуск rars в режиме компиляции или исполнения
+            const filename = path.join(tempDir, suffix)
+
+            redirectInput(filename, input)
+
+            return `< ${filename}`
+        })()
+
         
-        
-        // Например, запускаем программу с выводом в консоль:
-        // Параметры rars: 
-        const cmd = `java -jar "${RARS_JAR_PATH}" nc q run "${tempPath}" ${input ?? ''}`;
+        const cmd = `java -jar "${RARS_JAR_PATH}" "${tempPath}" nc ${redirectString}`;
+
+        // console.log(cmd)
 
         exec(cmd, { timeout: 5000 }, (error, stdout, stderr) => {
-        if (error) {
-            return res.status(500).json({ error: error.message, stderr });
-        }
+            console.log("Stdout : " + stdout)
 
-        res.json({ output: stdout.trim(), error: stderr.trim() });
-        });
+            if (error) {
+                console.log(error.message)
+
+                return res.status(500).json({ error: error.message, stderr });
+            }
+
+            fs.rm(tempDir, { recursive : true });
+            res.json({ output: stdout.trim(), error: stderr.trim() });
+            });
+        
+
+        
     } catch (err) {
         res.status(500).json({ error: (err as Error).message });
     }    
     finally {
-        // Очистка после использования
-        await rm(tempDir, { recursive: true, force: true });
     }
+
+    
 }
