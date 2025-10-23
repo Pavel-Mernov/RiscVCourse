@@ -47,6 +47,10 @@ export async function compile(req : Request, res : Response) {
 
     let tempDir = ''
 
+    // console.log(JSON.stringify(req.body))
+
+    // console.log(req.body.code)
+
     const { 
         code, 
         input, 
