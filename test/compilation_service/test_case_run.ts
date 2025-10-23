@@ -1,9 +1,9 @@
-import { codeHelloWorld } from "./helloworld"
-import { readFromFileAndSum } from "./readFromFileAndSum"
-import { runTest } from "./runtest"
-import { sumFromConsole } from "./sumFromConsole"
+import { codeHelloWorld } from "./scripts/helloworld"
+import { readFromFileAndSum } from "./scripts/readFromFileAndSum"
+import { runTest } from "./runTest"
+import { sumFromConsole } from "./scripts/sumFromConsole"
 import { Test } from "../types"
-import { strToInt } from "./strToInt"
+import { strToInt } from "./scripts/strToInt"
 import { twoIntsFromStr } from "./twoIntsFromStr"
 
 
