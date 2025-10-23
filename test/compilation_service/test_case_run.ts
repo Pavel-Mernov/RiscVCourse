@@ -4,17 +4,19 @@ import { runTest } from "./runTest"
 import { sumFromConsole } from "./scripts/sumFromConsole"
 import { Test } from "../types"
 import { strToInt } from "./scripts/strToInt"
-import { twoIntsFromStr } from "./twoIntsFromStr"
+import { twoIntsFromStr } from "./scripts/twoIntsFromStr"
+import { readStrFromFile } from "./scripts/readStrFromFile"
 
 
 const testCases : Test[] = [
-    /*
+    
     {
         body : {
             code : codeHelloWorld,
         },
         result : 'Hello, World!'
     },
+    /*
     {
         body : {
             code : sumFromConsole,
@@ -32,6 +34,7 @@ const testCases : Test[] = [
         result : '-69'
     },
     */
+/*
     {
         body : {
             code : readFromFileAndSum,
@@ -40,7 +43,8 @@ const testCases : Test[] = [
         },
         result : '-7'
     },
-
+*/
+/*
     {
         body : {
             code : readFromFileAndSum,
@@ -51,8 +55,18 @@ const testCases : Test[] = [
         },
         result : '19'
     },
-    
+*/
     /*
+    {
+        body: {
+            code: readStrFromFile,
+            input: "129",
+            filename: "string.txt",
+        },
+        result: "129"
+    },
+    */
+/*
    {
        body: {
            code: strToInt,
@@ -74,7 +88,8 @@ const testCases : Test[] = [
        },
        result: -1625,
    },
-   */
+*/   
+  /*
   {
       body: {
           code: twoIntsFromStr,
@@ -92,10 +107,11 @@ const testCases : Test[] = [
 2`,
       },
       result: "17"
-  },     
+  },
+  */     
 ]
 
-const PORT = 3000
+const PORT = 8080
 
 const url = `http://localhost:${PORT}/compile`
 

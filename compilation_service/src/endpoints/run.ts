@@ -49,7 +49,7 @@ export async function compile(req : Request, res : Response) {
 
     // console.log(JSON.stringify(req.body))
 
-    // console.log(req.body.code)
+    //console.log(req.body.code)
 
     const { 
         code, 
@@ -114,6 +114,7 @@ export async function compile(req : Request, res : Response) {
             if (error) {
                 console.log(error.message)
 
+                fs.rm(tempDir, { recursive : true });
                 return res.status(500).json({ error: error.message, stderr });
             }
 
