@@ -2,11 +2,13 @@
   "name": "compilationservice",
   "version": "1.0.0",
   "type" : "module",
+
   "description": "",
   "main": "./src/index.ts",
+  
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node src/main.ts"
+      "build": "tsc",
+      "start": "node dist/main.js"
   },
   "keywords": [],
   "author": "",

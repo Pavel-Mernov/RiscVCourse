@@ -16,7 +16,7 @@ const testCases : Test[] = [
         },
         result : 'Hello, World!'
     },
-    /*
+    
     {
         body : {
             code : sumFromConsole,
@@ -33,7 +33,7 @@ const testCases : Test[] = [
         },
         result : '-69'
     },
-    */
+    
 /*
     {
         body : {
@@ -111,7 +111,7 @@ const testCases : Test[] = [
   */     
 ]
 
-const PORT = 8080
+const PORT = 3000
 
 const url = `http://localhost:${PORT}/compile`
 

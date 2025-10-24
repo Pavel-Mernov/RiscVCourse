@@ -5,7 +5,7 @@
 
 
 
-export async function sendRequest(url : string, data : any, method : 'GET' | 'POST') {
+export async function sendRequest(url : string, data : any, method : 'GET' | 'POST' = 'POST') {
   try {
     const response = await fetch(url, {
       method: method,
@@ -13,7 +13,16 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(data)
-    });
+    })
+    //.then(resp => resp.json());
+
+    if (!response.ok) {
+      const errorText = await response.json().then(resp => resp.error);
+      console.error('Ошибка:', response.status, errorText);
+      return {
+        error : errorText
+       }
+    }
 
     const result = await response.json();
     

@@ -4,7 +4,7 @@ import { Test } from "../types"
 export async function runTest(testCase : Test, url : string) {
     
     const resp = await sendRequest(url, testCase.body, 'POST')
-    if ('output' in resp && (!('error' in resp) || !(resp.error))) {
+    if (resp.ok) {
         
         if (resp.output == testCase.result) {
             // console.log('Req.Body: ' + JSON.stringify(testCase.body))
@@ -17,7 +17,7 @@ export async function runTest(testCase : Test, url : string) {
         
     }
     else {
-        console.error(resp.error)
+        // console.error(resp.error.error)
     }
 
     return null

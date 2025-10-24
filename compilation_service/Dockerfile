@@ -1,21 +1,28 @@
-
-# Базовое окружение
+# Используйте базовый образ для вашего приложения
 FROM node:18
 
-# Каталог приложения
+# Установите рабочую директорию
 WORKDIR /app
 
-# Копируем зависимости
+# Копируйте package.json и package-lock.json
 COPY package*.json ./
 
-# Устанавливаем пакеты
-RUN npm install --production
+# Установите зависимости
+RUN npm install
 
-# Копируем всё остальное
+RUN apt-get update && apt-get install -y openjdk-17-jdk && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Проверим установку
+RUN java -version
+
+# Копируйте все исходные файлы
 COPY . .
 
-# Указываем порт микросервиса
-EXPOSE 8080
+# Скомпилируйте TypeScript в JavaScript
+RUN npm run build
 
-# Команда запуска
-CMD ["npm", "start"]
+# Запустите приложение
+CMD ["node", "dist/main.js"]  # Запуск скомпилированного JavaScript
+
+EXPOSE 3000
