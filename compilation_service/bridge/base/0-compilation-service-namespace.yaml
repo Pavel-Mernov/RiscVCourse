@@ -1,0 +1,8 @@
+#! 0-compilation-service-namespace.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: compilation-service
+    labels:
+        com.docker.compose.project: compilation_service

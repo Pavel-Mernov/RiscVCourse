@@ -10,6 +10,7 @@ import { readStrFromFile } from "./scripts/readStrFromFile"
 
 const testCases : Test[] = [
     
+    /*
     {
         body : {
             code : codeHelloWorld,
@@ -33,7 +34,7 @@ const testCases : Test[] = [
         },
         result : '-69'
     },
-    
+    */
 /*
     {
         body : {
@@ -56,7 +57,7 @@ const testCases : Test[] = [
         result : '19'
     },
 */
-    /*
+/*    
     {
         body: {
             code: readStrFromFile,
@@ -65,7 +66,7 @@ const testCases : Test[] = [
         },
         result: "129"
     },
-    */
+*/    
 /*
    {
        body: {
@@ -89,7 +90,7 @@ const testCases : Test[] = [
        result: -1625,
    },
 */   
-  /*
+
   {
       body: {
           code: twoIntsFromStr,
@@ -108,7 +109,7 @@ const testCases : Test[] = [
       },
       result: "17"
   },
-  */     
+       
 ]
 
 const PORT = 3000

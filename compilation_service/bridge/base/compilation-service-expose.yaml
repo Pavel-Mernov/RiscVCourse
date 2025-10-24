@@ -1,0 +1,18 @@
+#! compilation-service-expose.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: compilation-service
+    namespace: compilation-service
+    labels:
+        com.docker.compose.project: compilation_service
+        com.docker.compose.service: compilation-service
+spec:
+    selector:
+        com.docker.compose.project: compilation_service
+        com.docker.compose.service: compilation-service
+    ports:
+        - name: compilatio-3000
+          port: 3000
+          targetPort: compilatio-3000

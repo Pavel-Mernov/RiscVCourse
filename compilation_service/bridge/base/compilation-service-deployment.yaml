@@ -1,0 +1,38 @@
+#! compilation-service-deployment.yaml
+# Generated code, do not edit
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: compilation-service
+    namespace: compilation-service
+    labels:
+        com.docker.compose.project: compilation_service
+        com.docker.compose.service: compilation-service
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            com.docker.compose.project: compilation_service
+            com.docker.compose.service: compilation-service
+    strategy:
+        type: Recreate
+    template:
+        metadata:
+            labels:
+                com.docker.compose.project: compilation_service
+                com.docker.compose.service: compilation-service
+                com.docker.compose.network.default: "true"
+        spec:
+            containers:
+                - name: compilation-service
+                  image: compilation_service-compilation-service
+                  imagePullPolicy: IfNotPresent
+                  args:
+                    - node
+                    - dist/main.js
+                  env:
+                    - name: NODE_ENV
+                      value: "production"
+                  ports:
+                    - name: compilatio-3000
+                      containerPort: 3000

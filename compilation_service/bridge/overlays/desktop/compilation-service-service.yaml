@@ -1,0 +1,11 @@
+# check if there is at least one published port
+
+#! compilation-service-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: compilation-service-published
+    namespace: compilation-service
+spec:
+    type: LoadBalancer

@@ -1,0 +1,10 @@
+#! kustomization.yaml
+# Generated code, do not edit
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+    - 0-compilation-service-namespace.yaml
+    - compilation-service-deployment.yaml
+    - compilation-service-expose.yaml
+    - compilation-service-service.yaml
+    - default-network-policy.yaml

@@ -19,6 +19,8 @@ RUN java -version
 # Копируйте все исходные файлы
 COPY . .
 
+COPY rars ./
+
 # Скомпилируйте TypeScript в JavaScript
 RUN npm run build
 

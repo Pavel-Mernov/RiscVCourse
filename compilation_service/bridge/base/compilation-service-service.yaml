@@ -1,0 +1,21 @@
+# check if there is at least one published port
+
+#! compilation-service-service.yaml
+# Generated code, do not edit
+apiVersion: v1
+kind: Service
+metadata:
+    name: compilation-service-published
+    namespace: compilation-service
+    labels:
+        com.docker.compose.project: compilation_service
+        com.docker.compose.service: compilation-service
+spec:
+    selector:
+        com.docker.compose.project: compilation_service
+        com.docker.compose.service: compilation-service
+    ports:
+        - name: compilatio-3000
+          port: 3000
+          protocol: TCP
+          targetPort: compilatio-3000

@@ -25,6 +25,8 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
     }
 
     const result = await response.json();
+
+    console.log('Output: ' + result.output)
     
     return result
 
