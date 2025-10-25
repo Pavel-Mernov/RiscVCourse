@@ -5,8 +5,7 @@ import * as path from 'path';
 import fileSystem, { mkdtemp } from "fs"
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
-
-
+import multer, { diskStorage, memoryStorage } from 'multer';
 
 
 const _dirname = process.cwd()
@@ -16,7 +15,7 @@ const RARS_JAR_PATH = path.resolve(_dirname, './rars/rars1_6.jar');
 
 
 
-type Request = {
+type CodeRequest = {
     body : {
         code : string,
         input ?: string,
@@ -24,6 +23,16 @@ type Request = {
         // type ?: 'stdin' | 'file' | 'both',
     }
 }
+
+type RunFileRequest = {
+    
+    body : {
+        
+        input ?: string,
+        inputFilename ?: string,
+        // type ?: 'stdin' | 'file' | 'both',
+    }
+} & any
 
 type Response = {
     status : (status : number) => Response,
@@ -83,32 +92,10 @@ async function redirectInput(filename : string, inputData : string) {
   
 }
 
-// Handler for POST: /compile endpoint
-export async function compile(req : Request, res : Response) {
-
+async function runCode(res : Response, code : string, input ?: string, inputFilename ?: string) {
     let tempDir = ''
 
-    // console.log(JSON.stringify(req.body))
-
-    //console.log(req.body.code)
-
-    const { 
-        code, 
-        input, 
-        filename, 
-        // type 
-    } = req.body;
-    
-
-
-    // console.log(`Query: ${req.query}. `)
-
-    if (!code) {
-        return res.status(400).json({ error: 'Нет кода в теле запроса' });
-    }
-
-    
-    if ((filename) && !input) {
+    if ((inputFilename) && !input) {
         return res.status(400).json({ error: 'Нет входных данных для имени файла в теле запроса' });
     }
 
@@ -121,31 +108,22 @@ export async function compile(req : Request, res : Response) {
     try {
         // Запишем код во временный файл
         
-        tempDir = (await makeTempDir(_dirname, 'temp-', "."))
-        
-        const checkCat = `ls -ld ${tempDir}`
-
-        exec(checkCat, { timeout: 5000 }, (error, _a, _) => {
-          if (error) {
-            console.log(error.message)
-          }
-          else {
-            console.log(`Directory added successfully: ${tempDir}`)
-          }
-        } )
-
-        // console.log(tempDir)
+        if (typeof code == 'string') {
+            tempDir = (await makeTempDir(_dirname, 'temp-', "."))
+        }
 
         const tempPath = path.resolve(tempDir, 'temp.s');
 
-        await fs.writeFile(tempPath, code, { encoding: 'utf-8' });
+        if (typeof code == 'string') {
+            await fs.writeFile(tempPath, code, { encoding: 'utf-8' });
+        }
 
-        if (filename && input) {
-            const tempInputPath = path.resolve(tempDir, filename);
+        if (inputFilename && input) {
+            const tempInputPath = path.resolve(tempDir, inputFilename);
             await fs.writeFile(tempInputPath, input, { encoding: 'utf-8' });
         }
 
-        const redirectString = !(!filename && input) ? '' : await (async () => { 
+        const redirectString = !(!inputFilename && input) ? '' : await (async () => { 
             const suffix = 'input.txt'
 
             const filename = path.join(tempDir, suffix)
@@ -188,6 +166,50 @@ export async function compile(req : Request, res : Response) {
     
 }
 
+// Handler for POST: /compile endpoint
+async function compile(req : CodeRequest, res : Response) {
+
+    const { 
+        code, 
+        input, 
+        filename, 
+        // type 
+    } = req.body;
+    
+
+
+    // console.log(`Query: ${req.query}. `)
+
+    if (!code) {
+        return res.status(400).json({ error: 'Нет кода в теле запроса' });
+    }
+
+    return await runCode(res, code, input, filename)
+}
+
+// Настройка хранения файлов
+const storage = memoryStorage()
+
+// Инициализируем multer
+const upload = multer({ storage });
+
+// Handler for POST: /compile/file endpoint
+async function compileFile(req : RunFileRequest, res : Response) {
+    const { file,
+    body:  {
+        input,
+        inputFilename
+    }} = req
+
+    if (!file) {
+        return res.status(400).json({ error : 'Файл не загружен' })
+    }
+
+    const code = file.buffer.toString('utf-8')
+
+    return runCode(res, code, input, inputFilename)
+}
+
 const app = express();
 
 
@@ -196,7 +218,9 @@ const PORT = 3000;
 // app.use(bodyParser.text({ type: '*/*' }));
 app.use(express.json());
 
-app.post('/compile', compile);
+app.post('/api/compile/file', upload.single('file'), compileFile);
+
+app.post('/api/compile', compile);
 
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);

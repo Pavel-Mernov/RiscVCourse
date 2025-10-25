@@ -112,9 +112,20 @@ const testCases : Test[] = [
        
 ]
 
+const newTestCases : Test[] = Array(5).map(
+    (_, idx) => {
+        return {
+            body : {
+                code : strToInt,
+                input: `${idx}`
+            },
+            result : idx + 1
+        }
+    })
+
 const PORT = 3000
 
-const url = `http://localhost:${PORT}/compile`
+const url = `http://localhost:${PORT}/api/compile`
 
 const runTestCases = () => {
     testCases.forEach(test => runTest(test, url))

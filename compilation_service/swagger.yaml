@@ -5,7 +5,7 @@ info:
   version: 1.0.0
   description: API для компиляции кода с разными типами входных данных
 paths:
-  /compile:
+  /api/compile:
     post:
       summary: Компиляция кода из строки
       requestBody:
@@ -25,16 +25,10 @@ paths:
                   type: string
                   description: Входные данные для программы
 
-                input:
-                  type: filename
-                  description: Имя файла с входными данными для программы
-                type:
+                filename:
                   type: string
-                  enum:
-                    - stdin
-                    - file
-                    - both
-                  description: Способ передачи входных данных
+                  description: Имя файла с входными данными для программы
+
       responses:
         '200':
           description: Результат компиляции
@@ -49,7 +43,17 @@ paths:
                   error:
                     type: string
                     description: Сообщение об ошибке (если есть)
-  /compile/file:
+        '500':
+          description: Ошибка компиляции
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Сообщение об ошибке
+  /api/compile/file:
     post:
       summary: Компиляция из исполняемого файла
       requestBody:
@@ -60,7 +64,6 @@ paths:
               type: object
               required:
                 - file
-                - type
               properties:
                 file:
                   type: string
@@ -69,12 +72,10 @@ paths:
                 input:
                   type: string
                   description: Входные данные для программы
-                type:
+                inputFilename:
                   type: string
-                  enum:
-                    - stdin
-                    - file
-                  description: Способ передачи входных данных
+                  description: Имя файла с входными данными
+
       responses:
         '200':
           description: Результат компиляции
@@ -89,7 +90,17 @@ paths:
                   error:
                     type: string
                     description: Сообщение об ошибке (если есть)
-  /compile/archive:
+        '500':
+          description: Ошибка компиляции
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Сообщение об ошибке
+  /api/compile/archive:
     post:
       summary: Компиляция кода из архива
       requestBody:
