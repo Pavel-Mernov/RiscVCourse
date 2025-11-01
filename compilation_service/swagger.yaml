@@ -53,6 +53,8 @@ paths:
                   error:
                     type: string
                     description: Сообщение об ошибке
+        '401':
+          description: Неавторизованный доступ
   /api/compile/file:
     post:
       summary: Компиляция из исполняемого файла
@@ -90,6 +92,10 @@ paths:
                   error:
                     type: string
                     description: Сообщение об ошибке (если есть)
+        
+        '401':
+          description: Неавторизованный доступ
+
         '500':
           description: Ошибка компиляции
           content:
@@ -140,4 +146,6 @@ paths:
                               error:
                                 type: string
                                 description: Сообщение об ошибке (если есть)
+        '401':
+          description: Неавторизованный доступ
 components: {}

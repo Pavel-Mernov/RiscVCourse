@@ -6,6 +6,8 @@
 
 
 export async function sendRequest(url : string, data : any, method : 'GET' | 'POST' = 'POST') {
+  console.log('Data: ', data)
+
   try {
     const response = await fetch(url, {
       method: method,
@@ -16,6 +18,8 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
     })
     //.then(resp => resp.json());
 
+    // console.log('response: ', response)
+
     if (!response.ok) {
       const errorText = await response.json().then(resp => resp.error);
       console.error('Ошибка:', response.status, errorText);
@@ -24,9 +28,14 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
        }
     }
 
-    const result = await response.json();
+    
 
-    console.log('Output: ' + result.output)
+    const result = 
+      // response 
+      await response.json();
+    
+
+    console.log('Output: ', result)
     
     return result
 
