@@ -34,6 +34,65 @@ paths:
               schema:
                 $ref: '#/components/schemas/Contest'
 
+
+  /contests/{contestId}:
+    get:
+      summary: Получить контест по ID
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Данные контеста
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contest'
+        '404':
+          description: Контест не найден
+
+    put:
+      summary: Обновить контест по ID
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Contest'
+      responses:
+        '200':
+          description: Контест успешно обновлён
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contest'
+        '404':
+          description: Контест не найден
+
+    delete:
+      summary: Удалить контест по ID
+      parameters:
+        - name: contestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Контест удалён
+        '404':
+          description: Контест не найден
+
+
   /contests/{contestId}/tasks:
     get:
       summary: Получить все задачи урока

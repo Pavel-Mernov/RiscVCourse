@@ -10,16 +10,10 @@ COPY package*.json ./
 # Установим зависимости
 RUN npm install
 
-RUN apt-get update && apt-get install -y openjdk-17-jdk && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Проверим установку
-RUN java -version
 
 # Копируем все исходные файлы
 COPY . .
-
-COPY rars ./
 
 # Компилируем TypeScript в JavaScript
 RUN npm run build
@@ -27,4 +21,4 @@ RUN npm run build
 # Запускаем приложение
 CMD ["node", "dist/main.js"]  # Запуск скомпилированного JavaScript
 
-EXPOSE 3000
+EXPOSE 3003

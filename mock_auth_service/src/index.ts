@@ -1,6 +1,7 @@
 import express from 'express'
 import bcrypt from "bcryptjs"
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
 
 type LoginRequest = {
     body : {
@@ -17,7 +18,10 @@ const accounts = // это заглушка специально для дисц
     },
 ]
 
-const JWT_SECRET = 'ghkuifgo8yfo8f.?bjip?hupHOhio?:jkph0gh8b80-JHhipnldcrtiOPghifyuoH'
+dotenv.config()
+
+const JWT_SECRET = process.env.JWT_SECRET ?? ''
+const PORT = process.env.PORT ?? '' 
 
 const loginHandler = async (req : LoginRequest, res : any) => {
 
@@ -52,7 +56,7 @@ const app = express()
 
 app.use(express.json());
 
-const PORT = 3001
+// const PORT = 3003
 
 app.post('/login', loginHandler)
 

@@ -1,0 +1,38 @@
+services:
+  compilation-service:
+    build: 
+      context: ./compilation_service
+      dockerfile: Dockerfile
+
+    container_name: compilation-service
+    ports:
+      - "3000:3000"
+    command: ["node", "dist/main.js"]  
+    environment:
+      NODE_ENV: production
+
+  mock-auth-service:
+    build: 
+      context: ./mock_auth_service
+      dockerfile: Dockerfile
+
+    container_name: mock-auth-service
+    ports:
+      - "3003:3003"
+    command: ["node", "dist/main.js"]  
+    environment:
+      NODE_ENV: production
+
+  contest-service:
+    build: 
+      context: ./contest_service
+      dockerfile: Dockerfile
+
+    container_name: contest-service
+    ports:
+      - "3002:3002"
+    command: ["node", "dist/main.js"]  
+    environment:
+      NODE_ENV: production
+    
+

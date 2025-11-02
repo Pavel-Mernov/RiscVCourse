@@ -6,10 +6,10 @@ type LoginRequestBody = {
 }
 
 const tests : LoginRequestBody[] = [
-    //{
-    //    login : 'pavelmernov',
-    //    password : '12121212',
-    //},
+    {
+        login : 'pavelmernov',
+        password : '12121212',
+    },
     {
         login : "",
         password : '',
