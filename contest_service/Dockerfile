@@ -19,6 +19,6 @@ COPY . .
 RUN npm run build
 
 # Запускаем приложение
-CMD ["node", "dist/main.js"]  # Запуск скомпилированного JavaScript
+CMD ["node", "dist/index.js"]  # Запуск скомпилированного JavaScript
 
 EXPOSE 3002

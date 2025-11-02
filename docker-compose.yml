@@ -19,7 +19,7 @@ services:
     container_name: mock-auth-service
     ports:
       - "3003:3003"
-    command: ["node", "dist/main.js"]  
+    command: ["node", "dist/index.js"]  
     environment:
       NODE_ENV: production
 
@@ -31,7 +31,7 @@ services:
     container_name: contest-service
     ports:
       - "3002:3002"
-    command: ["node", "dist/main.js"]  
+    command: ["node", "dist/index.js"]  
     environment:
       NODE_ENV: production
     
