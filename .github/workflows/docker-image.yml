@@ -21,9 +21,9 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
-          registry: docker.io
+          registry: ghcp.io
           username: pavelmernov
-          password: 0311.2025
+          password: ${{ github.GHCP_TOKEN }}
 
       - name: Build and push service A
         uses: docker/build-push-action@v5
