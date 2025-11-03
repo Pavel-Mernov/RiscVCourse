@@ -23,7 +23,7 @@ jobs:
         with:
           registry: ghcp.io
           username: Pavel-Mernov
-          password: ${{ github.GHCP_TOKEN }}
+          password: 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
 
       - name: Build and push service A
         uses: docker/build-push-action@v5
