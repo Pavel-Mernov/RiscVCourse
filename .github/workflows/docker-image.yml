@@ -25,19 +25,27 @@ jobs:
       #    username: Pavel-Mernov
       #    password: ${{ secrets.GHCP_TOKEN }}
 
-      - name: Build and push service A
+      - name: Build and push compilation-service
         uses: docker/build-push-action@v5
         with:
-          context: ./service-a
-          file: ./service-a/Dockerfile
+          context: ./compilation_service
+          file: ./compilation_service/Dockerfile
           push: false
-          # tags: ghcr.io/${{ github.repository_owner }}/service-a:latest
+          # tags: ghcr.io/${{ github.repository_owner }}/compilation-service:latest
 
-      - name: Build and push service B
+      - name: Build and push Mock auth service
         uses: docker/build-push-action@v5
         with:
-          context: ./service-b
-          file: ./service-b/Dockerfile
+          context: ./mock_auth_service
+          file: ./mock_auth_service/Dockerfile
+          push: false
+          # tags: ghcr.io/${{ github.repository_owner }}/service-b:latest
+
+      - name: Build and push Contest service
+        uses: docker/build-push-action@v5
+        with:
+          context: ./contest_service
+          file: ./contest_service/Dockerfile
           push: false
           # tags: ghcr.io/${{ github.repository_owner }}/service-b:latest
 
