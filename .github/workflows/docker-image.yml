@@ -18,26 +18,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcp.io
-          username: Pavel-Mernov
-          password: ${{ secrets.GHCP_TOKEN }}
+      # - name: Login to GitHub Container Registry
+      #  uses: docker/login-action@v3
+      #  with:
+      #    registry: ghcp.io
+      #    username: Pavel-Mernov
+      #    password: ${{ secrets.GHCP_TOKEN }}
 
       - name: Build and push service A
         uses: docker/build-push-action@v5
         with:
           context: ./service-a
           file: ./service-a/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/service-a:latest
+          push: false
+          # tags: ghcr.io/${{ github.repository_owner }}/service-a:latest
 
       - name: Build and push service B
         uses: docker/build-push-action@v5
         with:
           context: ./service-b
           file: ./service-b/Dockerfile
-          push: true
-          tags: ghcr.io/${{ github.repository_owner }}/service-b:latest
+          push: false
+          # tags: ghcr.io/${{ github.repository_owner }}/service-b:latest
 
