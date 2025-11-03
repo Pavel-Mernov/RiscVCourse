@@ -23,7 +23,7 @@ jobs:
         with:
           registry: docker.io
           username: pavelmernov
-          password: ${{ github.DOCKER_HUB_TOKEN }}
+          password: 0311.2025
 
       - name: Build and push service A
         uses: docker/build-push-action@v5
