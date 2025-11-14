@@ -1,8 +1,15 @@
 import { AppBar, Toolbar, Button, Box } from '@mui/material';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
+
+  const [leftBtnIsEntered, setLeftBtnEntered] = useState(false)
+
+  const [contestsBtnIsEntered, setContentBtnEntered] = useState(false)
+
+  const [loginBtnIsEntered, setLoginBtnEntered] = useState(false)
 
   return (
     <AppBar 
@@ -14,8 +21,16 @@ const Navbar = () => {
         {/* Левая группа кнопок */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
           <Button
+            onMouseEnter={() => setLeftBtnEntered(true)}
+            onMouseLeave={() => setLeftBtnEntered(false)}
             onClick={() => navigate('/')}
-            sx={{ color: 'white', textTransform: 'none', gap: 1, fontSize : '20px' }}
+            sx={{ 
+              color: 'white', 
+              textTransform: 'none', 
+              transform: leftBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
+              gap: 1, 
+              fontSize : '20px' 
+            }}
             startIcon={
               <img
                 src='/logo-no-background.png'
@@ -29,7 +44,14 @@ const Navbar = () => {
 
           <Button
             onClick={() => navigate('/contests')}
-            sx={{ color: 'white', textTransform: 'none', fontSize : '20px' }}
+            onMouseEnter={() => setContentBtnEntered(true)}
+            onMouseLeave={() => setContentBtnEntered(false)}
+            sx={{ 
+              color: 'white', 
+              textTransform: 'none', 
+              fontSize : '20px', 
+              transform: contestsBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
+            }}
           >
             Контесты
           </Button>
@@ -38,7 +60,13 @@ const Navbar = () => {
         {/* Правая кнопка */}
         <Button
           onClick={() => navigate('/login')}
-          sx={{ color: 'white', textTransform: 'none', fontSize : '20px' }}
+          onMouseEnter={() => setLoginBtnEntered(true)}
+          onMouseLeave={() => setLoginBtnEntered(false)}
+          sx={{ color: 'white', 
+            textTransform: 'none', 
+            fontSize : '20px', 
+            transform: loginBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
+          }}
         >
           Войти
         </Button>
