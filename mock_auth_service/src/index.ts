@@ -58,7 +58,7 @@ app.use(express.json());
 
 // const PORT = 3003
 
-app.post('/login', loginHandler)
+app.post('/api/login', loginHandler)
 
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);

@@ -4,7 +4,7 @@ info:
   title: Submission Service API
   version: 1.0.0
 paths:
-  /submissions:
+  /api/submissions:
     get:
       summary: Получить список посылок
       responses:
@@ -17,7 +17,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Submission'
 
-  /submission:
+  /api/submission:
     post:
       summary: Создать новую посылку
       requestBody:
