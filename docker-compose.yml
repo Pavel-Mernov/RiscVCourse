@@ -34,5 +34,16 @@ services:
     command: ["node", "dist/index.js"]  
     environment:
       NODE_ENV: production
-    
+
+  contest-db:
+    image: postgres:18
+    container_name: contest-db
+    environment:
+      POSTGRES_USER: pavel_mernov
+      POSTGRES_PASSWORD: 0867
+      POSTGRES_DB: contest_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./contest_service/database/volumes:/var/lib/postgresql 
 

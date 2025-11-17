@@ -7,7 +7,7 @@ export interface Task {
   name: string
   numberInContest?: number
   text: string
-  deadline?: string
+  
   answerType: AnswerType
   timeLimitMs?: number
   memoryLimitKb?: number

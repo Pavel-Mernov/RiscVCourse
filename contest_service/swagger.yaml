@@ -255,6 +255,9 @@ components:
           format: uuid
         title:
           type: string
+        deadline:
+          type: string
+          format: date-time
         description:
           type: string
       required: [id, title]
@@ -266,6 +269,9 @@ components:
           type: string
         description:
           type: string
+        deadline:
+          type: string
+          format: date-time
       required: [title]
 
     Task:
@@ -283,9 +289,6 @@ components:
           type: integer
         text:
           type: string
-        deadline:
-          type: string
-          format: date-time
         answerType:
           type: string
           enum: [выбор, текст, код]
