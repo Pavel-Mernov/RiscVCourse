@@ -245,6 +245,72 @@ paths:
         '401':
           description: Неавторизованный доступ
 
+  /api/tests/{idTest}:
+    get:
+      summary: Получить Test по id
+      parameters:
+        - name: idTest
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Найденный объект Test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+        '404':
+          description: Объект не найден
+        '401':
+          description: Неавторизованный доступ
+
+    put:
+      summary: Обновить Test по id
+      parameters:
+        - name: idTest
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Test'
+      responses:
+        '200':
+          description: Обновленный объект Test
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Test'
+        '404':
+          description: Объект не найден
+        '401':
+          description: Неавторизованный доступ
+
+    delete:
+      summary: Удалить Test по id
+      parameters:
+        - name: idTest
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Успешное удаление
+        '404':
+          description: Объект не найден
+        '401':
+          description: Неавторизованный доступ
+
 components:
   schemas:
     Contest:

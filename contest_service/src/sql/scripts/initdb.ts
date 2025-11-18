@@ -1,4 +1,4 @@
-import { Client } from 'pg'
+import { Client, Pool } from 'pg'
 
 const script = `
 CREATE TABLE IF NOT EXISTS contests (
@@ -32,10 +32,10 @@ CREATE TABLE IF NOT EXISTS tests (
 ` 
 
 
-export async function initDB(client : Client) {
+export async function initDB(connection : Client | Pool) {
 
 
-    await client.connect()
-    await client.query(script)
-    await client.end()
+    
+    await connection.query(script)
+    
 }
