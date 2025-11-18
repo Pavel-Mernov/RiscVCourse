@@ -6,8 +6,4 @@ export interface Contest {
   description?: string
 }
 
-export interface ContestCreate {
-  title: string
-  deadline?: string
-  description?: string
-}
+export type ContestCreate = Omit<Contest, 'id'>

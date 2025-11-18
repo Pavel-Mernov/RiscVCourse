@@ -37,8 +37,15 @@ router.post('/contests', async (req, res) => {
   //const contests = await getContests(sqlPool)
 
   const body: ContestCreate = req.body
+
+  // Проверка обязательных полей
+  if (!body.title || body.title.trim() === '') {
+    return res.status(400).json({ error: 'Название контеста обязательно и не может быть пустым' })
+  }
+
   const contest: Contest = { id: uuid(), ...body }
-  
+
+
   //contests.push(contest)
   await createContest(sqlPool, contest)
 
@@ -50,7 +57,7 @@ router.get('/contests/:contestId', async (req, res) => {
 
   const contests = await getContests()
 
-  const contest = contests.find(c => c.id === contestId)
+  const contest = contests.find(c => c.id == contestId)
   if (!contest) return res.status(404).send('Contest not found')
   res.status(200).json(contest)
 })
