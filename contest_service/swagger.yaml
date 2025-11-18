@@ -27,6 +27,8 @@ paths:
             schema:
               $ref: '#/components/schemas/ContestCreate'
       responses:
+        '400':
+          description: Ошибка в запросе
         '201':
           description: Урок создан
           content:
@@ -135,6 +137,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+        '400':
+          description: Ошибка в запросе
 
   /api/tasks/{taskId}:
     get:
@@ -244,6 +248,9 @@ paths:
                 $ref: '#/components/schemas/Test'
         '401':
           description: Неавторизованный доступ
+
+        '400':
+          description: Ошибка в запросе
 
   /api/tests/{idTest}:
     get:

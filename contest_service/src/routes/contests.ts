@@ -16,6 +16,7 @@ import { deleteTask } from '../sql/scripts/tasks/deleteTask'
 import { getTests } from '../sql/scripts/tests/getTests'
 import { updateTest } from '../sql/scripts/tests/updateTest'
 import { deleteTest } from '../sql/scripts/tests/deleteTest'
+import { createTest } from '../sql/scripts/tests/createTest'
 
 const router = Router()
 
@@ -113,6 +114,21 @@ router.post('/contests/:contestId/tasks', async (req, res) => {
   if (!contest) return res.status(404).send('Contest not found')
 
   const body: TaskCreate = req.body
+
+  if (!body.name || body.name.trim() == '') {
+    return res.status(400).json({ error: 'Task name cannot be empty' })
+  }
+
+  if (!body.text || body.text.trim() == '') {
+    return res.status(400).json({ error: 'Task text is required. Task text cannot be empty' })
+  }
+
+  if (!body.answerType || body.answerType.trim() == '' || 
+    (body.answerType != 'code' && body.answerType != 'choice' && body.answerType != 'text' && body.answerType != 'theory')) {
+    
+      return res.status(400).json({ error: 'Task answer type is required. Answer type should be equal to either: \'code\', \'theory\', \'text\' or \'choice\'' })
+  }
+
   const task: Task = { id: uuid(), contestId, ...body }
   
   await createTask(task)
@@ -178,16 +194,21 @@ router.get('/tasks/:taskId/tests', async (req, res) => {
 //       Test Endpoints      //
 // ------------------------- //
 
-router.post('/api/tasks/:taskId/tests', (req, res) => {
+router.post('/api/tasks/:taskId/tests', async (req, res) => {
   const { taskId } = req.params;
-  const testData = req.body;
+  const body : Omit<Test, 'id' | 'taskId'> = req.body;
+
 
   // Пример логики добавления теста
-  const newTest = {
-    idTest: uuid(),
+  const newTest : Test = {
+    id: uuid(),
     taskId,
-    ...testData,
+    ...body,
   };
+
+
+
+  await createTest(newTest)
 
   res.status(201).json(newTest);
 });

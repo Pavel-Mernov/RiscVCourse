@@ -1,3 +1,7 @@
+import type { Client, Pool } from "pg";
+import type { Test } from "../../../models/test";
+import { sqlPool } from "../../..";
+
 const query = `
 
 INSERT INTO tests (
@@ -7,3 +11,9 @@ INSERT INTO tests (
 );
 
 `
+
+export async function createTest(test : Test, connection : Pool | Client = sqlPool) {
+    const { id, taskId, input, expectedOutput } = test
+
+    await connection.query(query, [id, taskId, input, expectedOutput])
+}
