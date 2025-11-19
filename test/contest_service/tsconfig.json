@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        // "forceConsistentCasingInFileNames": true,
+        "target": "es2022",
+        "module": "es2022",
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+    },
+    
+}

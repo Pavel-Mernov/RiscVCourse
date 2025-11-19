@@ -1,6 +1,6 @@
 import type { Client, Pool } from "pg";
 import type { Contest } from "../../../models/contest";
-import { sqlPool } from "../../..";
+import { sqlPool } from "../../../index.js";
 
 const script = `
 

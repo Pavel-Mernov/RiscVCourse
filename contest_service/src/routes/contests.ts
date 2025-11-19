@@ -2,21 +2,21 @@
 import { Router } from 'express'
 import { v4 as uuid } from 'uuid'
 import type { Contest, ContestCreate } from '../models/contest'
-import type { Task, TaskCreate } from '../models/task'
+import type { Task, TaskCreate } from '../models/task.js'
 import type { Test } from '../models/test'
-import { getContests } from '../sql/scripts/contests/getContests'
-import { sqlPool } from '..'
-import { createContest } from '../sql/scripts/contests/createContest'
-import { deleleContest } from '../sql/scripts/contests/deleteContest'
-import { updateContest } from '../sql/scripts/contests/updateContest'
-import { getTasks } from '../sql/scripts/tasks/getTasks'
-import { createTask } from '../sql/scripts/tasks/createTask'
-import { updateTask } from '../sql/scripts/tasks/updateTask'
-import { deleteTask } from '../sql/scripts/tasks/deleteTask'
-import { getTests } from '../sql/scripts/tests/getTests'
-import { updateTest } from '../sql/scripts/tests/updateTest'
-import { deleteTest } from '../sql/scripts/tests/deleteTest'
-import { createTest } from '../sql/scripts/tests/createTest'
+import { getContests } from '../sql/scripts/contests/getContests.js'
+import { sqlPool } from '../index.js'
+import { createContest } from '../sql/scripts/contests/createContest.js'
+import { deleleContest } from '../sql/scripts/contests/deleteContest.js'
+import { updateContest } from '../sql/scripts/contests/updateContest.js'
+import { getTasks } from '../sql/scripts/tasks/getTasks.js'
+import { createTask } from '../sql/scripts/tasks/createTask.js'
+import { updateTask } from '../sql/scripts/tasks/updateTask.js'
+import { deleteTask } from '../sql/scripts/tasks/deleteTask.js'
+import { getTests } from '../sql/scripts/tests/getTests.js'
+import { updateTest } from '../sql/scripts/tests/updateTest.js'
+import { deleteTest } from '../sql/scripts/tests/deleteTest.js'
+import { createTest } from '../sql/scripts/tests/createTest.js'
 
 const router = Router()
 
@@ -221,7 +221,7 @@ router.get('/tests/:idTest', async (req, res) => {
   const test = tests.filter(t => t.id === idTest)
 
   if (!test) {
-    return res.status(404).send('Объект не найден');
+    return res.status(404).send('Test not found');
   }
 
   res.status(200).json(test);
@@ -236,7 +236,7 @@ router.put('/tests/:idTest', async (req, res) => {
   const test = tests.filter(t => t.id === idTest)
 
   if (!test) {
-    return res.status(404).send('Объект не найден');
+    return res.status(404).send('Test not found');
   }
   
   // Пример обновления
@@ -259,12 +259,12 @@ router.delete('/tests/:idTest', async (req, res) => {
   const deletedObject = tests.find(t => t.id === idTest)
 
   if (!deletedObject) {
-    return res.status(404).send('Объект не найден');
+    return res.status(404).send('Test not found');
   }
 
   await deleteTest(idTest)
 
-  res.status(204).send();
+  res.status(204).send('Deletion successful');
 });
 
 export default router

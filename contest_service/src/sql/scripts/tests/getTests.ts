@@ -1,5 +1,5 @@
 import type { Client, Pool } from "pg";
-import { sqlPool } from "../../..";
+import { sqlPool } from "../../../index.js";
 import type { Test } from "../../../models/test";
 
 const query = `

@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "@vitejs/plugin-react": "^5.1.1",
     "pg": "^8.16.3",

@@ -5,16 +5,16 @@
 
 
 
-export async function sendRequest(url : string, data : any, method : 'GET' | 'POST' = 'POST') {
+export async function sendRequest(url : string, data : any, method : 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST') {
   console.log('Data: ', data)
 
   try {
     const response = await fetch(url, {
       method: method,
-      headers: {
+      headers: data ? {
         'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
+      } : {},
+      body: data ? JSON.stringify(data) : undefined
     })
     //.then(resp => resp.json());
 
