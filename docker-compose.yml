@@ -23,7 +23,26 @@ services:
     environment:
       NODE_ENV: production
 
+  contest-db:
+    image: postgres:18
+    container_name: contest-db
+    environment:
+      POSTGRES_USER: pavel_mernov
+      POSTGRES_PASSWORD: 0867
+      POSTGRES_DB: contest_database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pavel_mernov -d contest_database"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./contest_service/database/volumes:/var/lib/postgresql 
   contest-service:
+    depends_on:
+    - contest-db
+
     build: 
       context: ./contest_service
       dockerfile: Dockerfile
@@ -35,15 +54,5 @@ services:
     environment:
       NODE_ENV: production
 
-  contest-db:
-    image: postgres:18
-    container_name: contest-db
-    environment:
-      POSTGRES_USER: pavel_mernov
-      POSTGRES_PASSWORD: 0867
-      POSTGRES_DB: contest_database
-    ports:
-      - "5432:5432"
-    volumes:
-      - ./contest_service/database/volumes:/var/lib/postgresql 
+
 

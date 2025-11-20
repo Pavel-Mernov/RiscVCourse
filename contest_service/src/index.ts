@@ -1,28 +1,42 @@
 import express from 'express'
 import contestsRouter from './routes/contests.js'
-import { Pool } from 'pg'
+import { Client, Pool } from 'pg'
 import { initDB } from './sql/scripts/initdb.js'
 
 const app = express()
 app.use(express.json())
 app.use('/api', contestsRouter)
 
+async function connectWithRetry(pool : Pool | Client, retries : number = 10, delay : number = 2000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      await pool.connect()
+      return
+    } catch (err) {
+      console.log(`Не удалось подключиться к БД, попытка ${i+1}/${retries}`)
+      await new Promise(res => setTimeout(res, delay))
+    }
+  }
+  throw new Error('Не удалось подключиться к базе после нескольких попыток')
+}
+
 export const sqlPool = new Pool({
     user : 'pavel_mernov',
     password : '0867',
     database : 'contest_database',
-    host : 'localhost',
+    host : 'contest-db',
     port : 5432
 })
 
-await
-    sqlPool.connect()
+await connectWithRetry(sqlPool)
     .then(() => initDB(sqlPool))
     .then(() => {
         const port = process.env.PORT || 3002
         app.listen(port, () => console.log(`Contest Service running on port ${port}`))
     })
     .catch(console.error)
+
+
 
 process.on('SIGINT', async () => {
     await sqlPool.end()

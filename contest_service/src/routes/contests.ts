@@ -41,7 +41,7 @@ router.post('/contests', async (req, res) => {
 
   // Проверка обязательных полей
   if (!body.title || body.title.trim() === '') {
-    return res.status(400).json({ error: 'Название контеста обязательно и не может быть пустым' })
+    return res.status(400).json({ error: 'Contest title is required and cannot be blank' })
   }
 
   const contest: Contest = { id: uuid(), ...body }
@@ -59,7 +59,7 @@ router.get('/contests/:contestId', async (req, res) => {
   const contests = await getContests()
 
   const contest = contests.find(c => c.id == contestId)
-  if (!contest) return res.status(404).send('Contest not found')
+  if (!contest) return res.status(404).json({ error : 'Contest not found' })
   res.status(200).json(contest)
 })
 
@@ -71,7 +71,7 @@ router.put('/contests/:contestId', async (req, res) => {
   const contests = await getContests()
 
   const index = contests.findIndex(c => c.id === contestId)
-  if (index === -1) return res.status(404).send('Contest not found')
+  if (index === -1) return res.status(404).json({ error : 'Contest not found' })
 
   const updatedContest = { ...contests[index], ...updatedData }
   
@@ -87,7 +87,7 @@ router.delete('/contests/:contestId', async (req, res) => {
   const contests = await getContests()
 
   const index = contests.findIndex(c => c.id === contestId)
-  if (index === -1) return res.status(404).send('Contest not found')
+  if (index === -1) return res.status(404).json({ error : 'Contest not found' })
 
   await deleleContest(contestId)
   res.status(204).send()
@@ -98,7 +98,7 @@ router.get('/contests/:contestId/tasks', async (req, res) => {
 
   const contests = await getContests()
   const contest = contests.find(c => c.id === contestId)
-  if (!contest) return res.status(404).send('Contest not found')
+  if (!contest) return res.status(404).json({ error : 'Contest not found' })
 
   const tasks = await getTasks()
 
@@ -111,7 +111,7 @@ router.post('/contests/:contestId/tasks', async (req, res) => {
 
   const contests = await getContests()
   const contest = contests.find(c => c.id === contestId)
-  if (!contest) return res.status(404).send('Contest not found')
+  if (!contest) return res.status(404).json({ error : 'Contest not found' })
 
   const body: TaskCreate = req.body
 
@@ -145,7 +145,7 @@ router.get('/tasks/:taskId', async (req, res) => {
   const tasks = await getTasks()
   
   const task = tasks.find(t => t.id === req.params.taskId)
-  if (!task) return res.status(404).send('Task not found')
+  if (!task) return res.status(404).json({ error : 'Task not found' })
   res.status(200).json(task)
 })
 
@@ -154,7 +154,7 @@ router.put('/tasks/:taskId', async (req, res) => {
   const tasks = await getTasks()
 
   const task = tasks.find(t => t.id === req.params.taskId)
-  if (!task) return res.status(404).send('Task not found')
+  if (!task) return res.status(404).json({ error : 'Task not found' })
 
   Object.assign(task, req.body)
 
@@ -170,7 +170,7 @@ router.delete('/tasks/:taskId', async (req, res) => {
   const tasks = await getTasks()
 
   const index = tasks.findIndex(t => t.id === taskId)
-  if (index === -1) return res.status(404).send('Task not found')
+  if (index === -1) return res.status(404).json({ error : 'Task not found' })
 
   // tasks.splice(index, 1)
   await deleteTask(taskId)
@@ -183,7 +183,7 @@ router.get('/tasks/:taskId/tests', async (req, res) => {
 
   const tasks = await getTasks()
   const task = tasks.find(t => t.id === req.params.taskId)
-  if (!task) return res.status(404).send('Task not found')
+  if (!task) return res.status(404).json({ error : 'Task not found' })
 
   const tests = await getTests()
   const list = tests.filter(t => t.taskId === task.id)
@@ -221,7 +221,7 @@ router.get('/tests/:idTest', async (req, res) => {
   const test = tests.filter(t => t.id === idTest)
 
   if (!test) {
-    return res.status(404).send('Test not found');
+    return res.status(404).json({ error : 'Test not found' })
   }
 
   res.status(200).json(test);
@@ -236,7 +236,7 @@ router.put('/tests/:idTest', async (req, res) => {
   const test = tests.filter(t => t.id === idTest)
 
   if (!test) {
-    return res.status(404).send('Test not found');
+    return res.status(404).json({ error : 'Test not found' })
   }
   
   // Пример обновления
@@ -259,7 +259,7 @@ router.delete('/tests/:idTest', async (req, res) => {
   const deletedObject = tests.find(t => t.id === idTest)
 
   if (!deletedObject) {
-    return res.status(404).send('Test not found');
+    return res.status(404).json({ error : 'Test not found' })
   }
 
   await deleteTest(idTest)
