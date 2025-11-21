@@ -102,7 +102,8 @@ router.get('/contests/:contestId/tasks', async (req, res) => {
 
   const tasks = await getTasks()
 
-  const list = tasks.filter(t => t.contestId === req.params.contestId)
+  const list = tasks
+    .filter(t => t.contest_id == contestId)
   res.status(200).json(list)
 })
 
@@ -123,13 +124,13 @@ router.post('/contests/:contestId/tasks', async (req, res) => {
     return res.status(400).json({ error: 'Task text is required. Task text cannot be empty' })
   }
 
-  if (!body.answerType || body.answerType.trim() == '' || 
-    (body.answerType != 'code' && body.answerType != 'choice' && body.answerType != 'text' && body.answerType != 'theory')) {
+  if (!body.answer_type || body.answer_type.trim() == '' || 
+    (body.answer_type != 'code' && body.answer_type != 'choice' && body.answer_type != 'text' && body.answer_type != 'theory')) {
     
       return res.status(400).json({ error: 'Task answer type is required. Answer type should be equal to either: \'code\', \'theory\', \'text\' or \'choice\'' })
   }
 
-  const task: Task = { id: uuid(), contestId, ...body }
+  const task: Task = { id: uuid(), contest_id : contestId, ...body }
   
   await createTask(task)
   
@@ -158,9 +159,14 @@ router.put('/tasks/:taskId', async (req, res) => {
 
   Object.assign(task, req.body)
 
-  await updateTask(task)
+  try {
+    await updateTask(task)
 
-  res.status(200).json(task)
+    res.status(200).json(task)
+    }
+  catch (error) {
+    res.status(500).json({ error : `${error}. updated task:${JSON.stringify(task)}` });
+  }
 })
 
 // Удалить задачу
@@ -186,7 +192,7 @@ router.get('/tasks/:taskId/tests', async (req, res) => {
   if (!task) return res.status(404).json({ error : 'Task not found' })
 
   const tests = await getTests()
-  const list = tests.filter(t => t.taskId === task.id)
+  const list = tests.filter(t => t.task_id === task.id)
   res.status(200).json(list)
 })
 
@@ -196,13 +202,13 @@ router.get('/tasks/:taskId/tests', async (req, res) => {
 
 router.post('/api/tasks/:taskId/tests', async (req, res) => {
   const { taskId } = req.params;
-  const body : Omit<Test, 'id' | 'taskId'> = req.body;
+  const body : Omit<Test, 'id' | 'task_id'> = req.body;
 
 
   // Пример логики добавления теста
   const newTest : Test = {
     id: uuid(),
-    taskId,
+    task_id : taskId,
     ...body,
   };
 
@@ -229,6 +235,7 @@ router.get('/tests/:idTest', async (req, res) => {
 
 // Обновить тест по id
 router.put('/tests/:idTest', async (req, res) => {
+  
   const { idTest } = req.params;
   const updatedData = req.body;
 
@@ -245,9 +252,15 @@ router.put('/tests/:idTest', async (req, res) => {
     ...updatedData,
   };
 
+  try {
+
   await updateTest(updatedTest)
 
   res.status(200).json(updatedTest);
+  }
+  catch (error : any) {
+    res.status(500).json({ error : `${error}. updated test:${updatedTest}` });
+  }
 });
 
 // Удалить тест по id

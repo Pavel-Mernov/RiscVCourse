@@ -20,11 +20,10 @@ WHERE id = $1;
 `
 
 export async function updateTask(task : Task, connection : Pool | Client = sqlPool) {
-    const { id, contestId, name, numberInContest, text, answerType, timeLimitMs, memoryLimitKb, points, attempts } = task
 
     const values = 
-        // Object.values(task)
-        [id, contestId, name, numberInContest, text, answerType, timeLimitMs, memoryLimitKb, points, attempts]
+        Object.values(task)
+        // [id, contestId, name, numberInContest, text, answerType, timeLimitMs, memoryLimitKb, points, attempts]
 
     await connection.query(query, values)    
 }

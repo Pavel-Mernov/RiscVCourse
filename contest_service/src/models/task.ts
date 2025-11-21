@@ -3,16 +3,16 @@ export type AnswerType = 'theory' | 'choice' | 'text' | 'code'
 
 export interface Task {
   id: string
-  contestId: string
+  contest_id: string
   name: string
-  numberInContest?: number
+  number_in_contest?: number
   text: string
   
-  answerType: AnswerType
-  timeLimitMs?: number
-  memoryLimitKb?: number
+  answer_type: AnswerType
+  time_limit_ms?: number
+  memory_limit_kb?: number
   points?: number
   attempts?: number
 }
 
-export interface TaskCreate extends Omit<Task, 'id' | 'contestId'> {}
+export interface TaskCreate extends Omit<Task, 'id' | 'contest_id'> {}

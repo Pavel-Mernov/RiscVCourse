@@ -1,7 +1,7 @@
 
 export interface Test {
   id: string
-  taskId: string
+  task_id: string
   input: string
-  expectedOutput: string
+  expected_output: string
 }

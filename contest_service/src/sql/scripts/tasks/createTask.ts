@@ -15,11 +15,11 @@ INSERT INTO tasks (
 
 export async function createTask(task : Task, connection : Pool | Client = sqlPool) {
 
-    const { id, contestId, name, numberInContest, text, answerType, timeLimitMs, memoryLimitKb, points, attempts } = task
+    const { id, contest_id, name, number_in_contest, text, answer_type, time_limit_ms, memory_limit_kb, points, attempts } = task
 
     const values = 
         // Object.values(task)
-        [id, contestId, name, numberInContest, text, answerType, timeLimitMs, memoryLimitKb, points, attempts]
+        [id, contest_id, name, number_in_contest, text, answer_type, time_limit_ms, memory_limit_kb, points, attempts]
 
     await connection.query(query, values)
 }

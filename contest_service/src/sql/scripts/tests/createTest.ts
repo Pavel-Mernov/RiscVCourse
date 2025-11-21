@@ -13,7 +13,7 @@ INSERT INTO tests (
 `
 
 export async function createTest(test : Test, connection : Pool | Client = sqlPool) {
-    const { id, taskId, input, expectedOutput } = test
+    const { id, task_id, input, expected_output } = test
 
-    await connection.query(query, [id, taskId, input, expectedOutput])
+    await connection.query(query, [id, task_id, input, expected_output])
 }

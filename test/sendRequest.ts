@@ -6,6 +6,8 @@
 
 
 export async function sendRequest(url : string, data : any, method : 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST') {
+  console.log('Url: ', method, ' ', url)
+
   console.log('Data: ', data)
 
   try {
@@ -28,7 +30,7 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
        }
     }
 
-    
+    // console.log(response)
 
     const result = 
       // response 
