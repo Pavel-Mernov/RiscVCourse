@@ -143,6 +143,68 @@ async function testCaseDeleteTaskById(taskId : string) {
     await sendRequest(url, undefined, 'DELETE')
 }
 
+async function testCaseCreateTest(taskId : string) {
+    const PORT = 3002
+
+    const url = `http://localhost:${PORT}/api/tasks/${taskId}/tests`
+    
+    const body = {
+        input : 'test input 1',
+        expected_output : 'test 1 expected output'
+    }
+
+    await sendRequest(url, body, 'POST')
+}
+
+async function testCaseCreateTest2(taskId : string) {
+    const PORT = 3002
+
+    const url = `http://localhost:${PORT}/api/tasks/${taskId}/tests`
+    
+    const body = {
+        input : 'test input 2',
+        expected_output : 'test 2 expected output'
+    }
+
+    await sendRequest(url, body, 'POST')
+}
+
+async function testCaseGetTestsByTask(taskId : string) {
+    const PORT = 3002
+
+    const url = `http://localhost:${PORT}/api/tasks/${taskId}/tests`
+
+    await sendRequest(url, undefined, 'GET')
+}
+
+async function testCaseGetTestById(testId : string) {
+    const PORT = 3002
+
+    const url = `http://localhost:${PORT}/api/tests/${testId}`
+
+    await sendRequest(url, undefined, 'GET')
+}
+
+async function testCaseUpdateTestById(testId : string) {
+    const PORT = 3002
+
+    const url = `http://localhost:${PORT}/api/tests/${testId}`
+
+    const body = {
+        expected_output : 'New changed test output'
+    }
+
+    await sendRequest(url, body, 'PUT')
+}
+
+async function testCaseDeleteTestById(testId : string) {
+    const PORT = 3002
+
+    const url = `http://localhost:${PORT}/api/tests/${testId}`
+
+    await sendRequest(url, undefined, 'DELETE')
+}
+
 // await testCase3()
 
 // await testCaseCreateTask('04222305-9092-4ecb-8ba6-5f72382b88b9')
@@ -155,12 +217,26 @@ async function testCaseDeleteTaskById(taskId : string) {
 
 // await testCaseDeleteTaskById('fd83996d-d1bb-4b35-99e5-842eefa55e8e')
 
-await testCaseGetTasks('04222305-9092-4ecb-8ba6-5f72382b88b9')
+// await testCaseGetTasks('04222305-9092-4ecb-8ba6-5f72382b88b9')
 
-await testCaseGetTaskById('5aae5e94-c41d-4fba-9a39-dd4f5da3ee9e')
+// await testCaseGetTaskById('5aae5e94-c41d-4fba-9a39-dd4f5da3ee9e')
 
 // await testCaseGetTaskById('fd83996d')
 
 // await testCase1()
 
 // await testCase6()
+
+// await testCaseCreateTest('5aae5e94-c41d-4fba-9a39-dd4f5da3ee9e')
+
+await testCaseCreateTest2('5aae5e94-c41d-4fba-9a39-dd4f5da3ee9e')
+
+await testCaseGetTestsByTask('5aae5e94-c41d-4fba-9a39-dd4f5da3ee9e')
+
+// await testCaseUpdateTestById('7bab0e89-9c11-4d94-981c-e7114233ade0')
+
+//await testCaseGetTestById('7bab0e89-9c11-4d94-981c-e7114233ade0')
+
+await testCaseDeleteTestById('7bab0e89-9c11-4d94-981c-e7114233ade0')
+
+await testCaseGetTestsByTask('5aae5e94-c41d-4fba-9a39-dd4f5da3ee9e')

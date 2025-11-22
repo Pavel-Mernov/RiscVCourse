@@ -200,23 +200,31 @@ router.get('/tasks/:taskId/tests', async (req, res) => {
 //       Test Endpoints      //
 // ------------------------- //
 
-router.post('/api/tasks/:taskId/tests', async (req, res) => {
-  const { taskId } = req.params;
-  const body : Omit<Test, 'id' | 'task_id'> = req.body;
+router.post('/tasks/:taskId/tests', async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const body : Omit<Test, 'id' | 'task_id'> = req.body;
+
+    const tasks = await getTasks()
+    const task = tasks.find(t => t.id === req.params.taskId)
+    if (!task) return res.status(404).json({ error : 'Task not found' })
+
+    // Пример логики добавления теста
+    const newTest : Test = {
+      id: uuid(),
+      task_id : taskId,
+      ...body,
+    };
 
 
-  // Пример логики добавления теста
-  const newTest : Test = {
-    id: uuid(),
-    task_id : taskId,
-    ...body,
-  };
 
+    await createTest(newTest)
 
-
-  await createTest(newTest)
-
-  res.status(201).json(newTest);
+    res.status(201).json(newTest);
+  }
+  catch (error) {
+    res.status(500).json({ error })
+  }
 });
 
 // Получить тест по id
@@ -237,29 +245,25 @@ router.get('/tests/:idTest', async (req, res) => {
 router.put('/tests/:idTest', async (req, res) => {
   
   const { idTest } = req.params;
-  const updatedData = req.body;
+  // const updatedData = req.body;
 
   const tests = await getTests()
-  const test = tests.filter(t => t.id === idTest)
+  const test = tests.find(t => t.id === idTest)
 
   if (!test) {
     return res.status(404).json({ error : 'Test not found' })
   }
   
-  // Пример обновления
-  const updatedTest = {
-    idTest,
-    ...updatedData,
-  };
+  Object.assign(test, req.body)
 
   try {
 
-  await updateTest(updatedTest)
+  await updateTest(test)
 
-  res.status(200).json(updatedTest);
+  res.status(200).json(test);
   }
   catch (error : any) {
-    res.status(500).json({ error : `${error}. updated test:${updatedTest}` });
+    res.status(500).json({ error : `${error}. updated test:${test}` });
   }
 });
 

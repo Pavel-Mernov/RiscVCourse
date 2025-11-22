@@ -13,9 +13,9 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
   try {
     const response = await fetch(url, {
       method: method,
-      headers: data ? {
+      headers: {
         'Content-Type': 'application/json'
-      } : {},
+      },
       body: data ? JSON.stringify(data) : undefined
     })
     //.then(resp => resp.json());
@@ -23,7 +23,10 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
     // console.log('response: ', response)
 
     if (!response.ok) {
-      const errorText = await response.json().then(resp => resp.error);
+      // console.log(response)
+
+      const errorText = await  response.text()
+      
       console.error('Ошибка:', response.status, errorText);
       return {
         error : errorText
@@ -34,7 +37,7 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
 
     const result = 
       // response 
-      await response.json();
+      await response.text();
     
 
     console.log('Output: ', result)
