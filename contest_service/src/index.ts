@@ -1,11 +1,19 @@
+import dotenv from 'dotenv'
+
+
 import express from 'express'
 import contestsRouter from './routes/contests.js'
 import { Client, Pool } from 'pg'
 import { initDB } from './sql/scripts/initdb.js'
 
+dotenv.config()
+export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
+
 const app = express()
 app.use(express.json())
 app.use('/api', contestsRouter)
+
+// console.log(`JWT Secret: ${JWT_SECRET}`)
 
 async function connectWithRetry(pool : Pool | Client, retries : number = 10, delay : number = 2000) {
   for (let i = 0; i < retries; i++) {

@@ -5,7 +5,7 @@
 
 
 
-export async function sendRequest(url : string, data : any, method : 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST') {
+export async function sendRequest(url : string, data : any, method : 'GET' | 'POST' | 'PUT' | 'DELETE' = 'POST', token ?: string) {
   console.log('Url: ', method, ' ', url)
 
   console.log('Data: ', data)
@@ -14,9 +14,11 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
     const response = await fetch(url, {
       method: method,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer: ${token}` : '',
       },
-      body: data ? JSON.stringify(data) : undefined
+      body: data ? JSON.stringify(data) : undefined,
+      
     })
     //.then(resp => resp.json());
 

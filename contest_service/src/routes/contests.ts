@@ -17,6 +17,7 @@ import { getTests } from '../sql/scripts/tests/getTests.js'
 import { updateTest } from '../sql/scripts/tests/updateTest.js'
 import { deleteTest } from '../sql/scripts/tests/deleteTest.js'
 import { createTest } from '../sql/scripts/tests/createTest.js'
+import { authenticate } from './authenticate.js'
 
 const router = Router()
 
@@ -34,7 +35,7 @@ router.get('/contests', async (_, res) => {
   res.status(200).json(contests) 
 })
 
-router.post('/contests', async (req, res) => {
+router.post('/contests', authenticate, async (req, res) => {
   //const contests = await getContests(sqlPool)
 
   const body: ContestCreate = req.body
@@ -64,7 +65,7 @@ router.get('/contests/:contestId', async (req, res) => {
 })
 
 // Обновить контест по ID
-router.put('/contests/:contestId', async (req, res) => {
+router.put('/contests/:contestId', authenticate, async (req, res) => {
   const { contestId } = req.params
   const updatedData = req.body
 
@@ -81,7 +82,7 @@ router.put('/contests/:contestId', async (req, res) => {
 })
 
 // Удалить контест по ID
-router.delete('/contests/:contestId', async (req, res) => {
+router.delete('/contests/:contestId', authenticate, async (req, res) => {
   const { contestId } = req.params
 
   const contests = await getContests()
@@ -107,7 +108,7 @@ router.get('/contests/:contestId/tasks', async (req, res) => {
   res.status(200).json(list)
 })
 
-router.post('/contests/:contestId/tasks', async (req, res) => {
+router.post('/contests/:contestId/tasks', authenticate, async (req, res) => {
   const { contestId } = req.params
 
   const contests = await getContests()
@@ -151,7 +152,7 @@ router.get('/tasks/:taskId', async (req, res) => {
 })
 
 // Обновить задачу
-router.put('/tasks/:taskId', async (req, res) => {
+router.put('/tasks/:taskId', authenticate, async (req, res) => {
   const tasks = await getTasks()
 
   const task = tasks.find(t => t.id === req.params.taskId)
@@ -170,7 +171,7 @@ router.put('/tasks/:taskId', async (req, res) => {
 })
 
 // Удалить задачу
-router.delete('/tasks/:taskId', async (req, res) => {
+router.delete('/tasks/:taskId', authenticate, async (req, res) => {
   const { taskId } = req.params
 
   const tasks = await getTasks()
@@ -200,7 +201,7 @@ router.get('/tasks/:taskId/tests', async (req, res) => {
 //       Test Endpoints      //
 // ------------------------- //
 
-router.post('/tasks/:taskId/tests', async (req, res) => {
+router.post('/tasks/:taskId/tests', authenticate, async (req, res) => {
   try {
     const { taskId } = req.params;
     const body : Omit<Test, 'id' | 'task_id'> = req.body;
@@ -242,7 +243,7 @@ router.get('/tests/:idTest', async (req, res) => {
 });
 
 // Обновить тест по id
-router.put('/tests/:idTest', async (req, res) => {
+router.put('/tests/:idTest', authenticate, async (req, res) => {
   
   const { idTest } = req.params;
   // const updatedData = req.body;
@@ -268,7 +269,7 @@ router.put('/tests/:idTest', async (req, res) => {
 });
 
 // Удалить тест по id
-router.delete('/tests/:idTest', async (req, res) => {
+router.delete('/tests/:idTest', authenticate, async (req, res) => {
   const { idTest } = req.params;
 
   const tests = await getTests()
