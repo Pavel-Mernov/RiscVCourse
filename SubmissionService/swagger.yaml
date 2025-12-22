@@ -7,6 +7,21 @@ paths:
   /api/submissions:
     get:
       summary: Получить список посылок
+      parameters:
+        - in: query
+          name: taskId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор задачи
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+            
+          description: Идентификатор пользователя
       responses:
         '200':
           description: Список посылок
