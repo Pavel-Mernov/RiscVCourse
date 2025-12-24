@@ -1,0 +1,132 @@
+
+openapi: 3.0.3
+info:
+  title: Submission Service API
+  version: 1.0.0
+paths:
+  /api/submissions:
+    get:
+      summary: Получить список посылок студента для одной задачи 
+      parameters:
+        - in: query
+          name: taskId
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Идентификатор задачи
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: string
+            
+          description: Идентификатор пользователя
+      responses:
+        '200':
+          description: Список посылок
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Submission'
+
+  /api/submission:
+    post:
+      summary: Создать новую посылку
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmissionCreate'
+      responses:
+        '201':
+          description: Посылка создана
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+
+        '401':
+          description: Неавторизованный доступ
+
+  /submission/{id}:
+    get:
+      summary: Получить посылку по ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Данные посылки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Submission'
+        
+        '401':
+          description: Неавторизованный доступ
+
+        '404':
+          description: Не найдено
+
+    delete:
+      summary: Удалить посылку
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '401':
+          description: Неавторизованный доступ
+          
+        '204':
+          description: Удалено успешно
+
+components:
+  schemas:
+    Submission:
+      type: object
+      properties:
+        submission_id:
+          type: string
+          format: uuid
+        task_id:
+          type: string
+          format: uuid
+        student_id:
+          type: string
+          format: uuid
+        timestamp:
+          type: string
+          format: date-time
+        text:
+          type: string
+        verdict:
+          type: string
+          enum: [OK, WA, RE, TL, IG]
+
+    SubmissionCreate:
+      type: object
+      required: [task_id, student_id, text]
+      properties:
+        task_id:
+          type: string
+          format: uuid
+        student_id:
+          type: string
+          format: uuid
+        text:
+          type: string
+        verdict:
+          type: string
+          enum: [OK, WA, RE, TL, IG]

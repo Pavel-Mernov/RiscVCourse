@@ -53,6 +53,39 @@ services:
     command: ["node", "dist/index.js"]  
     environment:
       NODE_ENV: production
+  submission-db:
+    image: postgres:18
+    container_name: submission-db
+    restart: always
+    environment:
+      POSTGRES_USER: pavel_mernov
+      POSTGRES_PASSWORD: 0867
+      POSTGRES_DB: submission_database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pavel_mernov -d submission_database"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5433:5432"
+    volumes:
+      - submission_volumes:/var/lib/postgresql 
+  submission-service:
+    depends_on:
+    - submission-db
 
+    build: 
+      context: ./submission_service
+      dockerfile: Dockerfile
+
+    container_name: submission-service
+    ports:
+      - "3004:3004"
+    command: ["node", "dist/index.js"]  
+    environment:
+      NODE_ENV: production
+
+volumes:
+  submission_volumes:
 
 
