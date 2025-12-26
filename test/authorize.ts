@@ -12,4 +12,6 @@ const defaultCredentials = {
 
 export async function authorize(credentials : Credentials = defaultCredentials) {
     const res = await sendRequest('http://localhost:3003/api/login', credentials, 'POST')
+
+    return res
 }

@@ -59,7 +59,6 @@ interface SubmissionCreate {
 
 // Middleware для имитации авторизации
 function middleware(req: any, res: Response, next: NextFunction) {
-  // Простая заглушка: если в заголовках есть Authorization, пропускаем
   
   const header = req.headers.authorization
 
