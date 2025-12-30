@@ -1,0 +1,25 @@
+{
+  "name": "auth_service",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "openid-client": "^6.8.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  }
+}
