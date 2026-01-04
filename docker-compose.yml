@@ -35,6 +35,25 @@ services:
     environment:
       NODE_ENV: production
 
+#  keycloak:
+#    image: quay.io/keycloak/keycloak:25.0
+#    container_name: keycloak
+#    environment:
+#      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+#      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+#      CLIENT_SECRET: ${CLIENT_SECRET}
+#    volumes:
+#      - ./realm-template.json:/opt/keycloak/data/import/realm-template.json
+#    command: >
+#      sh -c "
+#        echo Running import template...
+#        envsubst < /opt/keycloak/data/import/realm-template.json \
+#          > /opt/keycloak/data/import/realm.json &&
+#        /opt/keycloak/bin/kc.sh start-dev --import-realm
+#      "
+#    ports:
+#      - "8080:8080"
+
   contest-db:
     image: postgres:18
     container_name: contest-db

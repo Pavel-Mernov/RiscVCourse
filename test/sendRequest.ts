@@ -46,9 +46,9 @@ export async function sendRequest(url : string, data : any, method : 'GET' | 'PO
     
     return result
 
-  } catch (error) {
+  } catch (error : any) {
     console.error('Ошибка при запросе:', error);
-    return { error }
+    return { error : error.toString() }
   }
 
   

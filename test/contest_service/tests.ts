@@ -1,5 +1,5 @@
 import { sendRequest } from "../sendRequest.ts"
-import { authorize } from "../authorize.ts"
+import { authorizeMock } from "../authorize.ts"
 
 async function testCaseGetContests() {
     const PORT = 3002

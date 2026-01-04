@@ -12,12 +12,12 @@ app.use(express.json());
 
 // ---- НАСТРОЙКИ KEYCLOAK ----
 const KEYCLOAK_URL = 'https://your-keycloak/auth/realms/myrealm/protocol/openid-connect/token';
-const CLIENT_ID = 'riskvcourse_auth_service';          
+const CLIENT_ID = 'riscvcourse_auth_service';          
 
 // Если client public — CLIENT_SECRET не нужен
 
 // ---- /login ----
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password)
@@ -46,7 +46,7 @@ app.post('/login', async (req, res) => {
 });
 
 // ---- /refresh ----
-app.post('/refresh', async (req, res) => {
+app.post('/api/refresh', async (req, res) => {
     const { refreshToken } = req.body;
 
     if (!refreshToken)
