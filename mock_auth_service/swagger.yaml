@@ -1,0 +1,49 @@
+
+openapi: 3.0.3
+info:
+  title: Auth Service / Mock Auth Service API
+  version: 1.0.0
+paths:
+  /api/login:
+    post:
+      summary: Авторизация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+              required:
+                - login
+                - password
+      responses:
+        '200':
+          description: Успешный вход
+        '401':
+          description: Неверные данные аутентификации
+  /api/refresh:
+    post:
+      summary: Обновление токена авторизации
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+              required:
+                - refreshToken
+      responses:
+        '200':
+          description: Успешный вход
+        '400':
+          description: Отсутствует токен авторизации
+        '401':
+          description: Токен авторизации не валиден

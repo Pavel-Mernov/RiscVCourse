@@ -11,29 +11,29 @@ services:
     environment:
       NODE_ENV: production
 
-#  mock-auth-service:
-#    build: 
-#      context: ./mock_auth_service
-#      dockerfile: Dockerfile
-
-#    container_name: mock-auth-service
-#    ports:
-#      - "3003:3003"
-#    command: ["node", "dist/index.js"]  
-#    environment:
-#      NODE_ENV: production
-
-  auth-service:
+  mock-auth-service:
     build: 
-      context: ./auth_service
+      context: ./mock_auth_service
       dockerfile: Dockerfile
 
-    container_name: auth-service
+    container_name: mock-auth-service
     ports:
-      - "3005:3005"
+      - "3003:3003"
     command: ["node", "dist/index.js"]  
     environment:
       NODE_ENV: production
+
+#  auth-service:
+#    build: 
+#      context: ./auth_service
+#      dockerfile: Dockerfile
+
+#    container_name: auth-service
+#    ports:
+#      - "3005:3005"
+#    command: ["node", "dist/index.js"]  
+#    environment:
+#      NODE_ENV: production
 
 #  keycloak:
 #    image: quay.io/keycloak/keycloak:25.0

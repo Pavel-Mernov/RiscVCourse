@@ -26,3 +26,24 @@ paths:
           description: Успешный вход
         '401':
           description: Неверные данные аутентификации
+  /api/refresh:
+    post:
+      summary: Обновление токена авторизации
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+              required:
+                - refreshToken
+      responses:
+        '200':
+          description: Успешный вход
+        '400':
+          description: Отсутствует токен авторизации
+        '401':
+          description: Токен авторизации не валиден
