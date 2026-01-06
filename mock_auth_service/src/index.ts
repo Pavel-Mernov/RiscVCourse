@@ -2,6 +2,7 @@ import express from 'express'
 import bcrypt from "bcryptjs"
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import Redis from 'ioredis';
 
 type LoginRequest = {
     body : {
@@ -10,11 +11,17 @@ type LoginRequest = {
     }
 }
 
+const redis = new Redis()
+
 const accounts = // это заглушка специально для дисциплины ПИПО. В ВКР будет
 [
     {
-        login : 'pavelmernov',
+        login : 'pkmernov@edu.hse.ru',
         password : await bcrypt.hash('12121212', 10),
+    },
+    {
+        login : 'kpashigorev@hse.ru',
+        password : await bcrypt.hash('06010601', 10),
     },
 ]
 
@@ -22,6 +29,24 @@ dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET ?? ''
 const PORT = process.env.PORT ?? '' 
+
+
+
+// Проверка и валидация refresh токена из Redis
+async function verifyRefreshToken(token: string) {
+  try {
+    // Проверяем подпись JWT
+    const payload = jwt.verify(token, JWT_SECRET) as jwt.JwtPayload;
+
+    // Проверяем наличие токена в Redis (валидность токена)
+    const stored = await redis.get(token);
+    if (!stored) throw new Error('Token Not Found');
+
+    return payload;
+  } catch (err) {
+    throw new Error('Invalid or Expired Token');
+  }
+}
 
 const loginHandler = async (req : LoginRequest, res : any) => {
 
@@ -48,17 +73,42 @@ const loginHandler = async (req : LoginRequest, res : any) => {
   const token = jwt.sign({ login }, JWT_SECRET, { expiresIn: '1h' });
   const refreshToken = jwt.sign({ login }, JWT_SECRET, { expiresIn: '7d' });
 
+  // Сохраняем refreshToken в Redis с TTL равным 7 дням
+  await redis.set(refreshToken, login, 'EX', 7 * 24 * 3600);
+
   res.json({ token, refreshToken });
 }
 
+const refreshHandler = async (req: any, res: any) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(400).json({ error: 'Refresh Token Required' });
+
+  try {
+    const payload = await verifyRefreshToken(refreshToken);
+
+    // Создаем новый access токен
+    const newAccessToken = jwt.sign({ login: payload.login }, JWT_SECRET, { expiresIn: '1h' });
+    res.json({ token: newAccessToken });
+  } catch (err) {
+    res.status(403).json({ error: (err as Error).message });
+  }
+};
+
+const logoutHandler = async (req: any, res: any) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(400).json({ error: 'Refresh Token Required' });
+
+  await redis.del(refreshToken);
+  res.sendStatus(204);
+};
 
 const app = express()
 
 app.use(express.json());
 
-// const PORT = 3003
-
 app.post('/api/login', loginHandler)
+app.post('/api/refresh', refreshHandler)
+app.post('/api/logout', logoutHandler)
 
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);

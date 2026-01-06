@@ -42,8 +42,27 @@ paths:
                 - refreshToken
       responses:
         '200':
-          description: Успешный вход
+          description: Успешное обновление токена
         '400':
           description: Отсутствует токен авторизации
         '401':
           description: Токен авторизации не валиден
+  /api/logout:
+    post:
+      summary: Удаление токена обновления
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+              required:
+                - refreshToken
+      responses:
+        '204':
+          description: Успешное удаление токена
+        '400':
+          description: Отсутствует токен обновления

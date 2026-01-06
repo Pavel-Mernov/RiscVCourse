@@ -14,6 +14,6 @@ export function authenticate(req : any, res : any, next : any) {
     req.user = payload
     next()
   } catch {
-    return res.status(403).json({ error: `Invalid or expired token. JWT_SECRET: ${JWT_SECRET}` })
+    return res.status(403).json({ error: `Invalid or expired token.` })
   }
 }
