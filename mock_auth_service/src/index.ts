@@ -2,7 +2,8 @@ import express from 'express'
 import bcrypt from "bcryptjs"
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import Redis from 'ioredis';
+import Redis from 'ioredis'
+import cors from 'cors'
 
 type LoginRequest = {
     body : {
@@ -11,7 +12,10 @@ type LoginRequest = {
     }
 }
 
-const redis = new Redis()
+const redis = new Redis({
+  host: process.env.REDIS_HOST || '127.0.0.1',
+  port: 6379
+})
 
 const accounts = // это заглушка специально для дисциплины ПИПО. В ВКР будет
 [
@@ -104,11 +108,21 @@ const logoutHandler = async (req: any, res: any) => {
 
 const app = express()
 
+app.use(cors({
+  origin: 'http://localhost:5173', // адрес вашего React (vite) приложения
+  methods: ['GET', 'POST', 'OPTIONS'], // необходимые методы
+  allowedHeaders: ['Content-Type'],
+}));
+
 app.use(express.json());
 
 app.post('/api/login', loginHandler)
 app.post('/api/refresh', refreshHandler)
 app.post('/api/logout', logoutHandler)
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);

@@ -5,7 +5,7 @@ import { useState } from "react"
 export default () => {
     const [loginText, setLoginText] = useState('')
 
-    const [loginError, ] = useState(false)
+    const [loginError, setLoginError] = useState(false)
 
     const [passwordText, setPasswordText] = useState('')
 
@@ -18,7 +18,31 @@ export default () => {
     })
 
     const fetchLogin = async () => {
+
+        if (!loginText.trim() || !passwordText.trim()) {
+            setLoginError(true)
+            return
+        }
+
+        const url = `http://localhost:3003/api/login`
+        const method = 'POST'
+        const data = {
+            login : loginText,
+            password : passwordText,
+        }
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+            
+        })
         
+        const result = await response.text()
+
+        console.log(result)
     }
 
     return <Stack
@@ -49,7 +73,10 @@ export default () => {
                     sx={{marginTop: '20px', background : 'white'}} 
                     variant="filled" 
                     value={loginText} 
-                    onChange={(e) => setLoginText(e.target.value)} 
+                    onChange={(e) => { 
+                        setLoginError(false)
+                        setLoginText(e.target.value) 
+                    }} 
                     label="Введите логин" 
                     error={loginError}    
                 />
@@ -59,7 +86,10 @@ export default () => {
                     variant="filled"
                     type="password" 
                     value={passwordText} 
-                    onChange={(e) => setPasswordText(e.target.value)} 
+                    onChange={(e) => { 
+                        setPasswordText(e.target.value) 
+                        setLoginError(false)
+                    }} 
                     label="Введите пароль" 
                     error={loginError}    
                 />
