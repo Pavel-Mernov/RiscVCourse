@@ -1,6 +1,7 @@
 import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -10,6 +11,24 @@ const Navbar = () => {
   const [contestsBtnIsEntered, setContentBtnEntered] = useState(false)
 
   const [loginBtnIsEntered, setLoginBtnEntered] = useState(false)
+
+  const { accessToken, setAccessToken } = useAuth()
+
+  const logout = async () => {
+    setAccessToken(undefined)
+
+    const url = `http://localhost:3003/api/logout`
+    const method = 'POST'
+    
+
+    await fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+            
+    })
+  }
 
   return (
     <AppBar 
@@ -58,18 +77,37 @@ const Navbar = () => {
         </Box>
 
         {/* Правая кнопка */}
-        <Button
-          onClick={() => navigate('/login')}
-          onMouseEnter={() => setLoginBtnEntered(true)}
-          onMouseLeave={() => setLoginBtnEntered(false)}
-          sx={{ color: 'white', 
-            textTransform: 'none', 
-            fontSize : '20px', 
-            transform: loginBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
-          }}
-        >
-          Войти
-        </Button>
+        {
+          (!accessToken) ?
+            <Button
+              onClick={() => {
+                
+                  navigate('/login')
+              }}
+              onMouseEnter={() => setLoginBtnEntered(true)}
+              onMouseLeave={() => setLoginBtnEntered(false)}
+              sx={{ color: 'white', 
+                textTransform: 'none', 
+                fontSize : '20px', 
+                transform: loginBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
+              }}
+            >
+              Войти
+            </Button>
+            :
+            <Button
+              onClick={ logout }
+              onMouseEnter={() => setLoginBtnEntered(true)}
+              onMouseLeave={() => setLoginBtnEntered(false)}
+              sx={{ color: 'white', 
+                textTransform: 'none', 
+                fontSize : '20px', 
+                transform: loginBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
+              }}
+            >
+              Выйти
+            </Button>
+        }
       </Toolbar>
     </AppBar>
   );

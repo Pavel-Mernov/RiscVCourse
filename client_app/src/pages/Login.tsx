@@ -1,6 +1,8 @@
 import { Button, createTheme, Stack, TextField, ThemeProvider, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useState } from "react"
+import { useAuth } from "../context/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 export default () => {
     const [loginText, setLoginText] = useState('')
@@ -8,6 +10,10 @@ export default () => {
     const [loginError, setLoginError] = useState(false)
 
     const [passwordText, setPasswordText] = useState('')
+
+    const { setAccessToken } = useAuth()
+
+    const navigate = useNavigate()
 
     const blueButtonTheme = createTheme({
         palette : {
@@ -40,9 +46,22 @@ export default () => {
             
         })
         
-        const result = await response.text()
+        if (!response.ok) {
+            setLoginError(true)
+            return
+        }
 
-        console.log(result)
+        const result = await response.json()
+
+        // console.log(JSON.stringify(result))
+
+        if ('accessToken' in result) {
+            
+            setAccessToken(result.accessToken)
+
+            console.log('Auth successful')
+            navigate(-1)
+        }
     }
 
     return <Stack
