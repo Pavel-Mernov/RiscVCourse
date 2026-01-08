@@ -87,7 +87,7 @@ const loginHandler = async (req : LoginRequest, res : any) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production', // для https в проде
     sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000 // например, 7 дней
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 дней
   });
 
   res.json({ accessToken });

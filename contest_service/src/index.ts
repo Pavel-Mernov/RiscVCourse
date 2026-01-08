@@ -5,11 +5,19 @@ import express from 'express'
 import contestsRouter from './routes/contests.js'
 import { Client, Pool } from 'pg'
 import { initDB } from './sql/scripts/initdb.js'
+import cors from 'cors'
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
 const app = express()
+
+app.use(cors({
+  origin: 'http://localhost:5173', // адрес React (vite) приложения
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json())
 app.use('/api', contestsRouter)
 

@@ -6,7 +6,7 @@ interface Credentials {
 }
 
 const defaultCredentials = {
-        login : 'pavelmernov',
+        login : 'pkmernov@edu.hse.ru',
         password : '12121212',
     }
 
