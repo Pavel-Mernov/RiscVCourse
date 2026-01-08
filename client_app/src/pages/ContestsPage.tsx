@@ -1,9 +1,46 @@
 import { Button, colors, createTheme, Stack, TextField, ThemeProvider, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import ContestLink from "../components/contestLink"
+
+export interface Contest {
+    id : string,
+    title : string,
+}
+
+async function getContests() {
+    const PORT = 3002
+
+    const url = `http://localhost:${PORT}/api/contests`
+
+    const contestList = await fetch(url, {
+        method : 'GET',
+        headers : {
+            'Content-Type': 'application/json'
+                
+        }
+    })
+    .then(resp => resp.json())
+    .then(resp => resp.map((c : any) => c as Contest))
+    .then(c => c as Contest[])
+
+    return contestList
+}
 
 export default () => {
     const [searchText, setSearchText] = useState('')
+
+    const [contests, setContests] = useState<Contest[]>([])
+
+    useEffect(() => {
+        const fetchContests = async () => { 
+            const contestList = await getContests()
+
+            setContests(contestList)
+        }
+
+        fetchContests()
+    }, [])
 
     const blueButtonTheme = createTheme({
         palette : {
@@ -14,7 +51,20 @@ export default () => {
     })
 
     const fetchSearchContests = async () => {
+        const contestList = await getContests()
 
+        if (searchText.trim() == '') {
+            setContests(contestList as Contest[])
+
+            
+            return
+        }
+
+        const regex = new RegExp(searchText, 'i')
+
+        const filteredContests = contestList.filter(c => regex.test(c.title))
+
+        setContests(filteredContests)
     }
 
     return <Stack
@@ -82,6 +132,14 @@ export default () => {
                 </ThemeProvider>
             </Stack> 
 
+            <Stack
+                width='70%'
+                spacing='20px'
+            >
+                {
+                    contests.map((contest, i) => <ContestLink key={`link_${i}`} contest={contest} />)
+                }
+            </Stack>
 
         </Stack>  
     </Stack>
