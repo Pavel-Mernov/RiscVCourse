@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 
 // 1. Типы для контекста
@@ -16,7 +16,19 @@ interface AuthProviderProps {
 
 // 3. Провайдер контекста
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+  const [accessToken, setAccessToken] = useState<string | undefined>(() => {
+    
+    return localStorage.getItem('accessToken') || undefined
+  });
+  
+  // При изменении токена сохраняем его в localStorage
+  useEffect(() => {
+    if (accessToken) {
+      localStorage.setItem('accessToken', accessToken);
+    } else {
+      localStorage.removeItem('accessToken');
+    }
+  }, [accessToken]);
 
   return (
     <AuthContext.Provider value={{ accessToken, setAccessToken }}>

@@ -5,6 +5,7 @@ import ContestsPage from './pages/ContestsPage';
 import Login from './pages/Login';
 import { AuthProvider } from './context/AuthContext';
 import ContestPage from './pages/ContestPage';
+import TaskPage from './pages/TaskPage';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/contests" element={<ContestsPage />} />
           <Route path="/contests/:id" element={<ContestPage />} />
+          <Route path="/tasks/:id" element={<TaskPage />} />
           <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>

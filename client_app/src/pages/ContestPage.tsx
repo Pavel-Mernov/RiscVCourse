@@ -108,7 +108,7 @@ export default () => {
         )        
     }
 
-    console.log(JSON.stringify(contest), contest.title, JSON.stringify(tasks))
+    // console.log(JSON.stringify(contest), contest.title, JSON.stringify(tasks))
 
     return (
         <Stack
