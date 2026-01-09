@@ -1,7 +1,7 @@
 import { Button, colors, createTheme, Stack, TextField, ThemeProvider, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useEffect, useState } from "react"
-import ContestLink from "../components/contestLink"
+import ContestLink from "../components/titleLink"
 
 export interface Contest {
     id : string,
@@ -137,7 +137,7 @@ export default () => {
                 spacing='20px'
             >
                 {
-                    contests.map((contest, i) => <ContestLink key={`link_${i}`} contest={contest} />)
+                    contests.map(({ title, id }, i) => <ContestLink key={`link_${i}`} title={ title } link={ `/contests/${id}` } />)
                 }
             </Stack>
 

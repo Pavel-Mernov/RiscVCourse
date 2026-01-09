@@ -1,0 +1,152 @@
+import { Stack, Typography } from "@mui/material"
+import Navbar from "../components/navbar"
+import { useParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import TaskLink from "../components/titleLink"
+
+interface Contest {
+  id: string
+  deadline?: string
+  title: string
+  description?: string
+}
+
+interface Task {
+    id : string,
+    name : string,
+}
+
+function Title(props : { title : string }) {
+    const { title } = props
+
+    return (
+            <Typography
+                sx={{ marginTop : '150px' }}
+                alignSelf='center'
+                variant="h3"
+                fontWeight='bold'
+                >
+                    { title }
+            </Typography>  
+    )
+}
+
+export default () => {
+
+    const { id } = useParams()
+
+    const [contest, setContest] = useState<Contest | { error : any } | null>(null)
+
+    const [ tasks, setTasks ] = useState<Task[]>([])
+
+    useEffect(() => {
+        const fetchContest = async () => {
+            const PORT = 3002
+            const url = `http://localhost:${PORT}/api/contests/${id}`    
+            const method = 'GET'
+
+            const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            
+            })
+            .then(resp => resp.json()) 
+            
+            
+
+            setContest(response)
+        }
+
+        fetchContest()
+    }, [])
+
+    useEffect(() => {
+        const fetchTasks = async () => {
+            const PORT = 3002
+            const url = `http://localhost:${PORT}/api/contests/${id}/tasks`    
+            const method = 'GET'
+
+            const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            
+            })
+            .then(resp => resp.json()) 
+            
+            
+
+            setTasks(response)
+        }
+
+        fetchTasks()
+    }, [])
+
+    if (!contest) {
+        return (
+            <Stack
+        
+            >
+                <Navbar /> 
+                
+            </Stack>
+        )        
+    }
+
+    if (contest && typeof contest == 'object' && 'error' in contest) {
+        return (
+            <Stack
+        
+            >
+                <Navbar /> 
+                
+                <Title title="Контест не найден" />
+            </Stack>
+        )        
+    }
+
+    console.log(JSON.stringify(contest), contest.title, JSON.stringify(tasks))
+
+    return (
+        <Stack
+    
+        >
+            <Navbar /> 
+            
+            <Title title={ contest.title } /> 
+
+            {
+                contest.description &&
+                <Typography
+                    sx={{ marginTop : '20px', alignSelf : 'center', maxWidth : '70%' }}
+                    variant="h5"
+                >
+                    { contest.description }
+                </Typography>
+            }
+        
+            <Typography
+                sx={{ marginTop : '50px', alignSelf : 'center' }}
+                variant="h4"
+                fontWeight='bold'
+                fontSize='50px'
+            >
+                Задачи
+            </Typography> 
+
+            <Stack
+                width='70%'
+                spacing='20px'
+                alignSelf='center'
+                marginTop='20px'
+            >
+                {
+                    tasks.map(({ name, id }, i) => <TaskLink key={`link_${i}`} title={ name } link={ `/tasks/${id}` } />)
+                }
+            </Stack>
+        </Stack>
+    )
+}
