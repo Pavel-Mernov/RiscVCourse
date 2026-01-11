@@ -2,10 +2,11 @@ import { Client, Pool } from 'pg'
 
 const script = `
 CREATE TABLE IF NOT EXISTS contests (
-  id           TEXT PRIMARY KEY,
-  deadline     TIMESTAMPTZ,
-  title        TEXT NOT NULL,
-  description  TEXT
+  id                TEXT PRIMARY KEY,
+  deadline          TIMESTAMPTZ,
+  title             TEXT NOT NULL,
+  description       TEXT,
+  authorized_only   BOOLEAN
 );
 
 

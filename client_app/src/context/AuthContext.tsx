@@ -1,9 +1,12 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { decodeToken, getLoginFromToken } from "./decode";
 
 
 // 1. Типы для контекста
 interface AuthContextType {
   accessToken ?: string;
+  isTokenValid : () => boolean,
+  isUserValidTeacher : () => boolean,
   setAccessToken: (token ?: string) => void;
 }
 
@@ -20,6 +23,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     
     return localStorage.getItem('accessToken') || undefined
   });
+
+  function isUserValidTeacher() {
+    if (!accessToken || !isTokenValid()) {
+      return false
+    }
+
+    const login = getLoginFromToken(accessToken)
+
+    if (!login) {
+        return false
+    }
+
+    return login.endsWith('@hse.ru')
+  }
+
+  function isTokenValid(): boolean {
+    if (!accessToken) {
+      return false
+    }
+
+    const decoded = decodeToken(accessToken);
+    if (!decoded || !decoded.exp) return false; // нет данных
+  
+    const now = Date.now() / 1000; // текущее время в секундах
+    return decoded.exp >= now;
+  }
   
   // При изменении токена сохраняем его в localStorage
   useEffect(() => {
@@ -31,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [accessToken]);
 
   return (
-    <AuthContext.Provider value={{ accessToken, setAccessToken }}>
+    <AuthContext.Provider value={{ accessToken, setAccessToken, isUserValidTeacher, isTokenValid }}>
       {children}
     </AuthContext.Provider>
   );

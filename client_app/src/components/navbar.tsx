@@ -12,7 +12,7 @@ const Navbar = () => {
 
   const [loginBtnIsEntered, setLoginBtnEntered] = useState(false)
 
-  const { accessToken, setAccessToken } = useAuth()
+  const { setAccessToken, isTokenValid } = useAuth()
 
   const logout = async () => {
     setAccessToken(undefined)
@@ -78,7 +78,7 @@ const Navbar = () => {
 
         {/* Правая кнопка */}
         {
-          (!accessToken) ?
+          (!isTokenValid()) ?
             <Button
               onClick={() => {
                 

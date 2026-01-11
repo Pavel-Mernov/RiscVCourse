@@ -6,6 +6,7 @@ import ContestLink from "../components/titleLink"
 export interface Contest {
     id : string,
     title : string,
+    authorized_only ?: boolean,
 }
 
 async function getContests() {
@@ -66,6 +67,8 @@ export default () => {
 
         setContests(filteredContests)
     }
+
+    // console.log(JSON.stringify(contests))
 
     return <Stack
     
@@ -137,7 +140,9 @@ export default () => {
                 spacing='20px'
             >
                 {
-                    contests.map(({ title, id }, i) => <ContestLink key={`link_${i}`} title={ title } link={ `/contests/${id}` } />)
+                    contests
+                        .filter(contest => !contest.authorized_only)
+                        .map(({ title, id }, i) => <ContestLink key={`link_${i}`} title={ title } link={ `/contests/${id}` } />)
                 }
             </Stack>
 

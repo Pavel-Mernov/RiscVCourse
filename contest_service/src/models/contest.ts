@@ -1,7 +1,8 @@
 
 export interface Contest {
   id: string
-  deadline?: string
+  deadline?: string,
+  authorized_only ?: boolean,
   title: string
   description?: string
 }

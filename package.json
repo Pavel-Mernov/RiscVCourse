@@ -2,6 +2,7 @@
   "type": "module",
   "dependencies": {
     "@vitejs/plugin-react": "^5.1.1",
+    "jwt-decode": "^2.2.0",
     "pg": "^8.16.3",
     "react-router-dom": "^7.9.5",
     "vite": "^7.2.2"
