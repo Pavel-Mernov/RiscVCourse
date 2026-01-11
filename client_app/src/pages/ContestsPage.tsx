@@ -2,6 +2,7 @@ import { Button, colors, createTheme, Stack, TextField, ThemeProvider, Typograph
 import Navbar from "../components/navbar"
 import { useEffect, useState } from "react"
 import ContestLink from "../components/titleLink"
+import { useAuth } from "../context/AuthContext"
 
 export interface Contest {
     id : string,
@@ -29,6 +30,8 @@ async function getContests() {
 }
 
 export default () => {
+    const { isTokenValid } = useAuth()
+
     const [searchText, setSearchText] = useState('')
 
     const [contests, setContests] = useState<Contest[]>([])
@@ -52,10 +55,10 @@ export default () => {
     })
 
     const fetchSearchContests = async () => {
-        const contestList = await getContests()
+        const contestList = await getContests() as Contest[]
 
         if (searchText.trim() == '') {
-            setContests(contestList as Contest[])
+            setContests(contestList)
 
             
             return
@@ -141,7 +144,7 @@ export default () => {
             >
                 {
                     contests
-                        .filter(contest => !contest.authorized_only)
+                        .filter(contest => isTokenValid() || !contest.authorized_only)
                         .map(({ title, id }, i) => <ContestLink key={`link_${i}`} title={ title } link={ `/contests/${id}` } />)
                 }
             </Stack>

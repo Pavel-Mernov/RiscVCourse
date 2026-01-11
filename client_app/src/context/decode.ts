@@ -1,25 +1,31 @@
 
-import { jwtDecode } from 'jwt-decode';
+// import { jwtDecode, type JwtPayload } from 'jwt-decode';
+
+import * as jwtDecodeModule from 'jwt-decode';
+const jwtDecode = (jwtDecodeModule as any).default;
 
 interface JwtPayload {
-  exp: number;       // время истечения в секундах с 1970
-  iat?: number;      // время выдачи
-  sub?: string;      // идентификатор пользователя или другой профиль
-  // добавьте другие поля вашего payload, если нужно
+    login : string,
+    iat : number,
+    exp : number,
 }
 
-export function decodeToken(token: string): JwtPayload | null {
+export function decodeToken(token: string) {
   try {
-    return jwtDecode(token);
+    const result = jwtDecode(token);
+
+    console.log(result)
+
+    return result as JwtPayload
   } catch (e) {
     console.error('Invalid token', e);
-    return null;
+    return undefined;
   }
 }
 
 export function getLoginFromToken(token: string) {
   const decoded = decodeToken(token);
-  return decoded?.sub || undefined; // либо другое поле с данными пользователя
+  return decoded?.login || undefined; // либо другое поле с данными пользователя
 }
 
 
