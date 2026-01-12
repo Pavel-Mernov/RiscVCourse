@@ -97,6 +97,8 @@ export default () => {
                         setLoginText(e.target.value) 
                     }} 
                     label="Введите логин" 
+                    placeholder="Введите логин"
+                    helperText={ loginError ? "Неверный логин или пароль" : "" }
                     error={loginError}    
                 />
                 
@@ -110,6 +112,7 @@ export default () => {
                         setLoginError(false)
                     }} 
                     label="Введите пароль" 
+                    placeholder="Введите пароль"
                     error={loginError}    
                 />
 

@@ -3,6 +3,7 @@ import Navbar from "../components/navbar"
 import { useEffect, useState } from "react"
 import ContestLink from "../components/titleLink"
 import { useAuth } from "../context/AuthContext"
+import { useNavigate } from "react-router-dom"
 
 export interface Contest {
     id : string,
@@ -30,11 +31,13 @@ async function getContests() {
 }
 
 export default () => {
-    const { isTokenValid } = useAuth()
+    const { isTokenValid, isUserValidTeacher } = useAuth()
 
     const [searchText, setSearchText] = useState('')
 
     const [contests, setContests] = useState<Contest[]>([])
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchContests = async () => { 
@@ -77,13 +80,24 @@ export default () => {
     
     >
         <Navbar />  
+            
+        
 
         <Stack
             marginTop='150px'
-            spacing='90px'
+            spacing='75px'
             
             alignItems='center'
         >
+            { isUserValidTeacher() && 
+                <Button 
+                    variant="outlined" 
+                    onClick={() => navigate('/create-contest')}
+                    sx={{ fontSize : '20px', borderWidth : '2px', alignSelf : 'end', right : '15vw' }}
+                >
+                    + Создать Новый Контест
+                </Button>
+            }
 
             <Typography
                 variant="h2"

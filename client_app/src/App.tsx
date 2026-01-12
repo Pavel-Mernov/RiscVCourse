@@ -3,13 +3,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import ContestsPage from './pages/ContestsPage';
 import Login from './pages/Login';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, } from './context/AuthContext';
 import ContestPage from './pages/ContestPage';
 import TaskPage from './pages/TaskPage';
+import CreateContestPage from './pages/CreateContestPage';
 
 function App() {
 
-  
 
   return (
     <AuthProvider>
@@ -17,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/contests" element={<ContestsPage />} />
+          <Route path="/create-contest" element={ <CreateContestPage /> }  />
           <Route path="/contests/:id" element={<ContestPage />} />
           <Route path="/tasks/:id" element={<TaskPage />} />
           <Route path="/login" element={<Login />} />
