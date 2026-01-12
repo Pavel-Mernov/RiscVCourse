@@ -1,6 +1,6 @@
-import { Stack, Typography } from "@mui/material"
+import { Box, Link, Stack, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import TaskLink from "../components/titleLink"
 
@@ -21,7 +21,7 @@ function Title(props : { title : string }) {
 
     return (
             <Typography
-                sx={{ marginTop : '150px' }}
+                sx={{ marginTop : '50px' }}
                 alignSelf='center'
                 variant="h3"
                 fontWeight='bold'
@@ -38,6 +38,8 @@ export default () => {
     const [contest, setContest] = useState<Contest | { error : any } | null>(null)
 
     const [ tasks, setTasks ] = useState<Task[]>([])
+
+    const navigate = useNavigate()
 
     useEffect(() => {
         const fetchContest = async () => {
@@ -116,6 +118,23 @@ export default () => {
         >
             <Navbar /> 
             
+            <Box 
+                marginTop='150px'
+                width='30vw'
+                marginLeft='15vw'
+            >
+                {//<BackLink title='Все контесты' link="/contests" />
+                }
+
+                <Link  
+                    fontSize='28px'
+                    onClick={() => { navigate('/contests') }}
+                    >
+                        ← Все контесты
+                </Link>
+            </Box>
+            
+
             <Title title={ contest.title } /> 
 
             {

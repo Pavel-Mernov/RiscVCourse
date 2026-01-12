@@ -6,10 +6,11 @@ type Props = {
     key ?: string | number,
     link ?: string,
     title : string,
+    marginTop ?: string | number,
 }
 
 export default (props : Props) => {
-    const { link, title } = props
+    const { link, title, marginTop } = props
 
     const [isMouseEntered, setMouseEntered] = useState(false)
 
@@ -28,6 +29,7 @@ export default (props : Props) => {
                 width : '100%',
                 border : '2px solid',
                 padding : '10px',
+                marginTop : marginTop,
                 borderColor : isMouseEntered ? colors.lightBlue[400] : colors.grey[500]
             }}
             
