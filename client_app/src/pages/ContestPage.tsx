@@ -31,6 +31,21 @@ function Title(props : { title : string }) {
     )
 }
 
+function formatDate(timestamp : string) {
+    const date = new Date(timestamp);
+
+    // Массив с названиями месяцев по-русски
+    const months = [
+    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+    ];
+
+    // Формируем строку
+    const formattedDate = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} года`;
+
+    return formattedDate
+}
+
 export default () => {
 
     const { id } = useParams()
@@ -145,6 +160,28 @@ export default () => {
                 >
                     { contest.description }
                 </Typography>
+            }
+
+            {
+                contest.deadline && 
+                <Stack 
+                    direction='row'
+                    spacing='10px'
+                >
+                    <Typography
+                        variant="h4"
+                        fontWeight='semiBold'
+                    >
+                        Дедлайн: 
+                    </Typography>
+
+                    <Typography
+                        variant="h4"
+                        fontWeight='semiBold'
+                    >
+                        { formatDate(contest.deadline) } 
+                    </Typography>
+                </Stack>
             }
         
             <Typography

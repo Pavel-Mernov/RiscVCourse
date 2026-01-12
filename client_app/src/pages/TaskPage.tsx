@@ -2,8 +2,9 @@ import { Stack, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
+import { ContestNavPanel } from "../components/contestNavPanel"
 
-type AnswerType = 'theory' | 'choice' | 'text' | 'code'
+type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
 interface Task {
   id: string
@@ -13,11 +14,11 @@ interface Task {
   text: string
   
   answer_type: AnswerType
-  time_limit_ms?: number
-  memory_limit_kb?: number
-  points?: number
-  attempts?: number
+  
+  task_data ?: object
 }
+
+
 
 export default () => {
 
@@ -40,7 +41,7 @@ export default () => {
             })
             .then(resp => resp.json()) 
             
-            console.log(response)
+            
 
             setTask(response)
         }
@@ -57,7 +58,7 @@ export default () => {
         )        
     }
 
-    if ('error' in task) {
+    if (!id || 'error' in task) {
         return (
             <Stack>
                 <Navbar />
@@ -81,6 +82,7 @@ export default () => {
                 marginTop='150px'
                 alignSelf='center'
                 maxWidth='80%'
+                marginBottom='80px'
                 spacing='50px'>
 
                 <Typography
@@ -89,6 +91,8 @@ export default () => {
                 >
                     {'Задача. ' + task.name}
                 </Typography>  
+
+                <ContestNavPanel curTaskId={id} contestId={task.contest_id} />
 
                 <Typography
                     variant='body1'

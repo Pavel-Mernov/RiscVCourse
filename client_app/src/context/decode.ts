@@ -2,7 +2,7 @@
 // import { jwtDecode, type JwtPayload } from 'jwt-decode';
 
 import * as jwtDecodeModule from 'jwt-decode';
-const jwtDecode = (jwtDecodeModule as any).default;
+const jwtDecode = (jwtDecodeModule as any).default || jwtDecodeModule.jwtDecode;
 
 interface JwtPayload {
     login : string,
@@ -12,9 +12,10 @@ interface JwtPayload {
 
 export function decodeToken(token: string) {
   try {
+    
     const result = jwtDecode(token);
 
-    console.log(result)
+    
 
     return result as JwtPayload
   } catch (e) {
