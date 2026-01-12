@@ -10,17 +10,14 @@ CREATE TABLE IF NOT EXISTS contests (
 );
 
 
-CREATE TABLE IF NOT EXISTS tasks (
-  id               TEXT PRIMARY KEY,
-  contest_id       TEXT NOT NULL REFERENCES contests(id) ON DELETE CASCADE,
-  name             TEXT NOT NULL,
-  number_in_contest INTEGER,
-  text             TEXT NOT NULL,
-  answer_type      TEXT NOT NULL CHECK (answer_type IN ('theory', 'choice', 'text', 'code')),
-  time_limit_ms    INTEGER,
-  memory_limit_kb  INTEGER,
-  points           INTEGER,
-  attempts         INTEGER
+CREATE TABLE tasks (
+    id TEXT PRIMARY KEY,
+    contest_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    number_in_contest INTEGER,
+    text TEXT NOT NULL,
+    answer_type TEXT NOT NULL CHECK (answer_type IN ('theory', 'choice', 'multichoice', 'text', 'code')),
+    task_data JSONB
 );
 
 

@@ -4,19 +4,15 @@ import { sqlPool } from "../../../index.js";
 
 const query = `
 
-UPDATE tasks
+UPDATE tasks 
 SET
-  contest_id = $2,
-  name = $3,
-  number_in_contest = $4,
-  text = $5,
-  answer_type = $6,
-  time_limit_ms = $7,
-  memory_limit_kb = $8,
-  points = $9,
-  attempts = $10
+    contest_id = $2,
+    name = $3,
+    number_in_contest = $4,
+    text = $5,
+    answer_type = $6,
+    task_data = $7
 WHERE id = $1;
-
 `
 
 export async function updateTask(task : Task, connection : Pool | Client = sqlPool) {

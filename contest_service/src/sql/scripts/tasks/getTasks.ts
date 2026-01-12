@@ -4,7 +4,8 @@ import type { Task } from "../../../models/task.js";
 
 const query = `
 
-SELECT *
+SELECT 
+    id, contest_id, name, number_in_contest, text, answer_type, task_data
 FROM tasks;
 
 `

@@ -12,7 +12,7 @@ VALUES ($1, $2, $3, $4, $5);
 export async function createContest(connection : Client | Pool = sqlPool, contest : Contest) {
     const { id, deadline, title, description, authorized_only } = contest
 
-    console.log('Authorized Only: ' + authorized_only)
+    
 
     await connection.query(script, [id, deadline, title, description, authorized_only])
 }
