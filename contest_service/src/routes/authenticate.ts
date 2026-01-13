@@ -28,7 +28,7 @@ export function authenticateTeacher(req : any, res : any, next : any) {
     
     const login = payload.login as string
 
-    console.log('Login: ' + login)
+    // console.log('Login: ' + login)
 
     if (!login.endsWith('@hse.ru')) {
       return res.status(403).json({ error: `Access Denied. Invalid login` })

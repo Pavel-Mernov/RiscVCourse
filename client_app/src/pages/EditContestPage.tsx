@@ -244,6 +244,26 @@ export default () => {
                         navigate(-1)
                     }
 
+    const fetchDeleteContest = async () => {
+
+                        const PORT = 3002
+
+                        const url = `http://localhost:${PORT}/api/contests/${id}`
+
+                        // const response = 
+                        await fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer: ${accessToken}`,
+                            }
+                            
+                        }) 
+                        // .then(resp => resp.json()) 
+
+                        navigate(-2)
+                    }
+
     return (
         <Stack
             spacing='150px'>
@@ -255,8 +275,17 @@ export default () => {
                 alignSelf='center'
                 width='75%'>
 
+                <Button
+                    variant="outlined"
+                    
+                    sx={{ maxWidth : '300px', fontWeight : 'bold', fontSize : '18px' }}
+                    onClick={() => { navigate(-1) }}
+                >
+                    Назад
+                </Button>
+
                 <TextField 
-                    sx={{marginTop: '20px', background : 'white'}} 
+                    sx={{marginTop: '50px', background : 'white'}} 
                     variant="filled" 
                     value={title} 
                     onChange={(e) => { 
@@ -311,6 +340,14 @@ export default () => {
                     onClick={fetchUpdateContest}
                 >
                     Изменить контест
+                </Button>
+
+                <Button 
+                    sx={{ borderColor : colors.red[500], borderWidth : '1px', fontSize : '20px', color : colors.red[500] }}
+                    variant="outlined"
+                    onClick={fetchDeleteContest}
+                >
+                    Удалить контест
                 </Button>
             </Stack>
         </Stack>

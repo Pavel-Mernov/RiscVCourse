@@ -59,6 +59,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [accessToken]);
 
+  useEffect(() => {
+    const fetchRefresh = async () => {
+      if (!accessToken || isTokenValid()) {
+        return
+      }
+
+      const url = 'http://localhost:3003/api/refresh'
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization' : 'Bearer: ' + accessToken
+        },
+        credentials : 'include'
+      })
+      .then(resp => resp.json()) 
+
+      if ('accessToken' in response && typeof response.accessToken == 'string') {
+        setAccessToken(response.accessToken)
+      } 
+      else {
+        console.log(JSON.stringify(response))
+      }
+    }
+
+    fetchRefresh();
+  }, [])
+
   return (
     <AuthContext.Provider value={{ accessToken, setAccessToken, isUserValidTeacher, isTokenValid }}>
       {children}

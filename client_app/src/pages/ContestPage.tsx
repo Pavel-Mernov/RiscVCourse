@@ -122,7 +122,7 @@ export default () => {
     if (contest && typeof contest == 'object' && 'error' in contest) {
         return (
             <Stack
-        
+                spacing='150px'
             >
                 <Navbar /> 
                 
@@ -162,7 +162,7 @@ export default () => {
                     onClick={() => navigate(`/contests/${id}/edit`)}
                     sx={{ fontSize : '20px', borderWidth : '2px', alignSelf : 'end', right : '15vw' }}
                 >
-                    + Редактировать Контест
+                Редактировать Контест
                 </Button>
             }            
 

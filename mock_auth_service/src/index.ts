@@ -85,8 +85,8 @@ const loginHandler = async (req : LoginRequest, res : any) => {
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // для https в проде
-    sameSite: 'strict',
+    secure: false, // process.env.NODE_ENV === 'production', // для https в проде
+    sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 дней
   });
 
@@ -110,12 +110,13 @@ const refreshHandler = async (req: any, res: any) => {
 
 const logoutHandler = async (req: any, res: any) => {
   const { refreshToken } = req.cookies;
+
   if (!refreshToken) return res.status(400).json({ error: 'No Refresh Token' });
 
   res.clearCookie('refreshToken', {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict'
+    secure: false, // process.env.NODE_ENV === 'production',
+    sameSite: 'lax' // 'strict'
   });
   res.sendStatus(204);
 };
@@ -126,6 +127,7 @@ app.use(cors({
   origin: 'http://localhost:5173', // адрес React (vite) приложения
   methods: ['GET', 'POST', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type'],
+  credentials : true,
 }));
 
 app.use(express.json());

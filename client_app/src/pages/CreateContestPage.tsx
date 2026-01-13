@@ -194,8 +194,17 @@ export default () => {
                 alignSelf='center'
                 width='75%'>
 
+                <Button
+                    variant="outlined"
+                    
+                    sx={{ maxWidth : '300px', fontWeight : 'bold', fontSize : '18px' }}
+                    onClick={() => { navigate(-1) }}
+                >
+                    Назад
+                </Button>
+
                 <TextField 
-                    sx={{marginTop: '20px', background : 'white'}} 
+                    sx={{marginTop: '50px', background : 'white'}} 
                     variant="filled" 
                     value={title} 
                     onChange={(e) => { 
