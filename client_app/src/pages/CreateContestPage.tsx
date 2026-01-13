@@ -2,7 +2,7 @@ import { Button, Checkbox, colors, Stack, TextField, Typography } from "@mui/mat
 import { useState } from "react"
 import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
-import { Navigate } from "react-router-dom"
+import { Navigate, useNavigate } from "react-router-dom"
 
 const isValidDate = (dateStr: string) => {
     // Регулярное выражение для двух форматов: с временем и без
@@ -72,6 +72,8 @@ export default () => {
     const [deadLineError, setDeadlineError] = useState('')
 
     const { accessToken } = useAuth()
+
+    const navigate = useNavigate()
 
     const formatDateTime = (value : string) => {
         const digits = value.replace(/\D/g, '').slice(0, 12); // только цифры, максимум 12 (ДДММГГГГччмм)
@@ -178,7 +180,7 @@ export default () => {
                         
                         console.log(JSON.stringify(response))
 
-                        
+                        navigate(-1)
                     }
 
     return (

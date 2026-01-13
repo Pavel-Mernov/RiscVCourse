@@ -1,8 +1,9 @@
-import { Box, Link, Stack, Typography } from "@mui/material"
+import { Box, Button, Link, Stack, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import TaskLink from "../components/titleLink"
+import { useAuth } from "../context/AuthContext"
 
 interface Contest {
   id: string
@@ -40,8 +41,11 @@ function formatDate(timestamp : string) {
     'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
     ];
 
+    const hours = date.getHours().toString().padStart(2, '0')
+    const minutes = date.getMinutes().toString().padStart(2, '0')
+
     // Формируем строку
-    const formattedDate = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} года`;
+    const formattedDate = `${date.getDate()} ${months[date.getMonth()]} ${date.getFullYear()} года, ${hours}:${minutes}`;
 
     return formattedDate
 }
@@ -55,6 +59,8 @@ export default () => {
     const [ tasks, setTasks ] = useState<Task[]>([])
 
     const navigate = useNavigate()
+
+    const { isUserValidTeacher } = useAuth()
 
     useEffect(() => {
         const fetchContest = async () => {
@@ -150,6 +156,16 @@ export default () => {
             </Box>
             
 
+            { isUserValidTeacher() && 
+                <Button 
+                    variant="outlined" 
+                    onClick={() => navigate(`/contests/${id}/edit`)}
+                    sx={{ fontSize : '20px', borderWidth : '2px', alignSelf : 'end', right : '15vw' }}
+                >
+                    + Редактировать Контест
+                </Button>
+            }            
+
             <Title title={ contest.title } /> 
 
             {
@@ -188,11 +204,13 @@ export default () => {
                 <Stack 
                     direction='row'
                     alignSelf='center'
+                    marginTop='60px'
+                    alignItems='center'
                     spacing='10px'
                 >
                     <Typography
                         variant="h5"
-                        fontSize='22px'
+                        fontSize='25px'
                         fontWeight='semiBold'
                     >
                         Дедлайн: 
