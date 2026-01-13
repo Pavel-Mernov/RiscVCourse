@@ -161,38 +161,17 @@ export default () => {
                     { contest.description }
                 </Typography>
             }
-
-            {
-                contest.deadline && 
-                <Stack 
-                    direction='row'
-                    spacing='10px'
-                >
-                    <Typography
-                        variant="h4"
-                        fontWeight='semiBold'
-                    >
-                        Дедлайн: 
-                    </Typography>
-
-                    <Typography
-                        variant="h4"
-                        fontWeight='semiBold'
-                    >
-                        { formatDate(contest.deadline) } 
-                    </Typography>
-                </Stack>
-            }
         
-            <Typography
-                sx={{ marginTop : '50px', alignSelf : 'center' }}
-                variant="h4"
-                fontWeight='bold'
-                fontSize='50px'
-            >
-                Задачи
-            </Typography> 
-
+            { tasks.length != 0 && 
+                <Typography
+                    sx={{ marginTop : '50px', alignSelf : 'center' }}
+                    variant="h4"
+                    fontWeight='bold'
+                    fontSize='50px'
+                >
+                    Задачи
+                </Typography> 
+            }
             <Stack
                 width='70%'
                 spacing='20px'
@@ -203,6 +182,31 @@ export default () => {
                     tasks.map(({ name, id }, i) => <TaskLink key={`link_${i}`} title={ name } link={ `/tasks/${id}` } />)
                 }
             </Stack>
+
+            {
+                contest.deadline && 
+                <Stack 
+                    direction='row'
+                    alignSelf='center'
+                    spacing='10px'
+                >
+                    <Typography
+                        variant="h5"
+                        fontSize='22px'
+                        fontWeight='semiBold'
+                    >
+                        Дедлайн: 
+                    </Typography>
+
+                    <Typography
+                        variant="h5"
+                        fontSize='22px'
+                        fontWeight='semiBold'
+                    >
+                        { formatDate(contest.deadline) } 
+                    </Typography>
+                </Stack>
+            }
         </Stack>
     )
 }

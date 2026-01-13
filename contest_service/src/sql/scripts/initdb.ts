@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS contests (
 );
 
 
-CREATE TABLE tasks (
+CREATE TABLE IF NOT EXISTS tasks (
     id TEXT PRIMARY KEY,
     contest_id TEXT NOT NULL,
     name TEXT NOT NULL,
