@@ -8,6 +8,7 @@ import ContestPage from './pages/ContestPage';
 import TaskPage from './pages/TaskPage';
 import CreateContestPage from './pages/CreateContestPage';
 import EditContestPage from './pages/EditContestPage';
+import CreateTaskPage from './pages/CreateTaskPage';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
           <Route path="/create-contest" element={ <CreateContestPage /> }  />
           <Route path="/contests/:id" element={<ContestPage />} />
           <Route path="/contests/:id/edit" element={<EditContestPage />} />
+          <Route path="/contests/:contestId/create-task" element={<CreateTaskPage />} />
           <Route path="/tasks/:id" element={<TaskPage />} />
           <Route path="/login" element={<Login />} />
         </Routes>

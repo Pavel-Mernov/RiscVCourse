@@ -1,4 +1,4 @@
-import { Box, Button, Link, Stack, Typography } from "@mui/material"
+import { Box, Button, colors, Link, Stack, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
@@ -163,6 +163,24 @@ export default () => {
                     sx={{ fontSize : '20px', borderWidth : '2px', alignSelf : 'end', right : '15vw' }}
                 >
                 Редактировать Контест
+                </Button>
+            } 
+            { isUserValidTeacher() && 
+                <Button 
+                    variant="outlined"
+                     
+                    onClick={() => navigate(`/contests/${id}/create-task`)}
+                    sx={{ 
+                        marginTop : '40px',
+                        fontSize : '20px', 
+                        borderWidth : '2px', 
+                        alignSelf : 'end', 
+                        right : '15vw', 
+                        borderColor : colors.green[500], 
+                        color : colors.green[500],
+                    }}
+                >
+                +  Добавить задачу
                 </Button>
             }            
 
