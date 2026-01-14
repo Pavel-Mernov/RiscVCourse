@@ -117,7 +117,7 @@ export default () => {
         )
     }
 
-    const fetchAddContest = async () => {
+    const fetchEditTask = async () => {
                         if (!name ) {
                             setNameError(true)
                             return
@@ -153,6 +153,25 @@ export default () => {
                         console.log(JSON.stringify(response))
 
                         navigate(-1)
+                    }
+
+    const fetchDeleteTask = async () => {
+
+                        const PORT = 3002
+                        const url = `http://localhost:${PORT}/api/tasks/${id}`
+
+                        const response = await fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer: ${accessToken}`,
+                            },
+                            
+                        })  
+                        
+                        console.log(JSON.stringify(response))
+
+                        navigate(-2)
                     }
 
     return (
@@ -206,9 +225,17 @@ export default () => {
                 <Button 
                     sx={{ background : colors.green[500], fontSize : '24px', fontWeight : 'bold' }}
                     variant="contained"
-                    onClick={fetchAddContest}
+                    onClick={fetchEditTask}
                 >
                     Сохранить Изменения
+                </Button>
+
+                <Button 
+                    sx={{ borderColor : colors.red[500], borderWidth : '1px', fontSize : '20px', color : colors.red[500] }}
+                    variant="outlined"
+                    onClick={fetchDeleteTask}
+                >
+                    Удалить задачу
                 </Button>
             </Stack>
         </Stack>
