@@ -9,6 +9,7 @@ import TaskPage from './pages/TaskPage';
 import CreateContestPage from './pages/CreateContestPage';
 import EditContestPage from './pages/EditContestPage';
 import CreateTaskPage from './pages/CreateTaskPage';
+import EditTaskPage from './pages/EditTaskPage';
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/contests/:id/edit" element={<EditContestPage />} />
           <Route path="/contests/:contestId/create-task" element={<CreateTaskPage />} />
           <Route path="/tasks/:id" element={<TaskPage />} />
+          <Route path="/tasks/:id/edit" element={<EditTaskPage />} />
           <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>

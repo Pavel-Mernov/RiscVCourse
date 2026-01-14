@@ -1,8 +1,9 @@
-import { Stack, Typography } from "@mui/material"
+import { Button, Stack, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { ContestNavPanel } from "../components/contestNavPanel"
+import { useAuth } from "../context/AuthContext"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -25,6 +26,10 @@ export default () => {
     const { id } = useParams()
 
     const [task, setTask] = useState<Task | { error : any } | undefined>(undefined)
+
+    const navigate = useNavigate()
+
+    const { isUserValidTeacher } = useAuth()
 
     useEffect(() => {
         const fetchTask = async () => {
@@ -84,6 +89,16 @@ export default () => {
                 maxWidth='80%'
                 marginBottom='80px'
                 spacing='50px'>
+
+                { isUserValidTeacher() && 
+                    <Button 
+                        variant="outlined" 
+                        onClick={() => navigate(`/tasks/${id}/edit`)}
+                        sx={{ fontSize : '20px', borderWidth : '2px', alignSelf : 'end', right : '15vw' }}
+                    >
+                    Редактировать Задачу
+                    </Button>
+                } 
 
                 <Typography
                     variant="h2"
