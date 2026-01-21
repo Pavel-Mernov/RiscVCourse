@@ -7,10 +7,10 @@ info:
 paths:
   /api/contests:
     get:
-      summary: Получить список уроков
+      summary: Получить список контестов
       responses:
         '200':
-          description: Список уроков
+          description: Список контестов
           content:
             application/json:
               schema:
@@ -19,7 +19,7 @@ paths:
                   $ref: '#/components/schemas/Contest'
 
     post:
-      summary: Создать урок
+      summary: Создать контест
       requestBody:
         required: true
         content:
@@ -30,7 +30,7 @@ paths:
         '400':
           description: Ошибка в запросе
         '201':
-          description: Урок создан
+          description: Контест создан
           content:
             application/json:
               schema:

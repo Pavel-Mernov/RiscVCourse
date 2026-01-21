@@ -37,23 +37,18 @@ async function connectWithRetry(pool : Pool | Client, retries : number = 10, del
 
 
 // Типы
-type Verdict = 'OK' | 'WA' | 'RE' | 'TL' | 'IG';
+type Verdict = 'OK' | 'WA' | 'RE' | 'TL' | 'IG' | 'PS';
 
 export interface Submission {
   submission_id: string;
   task_id: string;
   student_id: string;
   timestamp: string; // ISO string
-  text: string;
+  text: string | string[];
   verdict?: Verdict | undefined;
 }
 
-interface SubmissionCreate {
-  task_id: string;
-  student_id: string;
-  text: string;
-  verdict?: Verdict;
-}
+type SubmissionCreate = Omit<Submission, 'submission_id' | 'timestamp'>
 
 
 
@@ -102,7 +97,7 @@ app.get('/api/submissions', async (req : any, res : any) => {
 });
 
 // POST /api/submission
-app.post('/api/submission', middleware, async (req : any, res : any) => {
+app.post('/api/submission', async (req : any, res : any) => {
   const body: SubmissionCreate = req.body;
   const { task_id, student_id, text, verdict } = body;
 
@@ -137,7 +132,7 @@ app.post('/api/submission', middleware, async (req : any, res : any) => {
 });
 
 // GET /submission/{id}
-app.get('/submission/:id', middleware, async (req : any, res : any) => {
+app.get('/submission/:id', async (req : any, res : any) => {
   const id = req.params.id;
   if (!isUUID(id)) {
     return res.status(400).json({ message: 'Invalid id' });

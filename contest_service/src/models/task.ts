@@ -4,11 +4,19 @@ export type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 export interface ChoiceAnswers {
   correct_answer : string,
   [key : number] : string, // неправильные ответы
+  points?: number
+  attempts?: number
 }
 
-interface MultichoiceAnswer {
-  answer : string,
-  is_correct : boolean,
+
+
+interface MultichoiceAnswers {
+  answers : { 
+    answer : string,
+    is_correct : boolean } [],
+    
+  points?: number
+  attempts?: number
 }
 
 export interface CodeData {
@@ -20,6 +28,8 @@ export interface CodeData {
 
 export interface TextAnswer {
   correct_answers : string[]
+  points?: number
+  attempts?: number
 }
 
 export interface Task {
@@ -30,7 +40,7 @@ export interface Task {
   text: string
   answer_type: AnswerType
   
-  task_data ?: ChoiceAnswers | MultichoiceAnswer[] | CodeData | TextAnswer // в SQL это должно быть поле типа JSONB
+  task_data ?: ChoiceAnswers | MultichoiceAnswers | CodeData | TextAnswer // в SQL это должно быть поле типа JSONB
 }
 
 export interface TaskCreate extends Omit<Task, 'id' | 'contest_id'> {}
