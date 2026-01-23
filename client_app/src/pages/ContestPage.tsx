@@ -22,8 +22,10 @@ function Title(props : { title : string }) {
 
     return (
             <Typography
-                sx={{ marginTop : '50px' }}
+                sx={{ marginTop : '50px', maxWidth : '100%' }}
                 alignSelf='center'
+                alignContent='center'
+                textAlign='center'
                 variant="h3"
                 fontWeight='bold'
                 >
@@ -133,6 +135,8 @@ export default () => {
 
     // console.log(JSON.stringify(contest), contest.title, JSON.stringify(tasks))
 
+    const { title } = contest
+
     return (
         <Stack
     
@@ -184,7 +188,7 @@ export default () => {
                 </Button>
             }            
 
-            <Title title={ contest.title } /> 
+            <Title title={ title } /> 
 
             {
                 contest.description &&

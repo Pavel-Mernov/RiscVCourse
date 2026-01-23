@@ -16,6 +16,8 @@ export default (props : Props) => {
 
     const navigate = useNavigate()
 
+    const maxLength = 69
+
     return (
         <Stack
             onMouseEnter={() => setMouseEntered(true)}
@@ -41,7 +43,7 @@ export default (props : Props) => {
                     
                 }}
             >
-                { title }
+                { title.length <= maxLength ? title : title.slice(0, maxLength - 1) + '...' }
             </Typography>
 
         </Stack>
