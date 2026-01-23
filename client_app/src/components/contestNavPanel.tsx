@@ -34,7 +34,9 @@ export function ContestNavPanel(props : Props) {
             })
             .then(resp => resp.json()) 
             
-            
+            if ('error' in response) {
+                return
+            }            
 
             setContestTitle(response.title)
         }
@@ -56,6 +58,10 @@ export function ContestNavPanel(props : Props) {
             
             })
             .then(resp => resp.json()) 
+
+            if ('error' in response) {
+                return
+            }
 
             setTaskNames((response as TaskName[]).filter(t => t.id != curTaskId))
         }

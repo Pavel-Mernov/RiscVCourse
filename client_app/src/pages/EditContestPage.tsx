@@ -246,6 +246,7 @@ export default () => {
 
     const fetchDeleteContest = async () => {
 
+                    try {
                         const PORT = 3002
 
                         const url = `http://localhost:${PORT}/api/contests/${id}`
@@ -261,7 +262,10 @@ export default () => {
                         }) 
                         // .then(resp => resp.json()) 
 
-                        navigate(-2)
+                        navigate('/contests')
+                    }
+                    catch {
+                    }
                     }
 
     return (

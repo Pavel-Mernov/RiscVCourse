@@ -37,6 +37,7 @@ export default () => {
             const url = `http://localhost:${PORT}/api/tasks/${id}`    
             const method = 'GET'
 
+            try {
             const response = await fetch(url, {
             method,
             headers: {
@@ -49,9 +50,14 @@ export default () => {
             
 
             setTask(response)
+            }
+            catch {}
         }
 
-        fetchTask()
+        try {
+            fetchTask()
+        }
+        catch {}
     }, [])    
 
     if (!task) {

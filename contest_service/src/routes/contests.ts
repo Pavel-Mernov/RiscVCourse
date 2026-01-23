@@ -87,8 +87,16 @@ router.delete('/contests/:contestId', authenticateTeacher, async (req, res) => {
 
   const contests = await getContests()
 
-  const index = contests.findIndex(c => c.id === contestId)
-  if (index === -1) return res.status(404).json({ error : 'Contest not found' })
+  const found = contests.find(c => c.id === contestId)
+  if (!found) return res.status(404).json({ error : 'Contest not found' })
+
+  // Удаляем все задачи контеста
+  const tasks = await getTasks()
+  .then(tasks => tasks.filter(t => t.contest_id == contestId))
+  
+  tasks.forEach(async t => {
+    await deleteTask(t.id)
+  })
 
   await deleleContest(contestId)
   res.status(204).send()
