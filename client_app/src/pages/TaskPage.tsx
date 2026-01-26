@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { ContestNavPanel } from "../components/contestNavPanel"
 import { useAuth } from "../context/AuthContext"
+import UrlText from "../components/urlText"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -113,17 +114,26 @@ export default () => {
                     {'Задача. ' + task.name}
                 </Typography>  
 
-                <ContestNavPanel curTaskId={id} contestId={task.contest_id} />
+                <ContestNavPanel curTaskId={id} contestId={ task.contest_id } />
 
-                <Typography
-                    variant='body1'
-                    marginTop='150px'
-                    fontSize='24px'
-                    textAlign='justify'
-                    style={{ whiteSpace : 'pre-line' }}
-                >
-                    {task.text}
-                </Typography>
+                {
+                    /*
+                    <Typography
+                        variant='body1'
+                        marginTop='150px'
+                        fontSize='24px'
+                        textAlign='justify'
+                        style={{ whiteSpace : 'pre-line' }}
+                    >
+                        {task.text}
+                    </Typography>
+                    */
+
+                    <UrlText>
+                        { task.text }
+                    </UrlText>
+                }
+                
             </Stack>
         </Stack>
     )
