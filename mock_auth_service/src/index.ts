@@ -35,7 +35,7 @@ const accounts = // это заглушка специально для дисц
 dotenv.config()
 
 const JWT_SECRET = process.env.JWT_SECRET ?? ''
-const PORT = process.env.PORT ?? '' 
+const PORT = process.env.PORT ?? '3003' 
 
 
 
