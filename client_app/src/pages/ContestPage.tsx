@@ -66,8 +66,9 @@ export default () => {
 
     useEffect(() => {
         const fetchContest = async () => {
+            const serverIp = '130.49.150.32'
             const PORT = 3002
-            const url = `http://localhost:${PORT}/api/contests/${id}`    
+            const url = `http://${serverIp}:${PORT}/api/contests/${id}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -89,8 +90,9 @@ export default () => {
 
     useEffect(() => {
         const fetchTasks = async () => {
+            const serverIp = '130.49.150.32'
             const PORT = 3002
-            const url = `http://localhost:${PORT}/api/contests/${id}/tasks`    
+            const url = `http://${serverIp}:${PORT}/api/contests/${id}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {

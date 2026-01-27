@@ -44,8 +44,9 @@ export default () => {
                 return
             }
 
+            const serverIp = '130.49.150.32'
             const PORT = 3002
-            const url = `http://localhost:${PORT}/api/tasks/${id}`    
+            const url = `http://${serverIp}:${PORT}/api/tasks/${id}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -137,8 +138,8 @@ export default () => {
                         }
 
                         const PORT = 3002
-
-                        const url = `http://localhost:${PORT}/api/tasks/${id}`
+                        const serverIp = '130.49.150.32'
+                        const url = `http://${serverIp}:${PORT}/api/tasks/${id}`
 
                         const response = await fetch(url, {
                             method: 'PUT',
@@ -158,7 +159,8 @@ export default () => {
     const fetchDeleteTask = async () => {
 
                         const PORT = 3002
-                        const url = `http://localhost:${PORT}/api/tasks/${id}`
+                        const serverIp = '130.49.150.32'
+                        const url = `http://${serverIp}:${PORT}/api/tasks/${id}`
 
                         const response = await fetch(url, {
                             method: 'DELETE',

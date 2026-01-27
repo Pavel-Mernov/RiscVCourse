@@ -165,8 +165,8 @@ export default () => {
                         }
 
                         const PORT = 3002
-
-                        const url = `http://localhost:${PORT}/api/contests`
+                        const serverIp = '130.49.150.32'
+                        const url = `http://${serverIp}:${PORT}/api/contests`
 
                         const response = await fetch(url, {
                             method: 'POST',

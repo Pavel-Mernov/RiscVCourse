@@ -142,5 +142,5 @@ app.post('/api/logout', logoutHandler)
 
 
 app.listen(PORT, () => {
-  console.log(`Server started at http://localhost:${PORT}`);
+  console.log(`Server started on PORT: ${PORT}`);
 });

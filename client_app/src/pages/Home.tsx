@@ -11,8 +11,10 @@ interface Task {
 }
 
 const fetchTask = async (taskId : string, setTask : (task : Task) => void) => {
+    try {
             const PORT = 3002
-            const url = `http://localhost:${PORT}/api/tasks/${taskId}`    
+            const serverIp = '130.49.150.32'
+            const url = `http://${serverIp}:${PORT}/api/tasks/${taskId}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -31,6 +33,8 @@ const fetchTask = async (taskId : string, setTask : (task : Task) => void) => {
             // console.log('Fetch Task. Id: ' + taskId + ' Result: ' + JSON.stringify(response))
 
             setTask(response)
+    }
+    catch {}
 }
 
 export default () => {
@@ -42,6 +46,7 @@ export default () => {
     const [task2, setTask2] = useState<Task | undefined>(undefined)
 
     useEffect(() => { 
+        
         fetchTask(id1, setTask1)
     }, [])
 

@@ -223,6 +223,6 @@ app.post('/api/compile/file', upload.single('file'), compileFile);
 app.post('/api/compile', compile);
 
 app.listen(PORT, () => {
-  console.log(`Server started at http://localhost:${PORT}`);
+  console.log(`Server started on PORT ${PORT}`);
 });
 

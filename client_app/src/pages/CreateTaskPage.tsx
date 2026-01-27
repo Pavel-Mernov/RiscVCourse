@@ -41,8 +41,9 @@ export default () => {
                 return
             }
 
+            const serverIp = '130.49.150.32'
             const PORT = 3002
-            const url = `http://localhost:${PORT}/api/contests/${contestId}/tasks`    
+            const url = `http://${serverIp}:${PORT}/api/contests/${contestId}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -128,8 +129,8 @@ export default () => {
                         }
 
                         const PORT = 3002
-
-                        const url = `http://localhost:${PORT}/api/contests/${contestId}/tasks`
+                        const serverIp = '130.49.150.32'
+                        const url = `http://${serverIp}:${PORT}/api/contests/${contestId}/tasks`
 
                         const response = await fetch(url, {
                             method: 'POST',

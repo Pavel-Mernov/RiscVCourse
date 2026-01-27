@@ -35,7 +35,8 @@ export default () => {
     useEffect(() => {
         const fetchTask = async () => {
             const PORT = 3002
-            const url = `http://localhost:${PORT}/api/tasks/${id}`    
+            const serverIp = '130.49.150.32'
+            const url = `http://${serverIp}:${PORT}/api/tasks/${id}`    
             const method = 'GET'
 
             try {

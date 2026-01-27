@@ -65,7 +65,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return
       }
 
-      const url = 'http://localhost:3003/api/refresh'
+      const serverIp = '130.49.150.32'
+      const url = `http://${serverIp}:3003/api/refresh`
 
       const response = await fetch(url, {
         method: 'POST',

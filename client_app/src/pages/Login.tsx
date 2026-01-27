@@ -30,7 +30,8 @@ export default () => {
             return
         }
 
-        const url = `http://localhost:3003/api/login`
+        const serverIp = '130.49.150.32'
+        const url = `http://${serverIp}:3003/api/login`
         const method = 'POST'
         const data = {
             login : loginText,

@@ -21,8 +21,9 @@ export function ContestNavPanel(props : Props) {
 
     useEffect(() => {
         const fetchContest = async () => {
+            const serverIp = '130.49.150.32'
             const PORT = 3002
-            const url = `http://localhost:${PORT}/api/contests/${contestId}`    
+            const url = `http://${serverIp}:${PORT}/api/contests/${contestId}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -46,8 +47,9 @@ export function ContestNavPanel(props : Props) {
 
     useEffect(() => {
         const fetchTasks = async () => {
+            const serverIp = '130.49.150.32'
             const PORT = 3002
-            const url = `http://localhost:${PORT}/api/contests/${contestId}/tasks`    
+            const url = `http://${serverIp}:${PORT}/api/contests/${contestId}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {
