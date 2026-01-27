@@ -7,6 +7,7 @@ import { Client, Pool } from 'pg';
 import { createSubmission } from './sql/createSubmission.js';
 import { deleteSubmission } from './sql/deleteSubmission.js';
 import { initDB } from './sql/initdb.js';
+import { updateVerdict } from './sql/updateVerdict.js';
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
@@ -37,7 +38,7 @@ async function connectWithRetry(pool : Pool | Client, retries : number = 10, del
 
 
 // Типы
-type Verdict = 'OK' | 'WA' | 'RE' | 'TL' | 'IG' | 'PS';
+export type Verdict = 'OK' | 'WA' | 'RE' | 'TL' | 'IG' | 'PS';
 
 export interface Submission {
   submission_id: string;
@@ -146,6 +147,31 @@ app.get('/submission/:id', async (req : any, res : any) => {
   }
 
   res.json(submission);
+});
+
+app.put('/submissions/:id/verdict', async (req: any, res: Response) => {
+  const submission_id = req.params.id;
+  const { verdict } = req.body as { verdict?: Verdict };
+
+  if (!verdict) {
+    return res.status(400).json({ error: 'Поле verdict обязательно' });
+  }
+  if (!['OK', 'WA', 'RE', 'TL', 'IG', 'PS'].includes(verdict)) {
+    return res.status(400).json({ error: 'Недопустимое значение verdict' });
+  }
+
+  try {
+    const result = await updateVerdict(submission_id, verdict, sqlPool);
+
+    if (result === 0) {
+      return res.status(404).json({ error: 'Submission не найден' });
+    }
+
+    res.json({ message: 'Вердикт обновлен' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
 });
 
 // DELETE /submission/{id}

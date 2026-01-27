@@ -6,7 +6,7 @@ const script = `
     task_id          VARCHAR(255) NOT NULL,
     student_id       VARCHAR(255) NOT NULL,
     timestamp        TIMESTAMP    NOT NULL,
-    text             TEXT         NOT NULL,
+    text             JSONB        NOT NULL,
     verdict          VARCHAR(2),
     CONSTRAINT verdict_check CHECK (verdict IN ('OK', 'WA', 'RE', 'TL', 'IG') OR verdict IS NULL)
     );

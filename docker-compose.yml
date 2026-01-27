@@ -101,7 +101,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - ./submission_service/volumes:/var/lib/postgresql 
+      - submission_volumes:/var/lib/postgresql 
   submission-service:
     depends_on:
     - submission-db
@@ -118,6 +118,9 @@ services:
       NODE_ENV: production
   redis:
     image: redis
+volumes:
+  submission_volumes:
+
 networks:
   default:
     driver: bridge

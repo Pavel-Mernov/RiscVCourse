@@ -92,6 +92,73 @@ paths:
         '204':
           description: Удалено успешно
 
+  /api/submissions/{id}/verdict:
+    put:
+      summary: Обновить вердикт конкретного Submission
+      parameters:
+        - name: id
+          in: path
+          description: ID Submission для обновления
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Новый вердикт в формате JSON
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - verdict
+              properties:
+                verdict:
+                  type: string
+                  enum:
+                    - OK
+                    - WA
+                    - RE
+                    - TL
+                    - IG
+                    - PS
+      responses:
+        '200':
+          description: Вердикт успешно обновлен
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Ошибка валидации входных данных
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: Submission не найден
+          content:
+            application/json:
+              schema:
+                type: object
+        properties:
+                  error:
+                    type: string
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
 components:
   schemas:
     Submission:

@@ -1,8 +1,3 @@
-import { authorize } from "../authorize.ts"
+import { authorizeMock } from "../authorize.ts"
 
-await authorize()
-
-const accessToken = ``
-
-const refreshToken = ``
 
