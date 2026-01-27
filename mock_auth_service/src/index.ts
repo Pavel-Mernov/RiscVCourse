@@ -34,7 +34,7 @@ const accounts = // это заглушка специально для дисц
 
 dotenv.config()
 
-const JWT_SECRET = process.env.JWT_SECRET ?? ''
+const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 const PORT = process.env.PORT ?? '3003' 
 
 
@@ -124,7 +124,7 @@ const logoutHandler = async (req: any, res: any) => {
 const app = express()
 
 app.use(cors({
-  origin: 'http://localhost:5173', // адрес React (vite) приложения
+  origin: ['http://localhost:5173', 'http://riscvcourse.ru'], // адрес React (vite) приложения и адрес сайта
   methods: ['GET', 'POST', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type'],
   credentials : true,

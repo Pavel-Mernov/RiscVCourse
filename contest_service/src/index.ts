@@ -14,11 +14,11 @@ const app = express()
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://riscvcouse.ru',
-  'http://riscvcouse.ru'  // если доступен и по HTTP
+  'https://riscvcourse.ru',
+  'http://riscvcourse.ru'  
 ];
 
-const orginFunction = (origin : any, callback : any) => {
+const originFunction = (origin : any, callback : any) => {
     // Если origin не пришел (например, Postman или same-origin), разрешаем запрос
     if (!origin) return callback(null, true); 
     
@@ -30,7 +30,7 @@ const orginFunction = (origin : any, callback : any) => {
   }
 
 app.use(cors({
-  origin: orginFunction, // динамическое определение
+  origin: originFunction, // динамическое определение
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));

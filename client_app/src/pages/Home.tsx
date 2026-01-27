@@ -39,8 +39,8 @@ const fetchTask = async (taskId : string, setTask : (task : Task) => void) => {
 
 export default () => {
 
-    const id1 = '2204c607-4fd8-439c-9dbe-4a52a5498418'
-    const id2 = 'c2753146-16b8-4081-890b-fd73d84fca6c'
+    const id1 = '8895b056-6892-4374-9d62-e0c319a46713'
+    const id2 = '59e305d9-daf7-4caf-ab8f-ea8d7505ef16'
 
     const [task1, setTask1] = useState<Task | undefined>(undefined)
     const [task2, setTask2] = useState<Task | undefined>(undefined)
