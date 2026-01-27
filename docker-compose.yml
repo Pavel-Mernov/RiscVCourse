@@ -70,7 +70,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./contest_service/database/volumes:/var/lib/postgresql 
+      - contest_volumes:/var/lib/postgresql 
   contest-service:
     depends_on:
     - contest-db
@@ -120,6 +120,7 @@ services:
     image: redis
 volumes:
   submission_volumes:
+  contest_volumes:
 
 networks:
   default:
