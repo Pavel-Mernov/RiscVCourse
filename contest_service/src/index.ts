@@ -6,6 +6,7 @@ import contestsRouter from './routes/contests.js'
 import { Client, Pool } from 'pg'
 import { initDB } from './sql/scripts/initdb.js'
 import cors from 'cors'
+import logger from './logger/logger.js'
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
@@ -40,17 +41,21 @@ app.use('/api', contestsRouter)
 
 // console.log(`JWT Secret: ${JWT_SECRET}`)
 
-async function connectWithRetry(pool : Pool | Client, retries : number = 10, delay : number = 2000) {
+async function connectWithRetry(pool : Pool | Client, retries : number = 15, delay : number = 2000) {
   for (let i = 0; i < retries; i++) {
     try {
       await pool.connect()
       return
     } catch (err) {
-      console.log(`Не удалось подключиться к БД, попытка ${i+1}/${retries}`)
+      logger.error(`Не удалось подключиться к БД, попытка ${i+1}/${retries}`)
       await new Promise(res => setTimeout(res, delay))
     }
   }
-  throw new Error('Не удалось подключиться к базе после нескольких попыток')
+
+  const error = 'Не удалось подключиться к базе после нескольких попыток'
+
+  logger.error(error)
+  throw new Error(error)
 }
 
 export const sqlPool = new Pool({
@@ -65,7 +70,7 @@ await connectWithRetry(sqlPool)
     .then(() => initDB(sqlPool))
     .then(() => {
         const port = process.env.PORT || 3002
-        app.listen(port, () => console.log(`Contest Service running on port ${port}`))
+        app.listen(port, () => logger.info(`Contest Service running on port ${port}`))
     })
     .catch(console.error)
 

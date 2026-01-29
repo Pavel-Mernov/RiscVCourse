@@ -18,6 +18,7 @@ import { updateTest } from '../sql/scripts/tests/updateTest.js'
 import { deleteTest } from '../sql/scripts/tests/deleteTest.js'
 import { createTest } from '../sql/scripts/tests/createTest.js'
 import { authenticate, authenticateTeacher } from './authenticate.js'
+import logger from '../logger/logger.js'
 
 const router = Router()
 
@@ -30,6 +31,9 @@ const router = Router()
 // ------------------------- //
 
 router.get('/contests', async (_, res) => { 
+
+  logger.info('GET /contests')
+
   const contests = await getContests()
 
   res.status(200).json(contests) 
@@ -40,27 +44,52 @@ router.post('/contests', authenticateTeacher, async (req, res) => {
 
   const body: ContestCreate = req.body
 
+  logger.info('POST /contests. Body: ' + JSON.stringify(body))
+
   // Проверка обязательных полей
   if (!body.title || body.title.trim() === '') {
-    return res.status(400).json({ error: 'Contest title is required and cannot be blank' })
+    const error = 'Contest title is required and cannot be blank'
+
+    logger.error(error)
+    return res.status(400).json({ error })
   }
 
   const contest: Contest = { id: uuid(), ...body }
 
 
   //contests.push(contest)
-  await createContest(sqlPool, contest)
 
-  res.status(201).json(contest)
+  try {
+    await createContest(sqlPool, contest)
+
+    logger.info('Contest created: ' + JSON.stringify(contest))
+    res.status(201).json(contest)
+  }
+  catch (err : any) {
+    const error = (err as Error).message
+
+    logger.error(error)
+    res.status(500).json({ error })
+  }
 })
 
 router.get('/contests/:contestId', async (req, res) => {
   const { contestId } = req.params
 
+  logger.info('/contests/' + contestId)
+
   const contests = await getContests()
 
   const contest = contests.find(c => c.id == contestId)
-  if (!contest) return res.status(404).json({ error : 'Contest not found' })
+
+  if (!contest) {
+    const error = 'Contest not found'
+    
+    logger.error(error)
+    return res.status(404).json({ error })
+  }
+
+  logger.info('Create Contest Sucessful: ' + JSON.stringify(contest))
   res.status(200).json(contest)
 })
 
@@ -69,26 +98,49 @@ router.put('/contests/:contestId', authenticateTeacher, async (req, res) => {
   const { contestId } = req.params
   const updatedData = req.body
 
+  logger.info('PUT /contests/' + contestId + '. Body: ' + JSON.stringify(updatedData))
+
   const contests = await getContests()
 
   const index = contests.findIndex(c => c.id === contestId)
-  if (index === -1) return res.status(404).json({ error : 'Contest not found' })
+  if (index === -1) { 
+    const error = 'Contest not found'
+    
+    logger.error(error)
+    return res.status(404).json({ error }) 
+  }
 
-  const updatedContest = { ...contests[index], ...updatedData }
+  try {
+    const updatedContest = { ...contests[index], ...updatedData }
   
-  await updateContest(updatedContest as Contest)
+    await updateContest(updatedContest as Contest)
   
-  res.status(200).json(updatedContest)
+    logger.info('Update Successful. ' + JSON.stringify(updateContest))
+    res.status(200).json(updatedContest)
+  }
+  catch (err : any) {
+    const error = (err as Error).message
+
+    logger.error(error)
+    res.status(500).json({ error })
+  }
 })
 
 // Удалить контест по ID
 router.delete('/contests/:contestId', authenticateTeacher, async (req, res) => {
   const { contestId } = req.params
 
+  logger.info('DELETE /contests/' + contestId)
+
   const contests = await getContests()
 
   const found = contests.find(c => c.id === contestId)
-  if (!found) return res.status(404).json({ error : 'Contest not found' })
+  if (!found) {
+    const error = 'Contest not found'
+
+    logger.error(error)
+    return res.status(404).json({ error : 'Contest not found' })
+  } 
 
   // Удаляем все задачи контеста
   const tasks = await getTasks()
@@ -194,7 +246,7 @@ router.delete('/tasks/:taskId', authenticateTeacher, async (req, res) => {
 })
 
 // Получить тесты задачи
-router.get('/tasks/:taskId/tests', async (req, res) => {
+router.get('/tasks/:taskId/tests', authenticateTeacher, async (req, res) => {
 
   const tasks = await getTasks()
   const task = tasks.find(t => t.id === req.params.taskId)
@@ -237,7 +289,7 @@ router.post('/tasks/:taskId/tests', authenticateTeacher, async (req, res) => {
 });
 
 // Получить тест по id
-router.get('/tests/:idTest', async (req, res) => {
+router.get('/tests/:idTest', authenticateTeacher, async (req, res) => {
   const { idTest } = req.params;
 
   const tests = await getTests()
