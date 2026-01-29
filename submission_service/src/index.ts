@@ -8,6 +8,7 @@ import { createSubmission } from './sql/createSubmission.js';
 import { deleteSubmission } from './sql/deleteSubmission.js';
 import { initDB } from './sql/initdb.js';
 import { updateVerdict } from './sql/updateVerdict.js';
+import logger from './logger/logger.js';
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
@@ -29,11 +30,15 @@ async function connectWithRetry(pool : Pool | Client, retries : number = 10, del
       await pool.connect()
       return
     } catch (err : any) {
-      console.log(`Не удалось подключиться к БД, попытка ${i+1}/${retries}. ${err.toString()}`)
+      const message = `Не удалось подключиться к БД, попытка ${i+1}/${retries}. ${err.toString()}`
+
+      logger.info(message)
       await new Promise(res => setTimeout(res, delay))
     }
   }
-  throw new Error('Не удалось подключиться к базе после нескольких попыток')
+
+  const error = 'Не удалось подключиться к базе после нескольких попыток'
+  throw new Error(error)
 }
 
 
@@ -59,7 +64,11 @@ function middleware(req: any, res: Response, next: NextFunction) {
   const header = req.headers.authorization
 
   if (!header) {
-    return res.status(401).json({ message: 'Unauthorized' });
+
+    const message = 'Unauthorized'
+
+    logger.info(message)
+    return res.status(401).json({ message });
   }
   const [, token] = header.split(' ')
   try {
@@ -67,7 +76,10 @@ function middleware(req: any, res: Response, next: NextFunction) {
     req.user = payload
     next()
   } catch {
-    return res.status(403).json({ error: `Invalid or expired token.` })
+    const error = `Invalid or expired token.`
+
+    logger.error(error)
+    return res.status(403).json({ error })
   }
   next();
 }
@@ -79,12 +91,23 @@ function isUUID(value: string): boolean {
 
 // GET /api/submissions?taskId=&userId=
 app.get('/api/submissions', async (req : any, res : any) => {
+
   const { taskId, userId } = req.query;
+  
+  const logMessage = 'GET /api/submissions. Task id: ' + taskId + ' user Id: ' + userId
+  logger.info(logMessage)
+
   if (typeof taskId !== 'string' || !isUUID(taskId)) {
-    return res.status(400).json({ message: 'Invalid or missing taskId' });
+    const error = 'Invalid or missing taskId'
+
+    logger.error(error)
+    return res.status(400).json({ error });
   }
+  
   if (typeof userId !== 'string') {
-    return res.status(400).json({ message: 'Invalid or missing userId' });
+    const error = 'Invalid or missing userId'
+
+    return res.status(400).json({ error });
   }
 
   const submissions = await getSubmissions(sqlPool)
@@ -94,6 +117,7 @@ app.get('/api/submissions', async (req : any, res : any) => {
     (s) => s.task_id === taskId && s.student_id === userId
   );
 
+  logger.info(logMessage + '. Status: OK')
   res.json(result);
 });
 
@@ -101,6 +125,9 @@ app.get('/api/submissions', async (req : any, res : any) => {
 app.post('/api/submission', async (req : any, res : any) => {
   const body: SubmissionCreate = req.body;
   const { task_id, student_id, text, verdict } = body;
+
+  const queryMessage = 'POST /api/submission. Body: ' + JSON.stringify(body)
+  logger.info(queryMessage)
 
   if (
     typeof task_id !== 'string' ||
@@ -110,12 +137,19 @@ app.post('/api/submission', async (req : any, res : any) => {
     typeof text !== 'string' ||
     text.trim() === ''
   ) {
-    return res.status(400).json({ message: 'Invalid input data' });
+    const error = 'Invalid input data'
+
+    logger.error(error)
+    return res.status(400).json({ error });
   }
 
   const validVerdicts: Verdict[] = ['OK', 'WA', 'RE', 'TL', 'IG'];
   if (verdict && !validVerdicts.includes(verdict)) {
-    return res.status(400).json({ message: 'Invalid verdict value' });
+
+    const error = 'Invalid verdict value: ' + verdict
+
+    logger.error(error)
+    return res.status(400).json({ error });
   }
 
   const newSubmission: Submission = {
@@ -129,23 +163,35 @@ app.post('/api/submission', async (req : any, res : any) => {
 
   await createSubmission(newSubmission, sqlPool);
 
+  logger.info(queryMessage + '. Status: OK')
   res.status(201).json(newSubmission);
 });
 
 // GET /submission/{id}
 app.get('/submission/:id', async (req : any, res : any) => {
   const id = req.params.id;
+
+  const requestMessage = 'GET /submissions/' + id
+  logger.info(requestMessage)
+
   if (!isUUID(id)) {
-    return res.status(400).json({ message: 'Invalid id' });
+    const error = 'Invalid id: ' + id
+
+    logger.info(error)
+    return res.status(400).json({ error });
   }
 
   const submissions = await getSubmissions(sqlPool)
 
   const submission = submissions.find((s) => s.submission_id === id);
   if (!submission) {
-    return res.status(404).json({ message: 'Submission not found' });
+    const error = 'Submission not found'
+
+    logger.error(error)
+    return res.status(404).json({ error });
   }
 
+  logger.info(requestMessage + '. Status: OK')
   res.json(submission);
 });
 
@@ -153,43 +199,82 @@ app.put('/submissions/:id/verdict', async (req: any, res: Response) => {
   const submission_id = req.params.id;
   const { verdict } = req.body as { verdict?: Verdict };
 
+  const requestMessage = 'PUT /submissions/' + submission_id + '/verdict. Verdict: ' + verdict
+  logger.info(requestMessage)
+
   if (!verdict) {
-    return res.status(400).json({ error: 'Поле verdict обязательно' });
+    const error = 'Поле verdict обязательно'
+
+    logger.error(error)
+    return res.status(400).json({ error });
   }
   if (!['OK', 'WA', 'RE', 'TL', 'IG', 'PS'].includes(verdict)) {
-    return res.status(400).json({ error: 'Недопустимое значение verdict' });
+    const error = 'Недопустимое значение verdict'
+
+    logger.error(error)
+    return res.status(400).json({ error });
   }
 
   try {
     const result = await updateVerdict(submission_id, verdict, sqlPool);
 
     if (result === 0) {
-      return res.status(404).json({ error: 'Submission не найден' });
+      const error = 'Submission не найден'
+
+      logger.error(error)
+      return res.status(404).json({ error });
     }
 
-    res.json({ message: 'Вердикт обновлен' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    const finalMessage = requestMessage + '. Вердикт обновлен'
+    
+    logger.info(finalMessage)
+    res.json({ message: finalMessage });
+
+  } catch (err) {
+
+    const error = 'Внутренняя ошибка сервера: ' + (err as Error).message
+
+    logger.error(error);
+    res.status(500).json({ error });
   }
 });
 
-// DELETE /submission/{id}
-app.delete('/submission/:id', middleware, async (req : any, res : any) => {
+// DELETE /submissions/{id}
+app.delete('/submissions/:id', middleware, async (req : any, res : any) => {
   const id = req.params.id;
+  
+  const requestMessage = 'DELETE /submissions/' + id
+  logger.info(requestMessage)
+
   if (!isUUID(id)) {
-    return res.status(400).json({ message: 'Invalid id' });
+    const error = 'Invalid id: ' + id
+
+    logger.error(error)
+    return res.status(400).json({ error });
   }
 
   const submissions = await getSubmissions(sqlPool)
 
   const index = submissions.findIndex((s) => s.submission_id === id);
   if (index === -1) {
-    return res.status(404).json({ message: 'Submission not found' });
+    const error = 'Submission not found. id: ' + id
+
+    logger.error(error)
+    return res.status(404).json({ error });
   }
 
-  await deleteSubmission(id, sqlPool)
-  res.status(204).send();
+  try {
+    await deleteSubmission(id, sqlPool)
+
+    const message = requestMessage + '. Deletion sucessful'
+    logger.info(message)
+    res.status(204).json({ message });
+  } catch (err : any) {
+    const error = err.message
+    
+    logger.error(error)
+    res.status(500).json({ error })
+  }
 });
 
 
@@ -203,13 +288,13 @@ await
         initDB(sqlPool)
       }
       catch {
-        console.log('Failed to create submission database')
+        logger.error('Failed to create submission database')
       }
       
     })
     .then(() => {
         const port = process.env.PORT || 3004
-        app.listen(port, () => console.log(`Submission Service running on port ${port}`))
+        app.listen(port, () => logger.info(`Submission Service running on port ${port}`))
     })
     .catch(console.error)
 
