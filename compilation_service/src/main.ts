@@ -6,6 +6,7 @@ import fileSystem, { mkdtemp } from "fs"
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import multer, { diskStorage, memoryStorage } from 'multer';
+import logger from './logger/logger.js';
 
 
 const _dirname = process.cwd()
@@ -25,14 +26,14 @@ type CodeRequest = {
 }
 
 type RunFileRequest = {
-    
+
     body : {
         
         input ?: string,
         inputFilename ?: string,
         // type ?: 'stdin' | 'file' | 'both',
     }
-} & any
+} & Record<string, any>
 
 type Response = {
     status : (status : number) => Response,
@@ -52,6 +53,7 @@ async function makeTempDir(dirname : string, suffix : string, relpath ?: string,
     });
 }
 
+/*
 const readCurrentDir = async () => {
     try {
         const currentDirectory = process.cwd();
@@ -68,6 +70,7 @@ const readCurrentDir = async () => {
     }
   
 }
+    */
 
 
 async function redirectInput(filename : string, inputData : string) {
@@ -79,7 +82,7 @@ async function redirectInput(filename : string, inputData : string) {
   // записываем входные данные в поток
   output.write(inputData, (error) => {
     if (error) {
-      throw { error }
+      throw error
     }
   })
 
@@ -96,7 +99,10 @@ async function runCode(res : Response, code : string, input ?: string, inputFile
     let tempDir = ''
 
     if ((inputFilename) && !input) {
-        return res.status(400).json({ error: 'Нет входных данных для имени файла в теле запроса' });
+        const error = 'Нет входных данных для имени файла в теле запроса'
+
+        logger.error(error)
+        return res.status(400).json({ error });
     }
 
     /*
@@ -137,31 +143,37 @@ async function runCode(res : Response, code : string, input ?: string, inputFile
         
         const cmd = `java -jar "${RARS_JAR_PATH}" "${tempPath}" nc ${redirectString}`;
 
+        logger.info(`Procceeding command: ${cmd}`)
+
         // console.log(cmd)
 
-        const currentDirectory = await readCurrentDir()
+        // const currentDirectory = await readCurrentDir()
 
         exec(cmd, { timeout: 5000 }, async (error, stdout, stderr) => {
-            console.log("Stdout : " + stdout)
+            logger.info("Stdout : " + stdout)
 
             if (error) {
-                console.log(error.message)
+                logger.error(error.message)
 
                 await fs.rm(tempDir, { recursive : true });
-                return res.status(500).json({ error: `${error.message} \nCurrentDirectory: ${currentDirectory}`, stderr });
+                return res.status(500).json({ error: `${error.message}`, stderr });
             }
 
             await fs.rm(tempDir, { recursive : true });
+
+            logger.info("Stdin: " + input + ". Stdout: " + stdout.trim() + ". Stderr: " + stderr.trim())
             res.json({ output: stdout.trim(), error: stderr.trim() });
-            });
+            
+        });
         
 
         
     } catch (err) {
-        res.status(500).json({ error: (err as Error).message });
-    }    
-    finally {
-    }
+        const error = (err as Error).message
+
+        logger.error(error)
+        res.status(500).json({ error });
+    } 
 
     
 }
@@ -176,12 +188,17 @@ async function compile(req : CodeRequest, res : Response) {
         // type 
     } = req.body;
     
+    const requestMessage = `POST /api/compile. Code: ${code}. Input: ${input}. Filename: ${filename}`
 
+    logger.info(requestMessage)
 
     // console.log(`Query: ${req.query}. `)
 
     if (!code) {
-        return res.status(400).json({ error: 'Нет кода в теле запроса' });
+        const error = 'Нет кода в теле запроса'
+
+        logger.error(error)
+        return res.status(400).json({ error });
     }
 
     return await runCode(res, code, input, filename)
@@ -193,7 +210,7 @@ const storage = memoryStorage()
 // Инициализируем multer
 const upload = multer({ storage });
 
-// Handler for POST: /compile/file endpoint
+// Handler for POST: api/compile/file endpoint
 async function compileFile(req : RunFileRequest, res : Response) {
     const { file,
     body:  {
@@ -201,13 +218,19 @@ async function compileFile(req : RunFileRequest, res : Response) {
         inputFilename
     }} = req
 
+    const requestMessage = `POST /api/compile/file. File name: ${inputFilename}. Input: ${input}.`
+    logger.info(requestMessage)
+
     if (!file) {
-        return res.status(400).json({ error : 'Файл не загружен' })
+        const error = 'Файл не загружен'
+
+        logger.error(error)
+        return res.status(400).json({ error })
     }
 
     const code = file.buffer.toString('utf-8')
 
-    return runCode(res, code, input, inputFilename)
+    return await runCode(res, code, input, inputFilename)
 }
 
 const app = express();
@@ -223,6 +246,6 @@ app.post('/api/compile/file', upload.single('file'), compileFile);
 app.post('/api/compile', compile);
 
 app.listen(PORT, () => {
-  console.log(`Server started on PORT ${PORT}`);
+  logger.info(`Server started on PORT ${PORT}`);
 });
 
