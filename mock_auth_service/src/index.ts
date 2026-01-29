@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 
 import cors from 'cors'
+import logger from './logger.js'
 
 type LoginRequest = {
     body : {
@@ -42,29 +43,43 @@ const PORT = process.env.PORT ?? '3003'
 // Проверка и валидация refresh токена из Redis
 async function verifyRefreshToken(req : any) {
   try {
+
+    
+
     const refreshToken = req.cookies?.refreshToken
 
     // Проверяем подпись JWT
     const payload = jwt.verify(refreshToken, JWT_SECRET) as jwt.JwtPayload;
 
     // Проверяем наличие токена в куках
-    if (!payload) throw new Error('Token Not Found');
+    if (!payload) {
+      logger.error('Token not found!')
+      throw new Error('Token Not Found');
+    } 
 
     return payload;
   } catch (err) {
+
+    logger.error('Invalid or Expired Token')
     throw new Error('Invalid or Expired Token');
   }
 }
 
 const loginHandler = async (req : LoginRequest, res : any) => {
+  
 
-    const {
-        login,
-        password
-    } = req.body
+  const {
+    login,
+    password
+  } = req.body
+
+  logger.info('POST /api/login ' + (login ?? ''))
 
   if (!login || !password) {
-    return res.status(400).json({ error: 'Login and password are required' });
+    const error = 'Login and password are required'
+
+    logger.error(error)
+    return res.status(400).json({ error });
   }
 
   
@@ -75,7 +90,10 @@ const loginHandler = async (req : LoginRequest, res : any) => {
   } );
 
   if (!match) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+    const error = 'Invalid credentials'
+
+    logger.error(error)
+    return res.status(401).json({ error });
   }
 
   const accessToken = jwt.sign({ login }, JWT_SECRET, { expiresIn: '1h' });
@@ -90,35 +108,68 @@ const loginHandler = async (req : LoginRequest, res : any) => {
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 дней
   });
 
+  logger.info('Login successful. Login:' + login)
   res.json({ accessToken });
 }
 
 const refreshHandler = async (req: any, res: any) => {
   const { refreshToken } = req.cookies;
-  if (!refreshToken) return res.status(400).json({ error: 'Refresh Token Required' });
+
+  logger.info('POST /api/refresh. ')
+
+  if (!refreshToken) {
+    const error = 'Refresh Token Required'
+
+    logger.error(error)
+
+    return res.status(400).json({ error });
+  } 
 
   try {
     const payload = await verifyRefreshToken(refreshToken);
 
     // Создаем новый access токен
     const newAccessToken = jwt.sign({ login: payload.login }, JWT_SECRET, { expiresIn: '1h' });
+    
+    logger.info('Refresh OK. ')
     res.json({ accessToken: newAccessToken });
   } catch (err) {
-    res.status(403).json({ error: (err as Error).message });
+    const error = (err as Error).message
+    logger.error(error)
+
+    res.status(403).json({ error });
   }
 };
 
 const logoutHandler = async (req: any, res: any) => {
   const { refreshToken } = req.cookies;
 
-  if (!refreshToken) return res.status(400).json({ error: 'No Refresh Token' });
+  logger.info('POST /api/logout. ')
 
+  if (!refreshToken) { 
+    const error = 'No Refresh Token'
+
+    logger.error(error)
+
+    return res.status(400).json({ error }); 
+  }
+
+  try {
   res.clearCookie('refreshToken', {
     httpOnly: true,
     secure: false, // process.env.NODE_ENV === 'production',
     sameSite: 'lax' // 'strict'
   });
+
+
   res.sendStatus(204);
+} catch (err) {
+  const error = (err as Error).message
+
+  logger.error(error)
+
+  res.status(403).json({ error });
+}
 };
 
 const app = express()
@@ -142,5 +193,5 @@ app.post('/api/logout', logoutHandler)
 
 
 app.listen(PORT, () => {
-  console.log(`Server started on PORT: ${PORT}`);
+  logger.info(`Server started on PORT: ${PORT}`);
 });
