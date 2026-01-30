@@ -5,6 +5,19 @@ info:
   version: 1.0.0
   description: API для компиляции кода с разными типами входных данных
 paths:
+  /metrics:
+    get:
+      summary: Получить метрики Prometheus
+      description: Возвращает метрики в формате Prometheus.
+      responses:
+        '200':
+          description: Метрики в формате Prometheus
+          content:
+            text/plain; version=0.0.4; charset=utf-8:
+              schema:
+                type: string
+                example: '# HELP http_requests_total The total number of HTTP requests.\n# TYPE http_requests_total counter\nhttp_requests_total{method="get",code="200"} 1027 1395066363000\n'
+
   /api/compile:
     post:
       summary: Компиляция кода из строки
