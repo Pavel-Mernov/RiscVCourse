@@ -10,6 +10,9 @@ services:
     command: ["node", "dist/main.js"]  
     environment:
       NODE_ENV: production
+    volumes:
+      - ./compilation_service/src/logs:/combined.logs
+      - ./compilation_service/src/logs:/error.log
 
   mock-auth-service:
     build: 
@@ -23,6 +26,9 @@ services:
     environment:
       NODE_ENV: production
       REDIS_HOST: redis
+    volumes:
+      - ./mock_auth_service/src/logs:/combined.logs
+      - ./mock_auth_service/src/logs:/error.log
 
 #  auth-service:
 #    build: 
@@ -85,6 +91,10 @@ services:
     command: ["node", "dist/index.js"]  
     environment:
       NODE_ENV: production
+    volumes:
+      - ./contest_service/src/logs:/combined.logs
+      - ./contest_service/src/logs:/error.log
+
   submission-db:
     image: postgres:18
     container_name: submission-db
@@ -116,6 +126,9 @@ services:
     command: ["node", "dist/index.js"]  
     environment:
       NODE_ENV: production
+    volumes:
+      - ./submission_service/src/logs:/combined.logs
+      - ./submission_service/src/logs:/error.log
   redis:
     image: redis
 volumes:
