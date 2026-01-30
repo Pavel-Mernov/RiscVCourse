@@ -7,11 +7,14 @@ import { Client, Pool } from 'pg'
 import { initDB } from './sql/scripts/initdb.js'
 import cors from 'cors'
 import logger from './logger/logger.js'
+import promClient from 'prom-client'
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
 const app = express()
+
+const { collectDefaultMetrics } = promClient
 
 const allowedOrigins = [
   'http://localhost:5173',
@@ -30,14 +33,37 @@ const originFunction = (origin : any, callback : any) => {
     }
   }
 
+const httpRequestsCounter = new promClient.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+  labelNames: ['method', 'route', 'status_code'],
+});
+
 app.use(cors({
   origin: originFunction, // динамическое определение
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    httpRequestsCounter.inc({
+      method: req.method,
+      route: req.route ? req.route.path : req.path,
+      status_code: res.statusCode.toString(),
+    });
+  });
+  next();
+});
+
 app.use(express.json())
 app.use('/api', contestsRouter)
+
+// Маршрут для отдачи метрик в Prometheus-формате
+app.get('/metrics', async (_, res) => {
+  res.set('Content-Type', promClient.register.contentType);
+  res.end(await promClient.register.metrics());
+});
 
 // console.log(`JWT Secret: ${JWT_SECRET}`)
 
