@@ -48,7 +48,7 @@ export function authenticateTeacher(req : any, res : any, next : any) {
 
     next()
   } catch {
-    const error = `Invalid or expired token.`
+    const error = `Invalid or expired token. JWT secret = ${JWT_SECRET}`
 
     logger.error('Authenticate teacher. ' + error)
 
