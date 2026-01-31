@@ -35,14 +35,14 @@ export function authenticateTeacher(req : any, res : any, next : any) {
   try {
     const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
     
-    logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
+    // logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
 
     const login = payload.login as string
 
     // console.log('Login: ' + login)
 
     if (!login.endsWith('@hse.ru')) {
-      const error = `Access Denied. Invalid login. JWT_secret = ${JWT_SECRET}. login: ${login}`
+      const error = `Access Denied. Invalid login. login: ${login}`
 
       logger.error('Authenticate teacher. ' + error)
       return res.status(403).json({ error })
@@ -50,7 +50,7 @@ export function authenticateTeacher(req : any, res : any, next : any) {
 
     next()
   } catch {
-    const error = `Invalid or expired token. JWT secret = ${JWT_SECRET}`
+    const error = `Invalid or expired token.`
 
     logger.error('Authenticate teacher. ' + error)
 
