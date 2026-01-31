@@ -22,6 +22,8 @@ const allowedOrigins = [
   'http://riscvcourse.ru'  
 ];
 
+collectDefaultMetrics(); 
+
 const originFunction = (origin : any, callback : any) => {
     // Если origin не пришел (например, Postman или same-origin), разрешаем запрос
     if (!origin) return callback(null, true); 

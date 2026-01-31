@@ -1,12 +1,18 @@
 
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { JWT_SECRET } from '../index.js'
+import logger from '../logger/logger.js'
 
 
 
 export function authenticate(req : any, res : any, next : any) {
   const header = req.headers.authorization
-  if (!header) return res.status(401).json({ error: 'No token' })
+  if (!header) { 
+    const error = 'No token'
+
+    logger.error('Authenticate. ' + error)
+    return res.status(401).json({ error }) 
+  }
 
   const [, token] = header.split(' ')
   try {
@@ -14,7 +20,10 @@ export function authenticate(req : any, res : any, next : any) {
     req.user = payload
     next()
   } catch {
-    return res.status(403).json({ error: `Invalid or expired token.` })
+    const error = `Invalid or expired token.`
+
+    logger.error('Authenticate. ' + error)
+    return res.status(403).json({ error })
   }
 }
 
@@ -31,11 +40,18 @@ export function authenticateTeacher(req : any, res : any, next : any) {
     // console.log('Login: ' + login)
 
     if (!login.endsWith('@hse.ru')) {
-      return res.status(403).json({ error: `Access Denied. Invalid login` })
+      const error = `Access Denied. Invalid login. JWT_secret = ${JWT_SECRET}. login: ${login}`
+
+      logger.error('Authenticate teacher. ' + error)
+      return res.status(403).json({ error })
     }
 
     next()
   } catch {
-    return res.status(403).json({ error: `Invalid or expired token.` })
+    const error = `Invalid or expired token.`
+
+    logger.error('Authenticate teacher. ' + error)
+
+    return res.status(403).json({ error })
   }
 }

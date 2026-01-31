@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import { useAuth } from "../context/AuthContext";
+import DeletionDialog from "../components/deletionDialog";
 
 const isValidDate = (dateStr: string) => {
     // Регулярное выражение для двух форматов: с временем и без
@@ -100,6 +101,8 @@ export default () => {
 
     const [deadline, setDeadline] = useState<string>('')
     const [deadLineError, setDeadlineError] = useState('')
+
+    const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false)
 
     const navigate = useNavigate()
 
@@ -349,11 +352,23 @@ export default () => {
                 <Button 
                     sx={{ borderColor : colors.red[500], borderWidth : '1px', fontSize : '20px', color : colors.red[500] }}
                     variant="outlined"
-                    onClick={fetchDeleteContest}
+                    onClick={() => setDeletionDialogOpen(true)}
                 >
                     Удалить контест
                 </Button>
             </Stack>
+
+            {
+                isDeletionDialogOpen && <DeletionDialog 
+                    onClose={() => setDeletionDialogOpen(false)} 
+                    onDelete={() => {
+                        fetchDeleteContest()
+                        setDeletionDialogOpen(false)
+                    }} 
+                    title='Подтверждение удаления контеста' 
+                    content='Вы действительно хотите удалить контест?' 
+                />
+            }
         </Stack>
     )
 }
