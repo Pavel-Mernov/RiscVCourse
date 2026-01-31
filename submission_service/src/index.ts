@@ -9,12 +9,35 @@ import { deleteSubmission } from './sql/deleteSubmission.js';
 import { initDB } from './sql/initdb.js';
 import { updateVerdict } from './sql/updateVerdict.js';
 import logger from './logger/logger.js';
+import client from 'prom-client'
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
 const app = express();
 app.use(express.json());
+const collectDefaultMetrics = client.collectDefaultMetrics;
+
+// Запускаем сбор стандартных метрик Node.js (CPU, память и т.д.)
+collectDefaultMetrics(); 
+
+// Создаём счётчик для запросов
+const httpRequestsCounter = new client.Counter({
+  name: 'http_requests_total',
+  help: 'Total number of HTTP requests',
+  labelNames: ['method', 'route', 'status_code'],
+});
+
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    httpRequestsCounter.inc({
+      method: req.method,
+      route: req.route ? req.route.path : req.path,
+      status_code: res.statusCode.toString(),
+    });
+  });
+  next();
+});
 
 export const sqlPool = new Pool({
     user : 'pavel_mernov',
