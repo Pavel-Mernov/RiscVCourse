@@ -110,7 +110,7 @@ const loginHandler = async (req : LoginRequest, res : any) => {
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 дней
   });
 
-  logger.info('Login successful. Login:' + login)
+  logger.info('Login successful. Login:' + login + 'JWT secret: ' + JWT_SECRET)
   res.json({ accessToken });
 }
 
