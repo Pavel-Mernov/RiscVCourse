@@ -35,6 +35,8 @@ export function authenticateTeacher(req : any, res : any, next : any) {
   try {
     const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
     
+    logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
+
     const login = payload.login as string
 
     // console.log('Login: ' + login)
