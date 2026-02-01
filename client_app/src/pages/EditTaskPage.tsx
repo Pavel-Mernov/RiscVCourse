@@ -1,4 +1,4 @@
-import { colors, Stack, TextField, Typography } from "@mui/material"
+import { colors, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import Button from "@mui/material/Button"
 import { useState, useEffect } from "react"
 import { useNavigate, useParams, Navigate } from "react-router-dom"
@@ -6,7 +6,16 @@ import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
 import DeletionDialog from "../components/deletionDialog"
 
-type AnswerType = 'theory'
+type AnswerType = 'theory' | 'choice'
+
+type AnswerTypeNames = {
+    [answer_type in AnswerType] : string
+}
+
+const answerTypeNames : AnswerTypeNames = {
+    theory: "Теория",
+    choice: "Выбор одного ответа"
+}
 
 interface TaskUpdate {
 
@@ -35,6 +44,8 @@ export default () => {
     const [contest_id, setContestId] = useState('')
 
     const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false)
+
+    const [answer_type, setAnswerType] = useState<AnswerType>('theory')
 
     useEffect(() => { 
         const findContest = async () => {
@@ -72,6 +83,8 @@ export default () => {
                 setText(response.text || '')
 
                 setContestId(response.contest_id || '')
+
+                setAnswerType(response.answer_type || 'theory')
 
                 return
             }
@@ -226,6 +239,26 @@ export default () => {
                     helperText={ textError ? "Текст задачи не может быть пустым" : "" }
                     error={textError}    
                 />
+
+                <Stack spacing='10px'>
+                    <InputLabel id="select-type">Выберите тип задачи</InputLabel>
+                    <Select
+                        labelId="select-type"
+                        value={answer_type}
+                        label="Выберите тип задачи"
+                        onChange={e => setAnswerType(e.target.value)}
+                    >
+                        {
+                            Object.keys(answerTypeNames).map(answer_type => {
+                                return <MenuItem 
+                                    key={ answer_type } 
+                                    value={ answer_type }>
+                                        { answerTypeNames[answer_type as AnswerType] }
+                                    </MenuItem>
+                            })
+                        }
+                    </Select>
+                </Stack>
 
                 <Button 
                     sx={{ background : colors.green[500], fontSize : '24px', fontWeight : 'bold' }}

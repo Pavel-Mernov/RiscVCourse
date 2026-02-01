@@ -1,10 +1,19 @@
 import { Navigate, useNavigate, useParams } from "react-router-dom"
 import { useAuth } from "../context/AuthContext"
-import { Button, colors, Stack, TextField, Typography } from "@mui/material"
+import { Button, colors, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useEffect, useState } from "react"
 
-type AnswerType = 'theory'
+type AnswerType = 'theory' | 'choice'
+
+type AnswerTypeNames = {
+    [answer_type in AnswerType] : string
+}
+
+const answerTypeNames : AnswerTypeNames = {
+    theory: "Теория",
+    choice: "Выбор одного ответа"
+}
 
 interface TaskCreate {
 
@@ -29,6 +38,8 @@ export default () => {
 
     const [text, setText] = useState('')
     const [textError, setTextError] = useState(false)
+
+    const [answer_type, setAnswerType] = useState<AnswerType>('theory')
 
     useEffect(() => { 
         const findContest = async () => {
@@ -109,7 +120,7 @@ export default () => {
         )
     }
 
-    const fetchAddContest = async () => {
+    const fetchAddTask = async () => {
                         if (!name ) {
                             setNameError(true)
                             return
@@ -125,7 +136,7 @@ export default () => {
                             name,
                             text,
                             contest_id: contestId,
-                            answer_type: "theory"
+                            answer_type
                         }
 
                         const PORT = 3002
@@ -195,10 +206,31 @@ export default () => {
                     error={textError}    
                 />
 
+                <Stack spacing='10px'>
+                    <InputLabel id="select-type">Выберите тип задачи</InputLabel>
+                    <Select
+                        labelId="select-type"
+                        value={answer_type}
+                        label="Выберите тип задачи"
+                        onChange={e => setAnswerType(e.target.value)}
+                    >
+                        {
+                            Object.keys(answerTypeNames).map(answer_type => {
+                                return <MenuItem 
+                                    key={ answer_type } 
+                                    value={ answer_type }>
+                                        { answerTypeNames[answer_type as AnswerType] }
+                                    </MenuItem>
+                            })
+                        }
+                    </Select>
+                </Stack>
+                
+
                 <Button 
                     sx={{ background : colors.green[500], fontSize : '24px', fontWeight : 'bold' }}
                     variant="contained"
-                    onClick={fetchAddContest}
+                    onClick={fetchAddTask}
                 >
                     Добавить задачу
                 </Button>
