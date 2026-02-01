@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useNavigate, useParams, Navigate } from "react-router-dom"
 import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
+import DeletionDialog from "../components/deletionDialog"
 
 type AnswerType = 'theory'
 
@@ -32,6 +33,8 @@ export default () => {
     const [textError, setTextError] = useState(false)
 
     const [contest_id, setContestId] = useState('')
+
+    const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false)
 
     useEffect(() => { 
         const findContest = async () => {
@@ -235,11 +238,24 @@ export default () => {
                 <Button 
                     sx={{ borderColor : colors.red[500], borderWidth : '1px', fontSize : '20px', color : colors.red[500] }}
                     variant="outlined"
-                    onClick={fetchDeleteTask}
+                    onClick={() => setDeletionDialogOpen(true)}
                 >
                     Удалить задачу
                 </Button>
             </Stack>
+
+            {
+                isDeletionDialogOpen &&
+                <DeletionDialog 
+                    onClose={() => setDeletionDialogOpen(false)} 
+                    onDelete={async () => {
+                        await fetchDeleteTask()
+                        setDeletionDialogOpen(false)
+                    }} 
+                    title='Удаление задачи' 
+                    content='Вы действительно хотите удалить задачу'                
+                />
+            }
         </Stack>
     )
 }

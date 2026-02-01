@@ -361,8 +361,8 @@ export default () => {
             {
                 isDeletionDialogOpen && <DeletionDialog 
                     onClose={() => setDeletionDialogOpen(false)} 
-                    onDelete={() => {
-                        fetchDeleteContest()
+                    onDelete={async () => {
+                        await fetchDeleteContest()
                         setDeletionDialogOpen(false)
                     }} 
                     title='Подтверждение удаления контеста' 
