@@ -2,8 +2,8 @@
 export type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
 export interface ChoiceAnswers {
-  correct_answer : string,
-  [key : number] : string, // неправильные ответы
+  correct_answer : number, // индекс правильного ответа
+  answers : string[], // все ответы
   points?: number
   attempts?: number
 }

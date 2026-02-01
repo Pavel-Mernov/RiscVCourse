@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext"
 import { Button, colors, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useEffect, useState } from "react"
+import ChoiceAnswersEditor from "../components/choiceTaskAnswerBlock"
 
 type AnswerType = 'theory' | 'choice'
 
@@ -10,9 +11,51 @@ type AnswerTypeNames = {
     [answer_type in AnswerType] : string
 }
 
+export type TaskAnswers = {
+    choice : ChoiceAnswers,
+}
+
+export const defaultTaskAnswers : TaskAnswers = {
+    choice : {
+        correct_answer: 0,
+        answers: [''],
+    }
+} as const
+
 const answerTypeNames : AnswerTypeNames = {
     theory: "Теория",
     choice: "Выбор одного ответа"
+}
+
+export interface ChoiceAnswers {
+  correct_answer : number,
+  answers : [string, ...string[]], // все ответы
+  points?: number
+  attempts?: number
+}
+
+
+
+export interface MultichoiceAnswers {
+  answers : { 
+    answer : string,
+    is_correct : boolean } [],
+    
+  points?: number
+  attempts?: number
+}
+
+export interface CodeData {
+  time_limit_ms?: number
+  memory_limit_kb?: number
+  points?: number
+  attempts?: number
+}
+
+export interface TextAnswer {
+  correct_answers : string[]
+  points?: number
+  attempts?: number
 }
 
 interface TaskCreate {
@@ -24,7 +67,7 @@ interface TaskCreate {
   
   answer_type: AnswerType
   
-  task_data ?: object
+  task_data ?: CodeData | ChoiceAnswers | MultichoiceAnswers | TextAnswer
 }
 
 export default () => {
@@ -40,6 +83,14 @@ export default () => {
     const [textError, setTextError] = useState(false)
 
     const [answer_type, setAnswerType] = useState<AnswerType>('theory')
+
+    const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>(defaultTaskAnswers)
+
+    const setChoiceAnswers = (answer : ChoiceAnswers) => {
+        const newTaskAnswers = { ...taskAnswers, choice : answer } as TaskAnswers
+
+        setTaskAnswers(newTaskAnswers)
+    }
 
     useEffect(() => { 
         const findContest = async () => {
@@ -136,7 +187,8 @@ export default () => {
                             name,
                             text,
                             contest_id: contestId,
-                            answer_type
+                            answer_type,
+                            task_data : taskAnswers[answer_type as Exclude<AnswerType, 'theory'>]
                         }
 
                         const PORT = 3002
@@ -226,6 +278,13 @@ export default () => {
                     </Select>
                 </Stack>
                 
+                {
+                    (answer_type == 'choice') &&
+                        <ChoiceAnswersEditor 
+                            setChoiceAnswers={setChoiceAnswers}
+                            choiceAnswers={taskAnswers.choice} 
+                        />
+                }
 
                 <Button 
                     sx={{ background : colors.green[500], fontSize : '24px', fontWeight : 'bold' }}

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { ContestNavPanel } from "../components/contestNavPanel"
 import { useAuth } from "../context/AuthContext"
 import UrlText from "../components/urlText"
+import type { ChoiceAnswers, CodeData, MultichoiceAnswers, TextAnswer } from "./CreateTaskPage"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -17,7 +18,7 @@ interface Task {
   
   answer_type: AnswerType
   
-  task_data ?: object
+  task_data ?: CodeData | ChoiceAnswers | MultichoiceAnswers | TextAnswer
 }
 
 
@@ -49,7 +50,7 @@ export default () => {
             })
             .then(resp => resp.json()) 
             
-            
+            console.log(response)
 
             setTask(response)
             }
@@ -133,6 +134,12 @@ export default () => {
                     <UrlText>
                         { task.text }
                     </UrlText>
+                }
+
+                {
+                    task.answer_type == 'choice' && task.task_data 
+                        && ('answers' in task.task_data ) && ('correct_answer' in task.task_data) 
+                    
                 }
                 
             </Stack>

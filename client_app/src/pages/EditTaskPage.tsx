@@ -5,6 +5,8 @@ import { useNavigate, useParams, Navigate } from "react-router-dom"
 import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
 import DeletionDialog from "../components/deletionDialog"
+import { defaultTaskAnswers, type ChoiceAnswers, type CodeData, type MultichoiceAnswers, type TaskAnswers, type TextAnswer } from "./CreateTaskPage"
+import ChoiceAnswersEditor from "../components/choiceTaskAnswerBlock"
 
 type AnswerType = 'theory' | 'choice'
 
@@ -26,7 +28,7 @@ interface TaskUpdate {
   
   answer_type: AnswerType
   
-  task_data ?: object
+  task_data ?: CodeData | ChoiceAnswers | MultichoiceAnswers | TextAnswer
 }
 
 export default () => {
@@ -46,6 +48,14 @@ export default () => {
     const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false)
 
     const [answer_type, setAnswerType] = useState<AnswerType>('theory')
+
+    const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>(defaultTaskAnswers)
+
+    const setChoiceAnswers = (answer : ChoiceAnswers) => {
+        const newTaskAnswers = { ...taskAnswers, choice : answer } as TaskAnswers
+
+        setTaskAnswers(newTaskAnswers)
+    }
 
     useEffect(() => { 
         const findContest = async () => {
@@ -77,6 +87,9 @@ export default () => {
                 return
             }
             else {
+
+                console.log(response)
+
                 setTaskFound(true)
 
                 setName(response.name || '')
@@ -150,7 +163,8 @@ export default () => {
                             name,
                             text,
                             contest_id,
-                            answer_type: "theory"
+                            answer_type,
+                            task_data : taskAnswers[answer_type as Exclude<AnswerType, 'theory'>]
                         }
 
                         const PORT = 3002
@@ -246,7 +260,10 @@ export default () => {
                         labelId="select-type"
                         value={answer_type}
                         label="Выберите тип задачи"
-                        onChange={e => setAnswerType(e.target.value)}
+                        onChange={e => { 
+                            setAnswerType(e.target.value)
+                            console.log(e.target.value) 
+                        }}
                     >
                         {
                             Object.keys(answerTypeNames).map(answer_type => {
@@ -259,6 +276,14 @@ export default () => {
                         }
                     </Select>
                 </Stack>
+
+                {
+                    (answer_type == 'choice') &&
+                        <ChoiceAnswersEditor 
+                            setChoiceAnswers={setChoiceAnswers}
+                            choiceAnswers={taskAnswers.choice} 
+                        />
+                }
 
                 <Button 
                     sx={{ background : colors.green[500], fontSize : '24px', fontWeight : 'bold' }}
