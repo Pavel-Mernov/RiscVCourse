@@ -24,7 +24,9 @@ export function decodeToken(token: string) {
   }
 }
 
-export function getLoginFromToken(token: string) {
+export function getLogin(token ?: string) {
+  if (!token) return undefined
+  
   const decoded = decodeToken(token);
   return decoded?.login || undefined; // либо другое поле с данными пользователя
 }

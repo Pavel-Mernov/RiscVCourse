@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { decodeToken, getLoginFromToken } from "./decode";
+import { decodeToken, getLogin } from "./decode";
 
 
 // 1. Типы для контекста
 interface AuthContextType {
   accessToken ?: string;
   isTokenValid : () => boolean,
+  getLogin : () => string | undefined,
   isUserValidTeacher : () => boolean,
   setAccessToken: (token ?: string) => void;
 }
@@ -29,7 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       return false
     }
 
-    const login = getLoginFromToken(accessToken)
+    const login = getLogin(accessToken)
 
     if (!login) {
         return false
@@ -89,8 +90,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     fetchRefresh();
   }, [])
 
+  const context : AuthContextType = { 
+    accessToken, 
+    setAccessToken,
+    getLogin : () => getLogin(accessToken),
+    isUserValidTeacher, 
+    isTokenValid 
+  }
+
   return (
-    <AuthContext.Provider value={{ accessToken, setAccessToken, isUserValidTeacher, isTokenValid }}>
+    <AuthContext.Provider value={context}>
       {children}
     </AuthContext.Provider>
   );

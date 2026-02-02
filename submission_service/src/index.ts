@@ -10,11 +10,36 @@ import { initDB } from './sql/initdb.js';
 import { updateVerdict } from './sql/updateVerdict.js';
 import logger from './logger/logger.js';
 import client from 'prom-client'
+import cors from 'cors'
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://riscvcourse.ru',
+  'http://riscvcourse.ru'  
+];
+
+const originFunction = (origin : any, callback : any) => {
+    // Если origin не пришел (например, Postman или same-origin), разрешаем запрос
+    if (!origin) return callback(null, true); 
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true); // разрешаем
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+
 const app = express();
+
+app.use(cors({
+  origin: originFunction, // динамическое определение
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json());
 const collectDefaultMetrics = client.collectDefaultMetrics;
 
@@ -115,7 +140,7 @@ function isUUID(value: string): boolean {
 // GET /api/submissions?taskId=&userId=
 app.get('/api/submissions', async (req : any, res : any) => {
 
-  const { taskId, userId } = req.query;
+  const { taskId, userId } = req.query || [ undefined, undefined ];
   
   const logMessage = 'GET /api/submissions. Task id: ' + taskId + ' user Id: ' + userId
   logger.info(logMessage)

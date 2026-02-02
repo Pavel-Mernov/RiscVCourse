@@ -6,6 +6,7 @@ import { ContestNavPanel } from "../components/contestNavPanel"
 import { useAuth } from "../context/AuthContext"
 import UrlText from "../components/urlText"
 import type { ChoiceAnswers, CodeData, MultichoiceAnswers, TextAnswer } from "./CreateTaskPage"
+import ChoiceTaskView from "../components/choiceTaskView"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -49,8 +50,6 @@ export default () => {
             
             })
             .then(resp => resp.json()) 
-            
-            console.log(response)
 
             setTask(response)
             }
@@ -138,7 +137,8 @@ export default () => {
 
                 {
                     task.answer_type == 'choice' && task.task_data 
-                        && ('answers' in task.task_data ) && ('correct_answer' in task.task_data) 
+                        && ('answers' in task.task_data ) && ('correct_answer' in task.task_data) &&
+                            <ChoiceTaskView taskData={ task.task_data } />
                     
                 }
                 
