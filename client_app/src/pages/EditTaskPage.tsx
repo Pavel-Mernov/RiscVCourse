@@ -6,9 +6,10 @@ import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
 import DeletionDialog from "../components/deletionDialog"
 import { defaultTaskAnswers, type ChoiceAnswers, type CodeData, type MultichoiceAnswers, type TaskAnswers, type TextAnswer } from "./CreateTaskPage"
-import ChoiceAnswersEditor from "../components/choiceTaskAnswerBlock"
+import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
+import MultichoiceEditor from "../components/multichoiceEditor"
 
-type AnswerType = 'theory' | 'choice'
+type AnswerType = 'theory' | 'choice' | 'multichoice'
 
 type AnswerTypeNames = {
     [answer_type in AnswerType] : string
@@ -16,7 +17,8 @@ type AnswerTypeNames = {
 
 const answerTypeNames : AnswerTypeNames = {
     theory: "Теория",
-    choice: "Выбор одного ответа"
+    choice: "Выбор одного ответа",
+    multichoice : 'Выбор нескольких ответов'
 }
 
 interface TaskUpdate {
@@ -45,20 +47,73 @@ export default () => {
 
     const [contest_id, setContestId] = useState('')
 
+
+    const [isContestForAuthorizedOnly, setContestForAuthorizedOnly] = useState(false)
+
     const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false)
 
     const [answer_type, setAnswerType] = useState<AnswerType>('theory')
 
-    const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>(defaultTaskAnswers)
+    const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>( defaultTaskAnswers )
 
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
-        const newTaskAnswers = { ...taskAnswers, choice : answer } as TaskAnswers
+        
+        const newAnswer : ChoiceAnswers = isContestForAuthorizedOnly ? 
+            answer : { ...answer, points : undefined, attempts : undefined }
+
+        const newTaskAnswers = { ...taskAnswers, choice : newAnswer } as TaskAnswers
 
         setTaskAnswers(newTaskAnswers)
     }
 
+    const setMultichoiceAnswers = (answer : MultichoiceAnswers) => {
+
+        const newAnswer : MultichoiceAnswers = isContestForAuthorizedOnly ? 
+            answer : { ...answer, points : undefined, attempts : undefined }
+
+        const newAnswers : TaskAnswers = { ...taskAnswers, multichoice : newAnswer }
+
+        setTaskAnswers(newAnswers)
+    }
+
     useEffect(() => { 
         const findContest = async () => {
+            if (!contest_id) {
+                return
+            }
+
+            const serverIp = '130.49.150.32'
+            const PORT = 3002
+            const url = `http://${serverIp}:${PORT}/api/contests/${contest_id}/tasks`    
+            const method = 'GET'
+
+            const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            
+            })
+            .then(resp => resp.json())
+            
+            if ('error' in response) {
+                return
+            }
+            else {
+
+                if ('authorized_only' in response && response.authorized_only) {
+                    setContestForAuthorizedOnly(true)
+                } 
+
+                return
+            }
+        }
+
+        findContest()
+    }, [])
+
+    useEffect(() => { 
+        const findTask = async () => {
             if (!id) {
                 setTaskFound(false)
                 return
@@ -99,11 +154,13 @@ export default () => {
 
                 setAnswerType(response.answer_type || 'theory')
 
+                setTaskAnswers({ ...taskAnswers, [response.answer_type] : response.task_data })
+
                 return
             }
         }
 
-        findContest()
+        findTask()
     }, [])
 
     if (!id || !taskFound) {
@@ -281,12 +338,22 @@ export default () => {
                     (answer_type == 'choice') &&
                         <ChoiceAnswersEditor 
                             setChoiceAnswers={setChoiceAnswers}
+                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
                             choiceAnswers={taskAnswers.choice} 
                         />
                 }
 
+                {
+                    (answer_type == 'multichoice') &&
+                        <MultichoiceEditor 
+                            setAnswers={setMultichoiceAnswers}
+                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            multichoiceAnswers={taskAnswers.multichoice} 
+                        />
+                }
+
                 <Button 
-                    sx={{ background : colors.green[500], fontSize : '24px', fontWeight : 'bold' }}
+                    sx={{ background : colors.green[500], fontSize : '24px', fontWeight : 'bold', marginTop : '45px', }}
                     variant="contained"
                     onClick={fetchEditTask}
                 >

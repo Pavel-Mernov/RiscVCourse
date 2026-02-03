@@ -2,12 +2,16 @@ import { Box, Button, colors, FormControlLabel, IconButton, Radio, RadioGroup, T
 import type { ChoiceAnswers } from "../pages/CreateTaskPage"
 import CloseIcon from "@mui/icons-material/Close"
 
+
 interface Props {
   choiceAnswers: ChoiceAnswers;
+  enableSetPointsAndAttempts : boolean;
   setChoiceAnswers: (answers: ChoiceAnswers) => void;
 }
 
-export default function ChoiceAnswersEditor({ choiceAnswers, setChoiceAnswers }: Props) {
+export default function ChoiceAnswersEditor({ choiceAnswers, enableSetPointsAndAttempts, setChoiceAnswers }: Props) {
+
+  
 
   const updateAnswer = (index: number, value: string) => {
     const updated = [...choiceAnswers.answers];
@@ -105,6 +109,7 @@ export default function ChoiceAnswersEditor({ choiceAnswers, setChoiceAnswers }:
         Добавить ответ
       </Button>
 
+    { enableSetPointsAndAttempts &&
       <Box sx={{ marginTop: '40px' }}>
         <TextField
           label="Баллы"
@@ -121,6 +126,7 @@ export default function ChoiceAnswersEditor({ choiceAnswers, setChoiceAnswers }:
           onChange={e => updatePositiveInt("attempts", e.target.value)}
         />
       </Box>
+    }
 
     </Box>
   );

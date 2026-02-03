@@ -3,9 +3,10 @@ import { useAuth } from "../context/AuthContext"
 import { Button, colors, InputLabel, MenuItem, Select, Stack, TextField, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useEffect, useState } from "react"
-import ChoiceAnswersEditor from "../components/choiceTaskAnswerBlock"
+import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
+import MultichoiceEditor from "../components/multichoiceEditor"
 
-type AnswerType = 'theory' | 'choice'
+type AnswerType = 'theory' | 'choice' | 'multichoice'
 
 type AnswerTypeNames = {
     [answer_type in AnswerType] : string
@@ -13,18 +14,26 @@ type AnswerTypeNames = {
 
 export type TaskAnswers = {
     choice : ChoiceAnswers,
+    multichoice : MultichoiceAnswers
 }
 
 export const defaultTaskAnswers : TaskAnswers = {
     choice : {
         correct_answer: 0,
         answers: [''],
+    },
+    multichoice : {
+        answers: [{
+            answer: "",
+            is_correct: false
+        }]
     }
 } as const
 
 const answerTypeNames : AnswerTypeNames = {
     theory: "Теория",
-    choice: "Выбор одного ответа"
+    choice: "Выбор одного ответа",
+    multichoice : 'Выбор нескольких ответов'
 }
 
 export interface ChoiceAnswers {
@@ -34,12 +43,15 @@ export interface ChoiceAnswers {
   attempts?: number
 }
 
-
+export interface MultichoiceAnswer {
+    answer : string
+    is_correct : boolean
+}
 
 export interface MultichoiceAnswers {
-  answers : { 
-    answer : string,
-    is_correct : boolean } [],
+  answers : [
+    MultichoiceAnswer,
+    ...MultichoiceAnswer[]],
     
   points?: number
   attempts?: number
@@ -75,6 +87,7 @@ export default () => {
     const navigate = useNavigate()
     const { contestId } = useParams()
     const [contestFound, setContestFound] = useState(false)
+    const [isContestForAuthorizedOnly, setContestForAuthorizedOnly] = useState(false)
 
     const [name, setName] = useState('')
     const [nameError, setNameError] = useState(false)
@@ -87,9 +100,23 @@ export default () => {
     const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>(defaultTaskAnswers)
 
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
-        const newTaskAnswers = { ...taskAnswers, choice : answer } as TaskAnswers
+        
+        const newAnswer : ChoiceAnswers = isContestForAuthorizedOnly ? 
+            answer : { ...answer, points : undefined, attempts : undefined }
+
+        const newTaskAnswers = { ...taskAnswers, choice : newAnswer } as TaskAnswers
 
         setTaskAnswers(newTaskAnswers)
+    }
+
+    const setMultichoiceAnswers = (answer : MultichoiceAnswers) => {
+
+        const newAnswer : MultichoiceAnswers = isContestForAuthorizedOnly ? 
+            answer : { ...answer, points : undefined, attempts : undefined }
+
+        const newAnswers : TaskAnswers = { ...taskAnswers, multichoice : newAnswer }
+
+        setTaskAnswers(newAnswers)
     }
 
     useEffect(() => { 
@@ -119,10 +146,16 @@ export default () => {
             
             if ('error' in response) {
                 setContestFound(false)
+                setContestForAuthorizedOnly(false)
                 return
             }
             else {
                 setContestFound(true)
+
+                if ('authorized_only' in response && response.authorized_only) {
+                    setContestForAuthorizedOnly(true)
+                } 
+
                 return
             }
         }
@@ -281,8 +314,18 @@ export default () => {
                 {
                     (answer_type == 'choice') &&
                         <ChoiceAnswersEditor 
+                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
                             setChoiceAnswers={setChoiceAnswers}
                             choiceAnswers={taskAnswers.choice} 
+                        />
+                }
+
+                {
+                    (answer_type == 'multichoice') &&
+                        <MultichoiceEditor 
+                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            setAnswers={setMultichoiceAnswers}
+                            multichoiceAnswers={taskAnswers.multichoice} 
                         />
                 }
 
