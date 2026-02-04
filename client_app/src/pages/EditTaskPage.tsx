@@ -8,8 +8,9 @@ import DeletionDialog from "../components/deletionDialog"
 import { defaultTaskAnswers, type ChoiceAnswers, type CodeData, type MultichoiceAnswers, type TaskAnswers, type TextAnswer } from "./CreateTaskPage"
 import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
 import MultichoiceEditor from "../components/multichoiceEditor"
+import TextAnswersEditor from "../components/textAnswersEditor"
 
-type AnswerType = 'theory' | 'choice' | 'multichoice'
+type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text'
 
 type AnswerTypeNames = {
     [answer_type in AnswerType] : string
@@ -18,7 +19,8 @@ type AnswerTypeNames = {
 const answerTypeNames : AnswerTypeNames = {
     theory: "Теория",
     choice: "Выбор одного ответа",
-    multichoice : 'Выбор нескольких ответов'
+    multichoice : 'Выбор нескольких ответов',
+    text : 'Ввод текстового ответа'
 }
 
 interface TaskUpdate {
@@ -72,6 +74,16 @@ export default () => {
             answer : { ...answer, points : undefined, attempts : undefined }
 
         const newAnswers : TaskAnswers = { ...taskAnswers, multichoice : newAnswer }
+
+        setTaskAnswers(newAnswers)
+    }
+
+    const setTextAnswers = (answer : TextAnswer) => {
+
+        const newAnswer : TextAnswer = isContestForAuthorizedOnly ? 
+            answer : { ...answer, points : undefined, attempts : undefined }
+
+        const newAnswers : TaskAnswers = { ...taskAnswers, text : newAnswer }
 
         setTaskAnswers(newAnswers)
     }
@@ -349,6 +361,15 @@ export default () => {
                             setAnswers={setMultichoiceAnswers}
                             enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
                             multichoiceAnswers={taskAnswers.multichoice} 
+                        />
+                }
+
+                {
+                    (answer_type == 'text') &&
+                        <TextAnswersEditor
+                            setAnswers={setTextAnswers}
+                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            answers={taskAnswers.text} 
                         />
                 }
 

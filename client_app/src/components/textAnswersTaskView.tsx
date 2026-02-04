@@ -1,9 +1,8 @@
-import { Stack, Typography, Button, colors, Checkbox } from "@mui/material"
+import { Stack, Typography, Button, colors, TextField } from "@mui/material"
 import { green, red } from "@mui/material/colors"
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import type { MultichoiceAnswers } from "../pages/CreateTaskPage"
-
+import type { TextAnswer } from "../pages/CreateTaskPage"
 import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
 
@@ -61,28 +60,18 @@ function Wrong() {
 }
 
 interface Props {
-    taskData : MultichoiceAnswers
+    taskData : TextAnswer
 }
 
-export default ({ 'taskData' : { answers, attempts, points } } : Props) => {
+export default ({ 'taskData' : { correct_answers, attempts, points } } : Props) => {
 
-    const [selectedAnswers, setSelectedAnswers] = useState(answers.map(_ => false))
+    const [answer, setAnswer] = useState('')
 
     const [isCorrectAnswerShown, setCorrectAnswerShown] = useState(false)
 
     const { isTokenValid, getLogin } = useAuth()
 
-    const handleCorrectChange = (index: number) => {
-        
-        const newAnswers = [ ...selectedAnswers] 
-
-        newAnswers[index] = !newAnswers[index]
-
-        setCorrectAnswerShown(false)
-        setSelectedAnswers(newAnswers)
-    }
-
-    // useEffect(() => console.log(selectedAnswers), [selectedAnswers])
+    const isAnswerCorrect = () => correct_answers.filter(ans => ans.trim() == answer.trim()).length != 0
 
     const sendAnswer = () => {
 
@@ -111,31 +100,29 @@ export default ({ 'taskData' : { answers, attempts, points } } : Props) => {
                     fontSize='28px'
                     fontWeight='bold'
                 >
-                    Выберите один или несколько ответов:
+                    Введите текстовый ответ:
                 </Typography>
 
                 
+            <Stack spacing='10px' >
+
+                <TextField
+                    fullWidth
+                    multiline
+                    label="Введите ответ"
+                    value={answer}
+                    onChange={(e) => { 
+                        setAnswer(e.target.value)
+                        setCorrectAnswerShown(false)
+                    }}
+                />
                 {
-                    answers.map(({ answer, is_correct }, i) => {
-
-                    return    (
-                        <Stack key={i} spacing='10px' direction='row'>
-                            <Checkbox
-                                checked={selectedAnswers[i]}
-                                onChange={() => handleCorrectChange(i)}
-                            />
-
-                            <Typography variant="body1" fontSize='24px'>{ answer }</Typography>
-                            {
-                                isCorrectAnswerShown && is_correct && selectedAnswers[i] && <Correct />
-                            }
-                            {
-                                isCorrectAnswerShown && !is_correct && selectedAnswers[i] && <Wrong />
-                            }
-                        </Stack>
-                        )
-                    })
+                    isCorrectAnswerShown && isAnswerCorrect() && <Correct />
                 }
+                {
+                    isCorrectAnswerShown && !isAnswerCorrect() && <Wrong />
+                }
+            </Stack>
             </Stack>
 
             <Button
@@ -149,7 +136,7 @@ export default ({ 'taskData' : { answers, attempts, points } } : Props) => {
                     borderWidth : '2px',
                     borderRadius : '15px',
                     borderColor : colors.green[800],
-                    
+                    maxWidth : '30%',
                 }}
                 onClick={sendAnswer}
             >

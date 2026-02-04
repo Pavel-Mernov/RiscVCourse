@@ -8,6 +8,7 @@ import UrlText from "../components/urlText"
 import type { ChoiceAnswers, CodeData, MultichoiceAnswers, TextAnswer } from "./CreateTaskPage"
 import ChoiceTaskView from "../components/choiceTaskView"
 import MultichoiceTaskView from "../components/multichoiceTaskView"
+import TextAnswersTaskView from "../components/textAnswersTaskView"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -147,6 +148,13 @@ export default () => {
                     task.answer_type == 'multichoice' && task.task_data 
                         && ('answers' in task.task_data ) && !('correct_answer' in task.task_data) &&
                             <MultichoiceTaskView taskData={ task.task_data } />
+                    
+                }
+
+                {
+                    task.answer_type == 'text' && task.task_data 
+                        && ('correct_answers' in task.task_data ) &&
+                            <TextAnswersTaskView taskData={ task.task_data } />
                     
                 }
                 

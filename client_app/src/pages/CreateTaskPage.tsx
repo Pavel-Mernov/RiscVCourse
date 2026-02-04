@@ -5,8 +5,9 @@ import Navbar from "../components/navbar"
 import { useEffect, useState } from "react"
 import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
 import MultichoiceEditor from "../components/multichoiceEditor"
+import TextAnswersEditor from "../components/textAnswersEditor"
 
-type AnswerType = 'theory' | 'choice' | 'multichoice'
+type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text'
 
 type AnswerTypeNames = {
     [answer_type in AnswerType] : string
@@ -15,6 +16,7 @@ type AnswerTypeNames = {
 export type TaskAnswers = {
     choice : ChoiceAnswers,
     multichoice : MultichoiceAnswers
+    text : TextAnswer
 }
 
 export const defaultTaskAnswers : TaskAnswers = {
@@ -27,13 +29,17 @@ export const defaultTaskAnswers : TaskAnswers = {
             answer: "",
             is_correct: false
         }]
+    },
+    text : {
+        correct_answers : ['']
     }
 } as const
 
 const answerTypeNames : AnswerTypeNames = {
     theory: "Теория",
     choice: "Выбор одного ответа",
-    multichoice : 'Выбор нескольких ответов'
+    multichoice : 'Выбор нескольких ответов',
+    text : 'Ввод текстового ответа'
 }
 
 export interface ChoiceAnswers {
@@ -65,7 +71,7 @@ export interface CodeData {
 }
 
 export interface TextAnswer {
-  correct_answers : string[]
+  correct_answers : [string, ...string[]]
   points?: number
   attempts?: number
 }
@@ -115,6 +121,16 @@ export default () => {
             answer : { ...answer, points : undefined, attempts : undefined }
 
         const newAnswers : TaskAnswers = { ...taskAnswers, multichoice : newAnswer }
+
+        setTaskAnswers(newAnswers)
+    }
+
+    const setTextAnswers = (answer : TextAnswer) => {
+
+        const newAnswer : TextAnswer = isContestForAuthorizedOnly ? 
+            answer : { ...answer, points : undefined, attempts : undefined }
+
+        const newAnswers : TaskAnswers = { ...taskAnswers, text : newAnswer }
 
         setTaskAnswers(newAnswers)
     }
@@ -326,6 +342,15 @@ export default () => {
                             enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
                             setAnswers={setMultichoiceAnswers}
                             multichoiceAnswers={taskAnswers.multichoice} 
+                        />
+                }
+
+                {
+                    (answer_type == 'text') &&
+                        <TextAnswersEditor 
+                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            setAnswers={setTextAnswers}
+                            answers={taskAnswers.text} 
                         />
                 }
 
