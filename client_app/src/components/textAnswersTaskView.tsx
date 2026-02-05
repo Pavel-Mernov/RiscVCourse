@@ -71,9 +71,16 @@ export default ({ 'taskData' : { correct_answers, attempts, points } } : Props) 
 
     const { isTokenValid, getLogin } = useAuth()
 
+    const [emptyCodeError, setEmptyCodeError] = useState(false)
+
     const isAnswerCorrect = () => correct_answers.filter(ans => ans.trim() == answer.trim()).length != 0
 
     const sendAnswer = () => {
+
+        if (!answer || !answer.trim()) {
+            setEmptyCodeError(true)
+            return
+        }
 
         setCorrectAnswerShown(true)
 
@@ -110,10 +117,13 @@ export default ({ 'taskData' : { correct_answers, attempts, points } } : Props) 
                     fullWidth
                     multiline
                     label="Введите ответ"
+                    error={ emptyCodeError }
+                    helperText={ emptyCodeError ? 'Ответ не может быть пустым' : '' }
                     value={answer}
                     onChange={(e) => { 
                         setAnswer(e.target.value)
                         setCorrectAnswerShown(false)
+                        setEmptyCodeError(false)
                     }}
                 />
                 {

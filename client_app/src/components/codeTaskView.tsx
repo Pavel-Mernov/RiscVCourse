@@ -74,9 +74,16 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
 
     const [verdict, _] = useState<'OK' | 'WA' | 'RE' | 'TL' | undefined>(undefined)
 
+    const [emptyCodeError, setEmptyCodeError] = useState(false)
+
     const isAnswerCorrect = () => verdict == 'OK'
 
     const sendAnswer = () => {
+
+        if (!answer || !answer.trim()) {
+            setEmptyCodeError(true)
+            return
+        }
 
         // tests.forEach(async test => {
 
@@ -129,7 +136,7 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
                             fontWeight={700}
                             fontSize="25px"
                         >
-                            Ограничение по времени, кБ:
+                            Ограничение по памяти, кБ:
                         </Typography>
 
                         <Typography
@@ -161,12 +168,15 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
                     fullWidth
                     multiline
                     minRows={10}
-                    maxRows={20}
-                    label="Введите код"
+                    maxRows={15}
+                    error={ emptyCodeError }
+                    helperText={emptyCodeError ? 'Код не может быть пустым' : ''}
+                    label={"Введите код"}
                     value={answer}
                     onChange={(e) => { 
                         setAnswer(e.target.value)
                         setCorrectAnswerShown(false)
+                        setEmptyCodeError(false)
                     }}
                 />
                 {
