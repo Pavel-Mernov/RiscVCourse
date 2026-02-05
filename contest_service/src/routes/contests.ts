@@ -395,7 +395,7 @@ router.get('/tasks/:taskId/tests', authenticateTeacher, async (req, res) => {
 //       Test Endpoints      //
 // ------------------------- //
 
-router.post('/tasks/:taskId/tests', authenticateTeacher, async (req, res) => {
+router.post('/tasks/:taskId/tests', async (req, res) => {
 
   const { taskId } = req.params;
 

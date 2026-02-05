@@ -5,10 +5,11 @@ import { useEffect, useState } from "react"
 import { ContestNavPanel } from "../components/contestNavPanel"
 import { useAuth } from "../context/AuthContext"
 import UrlText from "../components/urlText"
-import type { ChoiceAnswers, CodeData, MultichoiceAnswers, TextAnswer } from "./CreateTaskPage"
+import type { ChoiceAnswers, CodeData, MultichoiceAnswers, Test, TextAnswer } from "./CreateTaskPage"
 import ChoiceTaskView from "../components/choiceTaskView"
 import MultichoiceTaskView from "../components/multichoiceTaskView"
 import TextAnswersTaskView from "../components/textAnswersTaskView"
+import CodeTaskView from "../components/codeTaskView"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -32,34 +33,59 @@ export default () => {
 
     const [task, setTask] = useState<Task | { error : any } | undefined>(undefined)
 
+    const [tests, setTests] = useState<Test[]>([])
+
     const navigate = useNavigate()
 
     const { isUserValidTeacher } = useAuth()
 
     useEffect(() => {
-        const fetchTask = async () => {
+        const fetchTaskAndTests = async () => {
             const PORT = 3002
             const serverIp = '130.49.150.32'
             const url = `http://${serverIp}:${PORT}/api/tasks/${id}`    
             const method = 'GET'
 
             try {
-            const response = await fetch(url, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            
-            })
-            .then(resp => resp.json()) 
+                const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                
+                })
+                .then(resp => resp.json()) 
 
-            setTask(response)
+                setTask(response)
+
+                if (response.answer_type != 'code') {
+                    return
+                }
+
+                const testUrl = `http://${serverIp}:${PORT}/api/tasks/${id}/tests` 
+
+                const testsData = await fetch(testUrl, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                
+                })
+                .then(resp => resp.json()) 
+
+                if ('error' in testsData) {
+                    console.log('Error fetch tests: ', testsData.error)
+                }
+
+                setTests(testsData as Test[])
             }
-            catch {}
+            catch (err : any) {
+                console.log(err)
+            }
         }
 
         try {
-            fetchTask()
+            fetchTaskAndTests()
         }
         catch {}
     }, [])    
@@ -155,6 +181,13 @@ export default () => {
                     task.answer_type == 'text' && task.task_data 
                         && ('correct_answers' in task.task_data ) &&
                             <TextAnswersTaskView taskData={ task.task_data } />
+                    
+                }
+
+                {
+                    task.answer_type == 'code' && task.task_data 
+                        &&
+                            <CodeTaskView taskData={task.task_data} tests={tests} />
                     
                 }
                 

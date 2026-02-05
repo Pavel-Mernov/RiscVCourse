@@ -6,8 +6,9 @@ import { useEffect, useState } from "react"
 import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
 import MultichoiceEditor from "../components/multichoiceEditor"
 import TextAnswersEditor from "../components/textAnswersEditor"
+import CodeTaskEditor from "../components/codeTaskEditor"
 
-type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text'
+type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
 type AnswerTypeNames = {
     [answer_type in AnswerType] : string
@@ -17,6 +18,7 @@ export type TaskAnswers = {
     choice : ChoiceAnswers,
     multichoice : MultichoiceAnswers
     text : TextAnswer
+    code : CodeData
 }
 
 export const defaultTaskAnswers : TaskAnswers = {
@@ -32,14 +34,16 @@ export const defaultTaskAnswers : TaskAnswers = {
     },
     text : {
         correct_answers : ['']
-    }
+    },
+    code : {}
 } as const
 
 const answerTypeNames : AnswerTypeNames = {
     theory: "Теория",
     choice: "Выбор одного ответа",
     multichoice : 'Выбор нескольких ответов',
-    text : 'Ввод текстового ответа'
+    text : 'Ввод текстового ответа',
+    code : 'Задача на программирование'
 }
 
 export interface ChoiceAnswers {
@@ -88,6 +92,12 @@ interface TaskCreate {
   task_data ?: CodeData | ChoiceAnswers | MultichoiceAnswers | TextAnswer
 }
 
+export interface Test {
+    id ?: string
+    input ?: string
+    expected_output : string
+}
+
 export default () => {
     const { isTokenValid, isUserValidTeacher, accessToken } = useAuth()
     const navigate = useNavigate()
@@ -104,6 +114,8 @@ export default () => {
     const [answer_type, setAnswerType] = useState<AnswerType>('theory')
 
     const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>(defaultTaskAnswers)
+
+    const [tests, setTests] = useState<Test[]>([])
 
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
         
@@ -131,6 +143,16 @@ export default () => {
             answer : { ...answer, points : undefined, attempts : undefined }
 
         const newAnswers : TaskAnswers = { ...taskAnswers, text : newAnswer }
+
+        setTaskAnswers(newAnswers)
+    }
+
+    const setCodeData = (answer : CodeData) => {
+
+        const newData : CodeData = isContestForAuthorizedOnly ? 
+            answer : { ...answer, points : undefined, attempts : undefined }
+
+        const newAnswers : TaskAnswers = { ...taskAnswers, code : newData }
 
         setTaskAnswers(newAnswers)
     }
@@ -244,7 +266,7 @@ export default () => {
                         const serverIp = '130.49.150.32'
                         const url = `http://${serverIp}:${PORT}/api/contests/${contestId}/tasks`
 
-                        const response = await fetch(url, {
+                        const addedTask = await fetch(url, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -252,9 +274,34 @@ export default () => {
                             },
                             body: JSON.stringify(newTask),
                             
-                        })  
+                        })
+                        .then( resp => resp.json() )
+
+                        if ('error' in addedTask) {
+                            return
+                        }
+
+                        const taskId = addedTask.id
                         
-                        console.log(JSON.stringify(response))
+                        console.log(JSON.stringify(addedTask))
+
+                        if (answer_type == 'code') {
+                            tests.forEach(async test => {
+
+                                const url = `http://${serverIp}:${PORT}/api/tasks/${taskId}/tests`
+
+                                await fetch(url, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer: ${accessToken}`,
+                                    },
+                                    body: JSON.stringify(test),
+                                    
+                                })
+                                .then( resp => resp.json() )
+                            })
+                        }
 
                         navigate(-1)
                     }
@@ -351,6 +398,17 @@ export default () => {
                             enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
                             setAnswers={setTextAnswers}
                             answers={taskAnswers.text} 
+                        />
+                }
+
+                {
+                    (answer_type == 'code') &&
+                        <CodeTaskEditor 
+                            enableSetPointsAndAttempts={isContestForAuthorizedOnly} 
+                            taskData={taskAnswers.code} 
+                            setData={setCodeData} 
+                            tests={tests} 
+                            setTests={setTests}                            
                         />
                 }
 

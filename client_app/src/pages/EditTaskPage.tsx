@@ -5,12 +5,13 @@ import { useNavigate, useParams, Navigate } from "react-router-dom"
 import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
 import DeletionDialog from "../components/deletionDialog"
-import { defaultTaskAnswers, type ChoiceAnswers, type CodeData, type MultichoiceAnswers, type TaskAnswers, type TextAnswer } from "./CreateTaskPage"
+import { defaultTaskAnswers, type ChoiceAnswers, type CodeData, type MultichoiceAnswers, type TaskAnswers, type Test, type TextAnswer } from "./CreateTaskPage"
 import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
 import MultichoiceEditor from "../components/multichoiceEditor"
 import TextAnswersEditor from "../components/textAnswersEditor"
+import CodeTaskEditor from "../components/codeTaskEditor"
 
-type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text'
+type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
 type AnswerTypeNames = {
     [answer_type in AnswerType] : string
@@ -20,7 +21,8 @@ const answerTypeNames : AnswerTypeNames = {
     theory: "Теория",
     choice: "Выбор одного ответа",
     multichoice : 'Выбор нескольких ответов',
-    text : 'Ввод текстового ответа'
+    text : 'Ввод текстового ответа',
+    code : 'Задача на программирование'
 }
 
 interface TaskUpdate {
@@ -58,6 +60,10 @@ export default () => {
 
     const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>( defaultTaskAnswers )
 
+    const [tests, setTests] = useState<Test[]>([])
+
+    const [deletedTests, setDeletedTests] = useState<Test[]>([])
+
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
         
         const newAnswer : ChoiceAnswers = isContestForAuthorizedOnly ? 
@@ -84,6 +90,16 @@ export default () => {
             answer : { ...answer, points : undefined, attempts : undefined }
 
         const newAnswers : TaskAnswers = { ...taskAnswers, text : newAnswer }
+
+        setTaskAnswers(newAnswers)
+    }
+
+    const setCodeData = (answer : CodeData) => {
+
+        const newData : CodeData = isContestForAuthorizedOnly ? 
+            answer : { ...answer, points : undefined, attempts : undefined }
+
+        const newAnswers : TaskAnswers = { ...taskAnswers, code : newData }
 
         setTaskAnswers(newAnswers)
     }
@@ -125,7 +141,7 @@ export default () => {
     }, [])
 
     useEffect(() => { 
-        const findTask = async () => {
+        const findTaskAndTests = async () => {
             if (!id) {
                 setTaskFound(false)
                 return
@@ -155,7 +171,7 @@ export default () => {
             }
             else {
 
-                console.log(response)
+                console.log(JSON.stringify(response))
 
                 setTaskFound(true)
 
@@ -168,11 +184,31 @@ export default () => {
 
                 setTaskAnswers({ ...taskAnswers, [response.answer_type] : response.task_data })
 
+                const testsUrl = `http://${serverIp}:${PORT}/api/tasks/${id}/tests`
+
+                const fetchedTests = await fetch(testsUrl, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer: ${accessToken}`,
+                },
+                
+                })
+                .then(resp => resp.json())  
+                
+                if ('error' in fetchedTests) {
+                    return
+                }
+
+                console.log(JSON.stringify(fetchedTests))
+
+                setTests(fetchedTests as Test[])
+
                 return
             }
         }
 
-        findTask()
+        findTaskAndTests()
     }, [])
 
     if (!id || !taskFound) {
@@ -252,6 +288,56 @@ export default () => {
                         
                         console.log(JSON.stringify(response))
 
+                        console.log(JSON.stringify(tests))
+
+                        tests.filter(test => !test.id).forEach(async (test) => {
+                            
+
+                            const postUrl = `http://${serverIp}:${PORT}/api/tasks/${id}/tests`
+
+                            await fetch(postUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer: ${accessToken}`,
+                                },
+                                body : JSON.stringify(test)
+                            })
+                        })
+
+                        tests.filter(test => !!test.id).forEach(async (test) => {
+                            
+                            const { id } = test
+
+                            const putUrl = `http://${serverIp}:${PORT}/api/tests/${id}`
+
+                            await fetch(putUrl, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer: ${accessToken}`,
+                                },
+                                body : JSON.stringify(test)
+                            })
+                        })
+
+                        deletedTests.forEach(async ({ id }) => {
+                            if (id == undefined || id == null) {
+                                return
+                            }
+
+                            const deleteUrl = `http://${serverIp}:${PORT}/api/tests/${id}`
+
+                            await fetch(deleteUrl, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer: ${accessToken}`,
+                                },
+                                
+                            })
+                        })
+
                         navigate(-1)
                     }
 
@@ -271,6 +357,36 @@ export default () => {
                         })  
                         
                         console.log(JSON.stringify(response))
+
+                        deletedTests.forEach(async ({ id }) => {
+                            const url = `http://${serverIp}:${PORT}/api/tests/${id}`
+
+                            const response = await fetch(url, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer: ${accessToken}`,
+                                },
+                                
+                            })
+                            
+                            console.log(response)
+                        })
+
+                        tests.forEach(async ({ id }) => {
+                            const url = `http://${serverIp}:${PORT}/api/tests/${id}`
+
+                            const response = await fetch(url, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer: ${accessToken}`,
+                                },
+                                
+                            })
+                            
+                            console.log(response)
+                        })
 
                         navigate(-2)
                     }
@@ -370,6 +486,23 @@ export default () => {
                             setAnswers={setTextAnswers}
                             enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
                             answers={taskAnswers.text} 
+                        />
+                }
+
+                {
+                    (answer_type == 'code') &&
+                        <CodeTaskEditor
+                            taskData={taskAnswers.code}
+                            setData={setCodeData}
+                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            tests={tests}
+                            setTests={setTests}
+                            deleteTest={(test : Test) => { 
+                                
+                                if (test.id) {
+                                    setDeletedTests([...deletedTests, test])
+                                }
+                            }} 
                         />
                 }
 
