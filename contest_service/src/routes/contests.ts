@@ -368,7 +368,7 @@ router.delete('/tasks/:taskId', authenticateTeacher, async (req, res) => {
 })
 
 // Получить тесты задачи
-router.get('/tasks/:taskId/tests', authenticateTeacher, async (req, res) => {
+router.get('/tasks/:taskId/tests', async (req, res) => {
   const { taskId } = req.params
 
   const requestString = `GET /tasks/${taskId}/tests`
@@ -395,7 +395,7 @@ router.get('/tasks/:taskId/tests', authenticateTeacher, async (req, res) => {
 //       Test Endpoints      //
 // ------------------------- //
 
-router.post('/tasks/:taskId/tests', async (req, res) => {
+router.post('/tasks/:taskId/tests', authenticateTeacher, async (req, res) => {
 
   const { taskId } = req.params;
 
