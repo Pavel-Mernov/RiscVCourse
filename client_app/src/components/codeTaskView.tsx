@@ -5,7 +5,6 @@ import { green, red } from "@mui/material/colors"
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import type { CodeData, Test } from "../pages/CreateTaskPage"
-import type { data } from "react-router-dom"
 
 function Correct() {
     return (
@@ -79,18 +78,22 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
 
     const isAnswerCorrect = () => verdict == 'OK'
 
-    const testsShown = tests_shown ?? 0
+    const testsShown = tests_shown ?? 3
 
-    const sendAnswer = () => {
+    const sendAnswer = async () => {
 
         if (!answer || !answer.trim()) {
             setEmptyCodeError(true)
             return
         }
 
-        setVerdict('OK')
+        setCorrectAnswerShown(false)
 
-        tests.forEach(async ({ input,  }) => {
+        setVerdict(undefined);
+
+        await (async () => {
+
+        tests.forEach(async ({ input, expected_output }) => {
             const body = {
                 input : input,
                 code : answer,
@@ -110,8 +113,28 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
             })
             .then(resp => resp.json())
 
-            console.log(JSON.stringify(data))
+            console.log(data)
+
+            if ('output' in data && 'error' in data) {
+                if (data.output.trim() !== expected_output) {
+                    setVerdict('WA')
+                    return
+                }
+            }
+            else {
+                setVerdict('RE')
+
+                if ('error' in data) {
+                    console.log('Error: ' + data.error)
+                }
+            }
         })
+
+        })()
+
+        if (!verdict) {
+            setVerdict('OK')
+        }
 
         setCorrectAnswerShown(true)
 
@@ -211,7 +234,7 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                { tests.map((row, index) => (
+                { tests.slice(0, testsShown).map((row, index) => (
                     <TableRow
                     key={index}
                     sx={{
@@ -257,10 +280,10 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
                     }}
                 />
                 {
-                    isCorrectAnswerShown && isAnswerCorrect() && <Correct />
+                    isCorrectAnswerShown && verdict && isAnswerCorrect() && <Correct />
                 }
                 {
-                    isCorrectAnswerShown && !isAnswerCorrect() && <Wrong />
+                    isCorrectAnswerShown && verdict && !isAnswerCorrect() && <Wrong />
                 }
             </Stack>
             </Stack>
