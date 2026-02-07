@@ -1,16 +1,16 @@
-import { codeHelloWorld } from "./scripts/helloworld"
-import { readFromFileAndSum } from "./scripts/readFromFileAndSum"
-import { runTest } from "./runTest"
-import { sumFromConsole } from "./scripts/sumFromConsole"
-import { Test } from "../types"
-import { strToInt } from "./scripts/strToInt"
-import { twoIntsFromStr } from "./scripts/twoIntsFromStr"
-import { readStrFromFile } from "./scripts/readStrFromFile"
+import { codeHelloWorld } from "./scripts/helloworld.ts"
+import { readFromFileAndSum } from "./scripts/readFromFileAndSum.ts"
+import { runTest } from "./runTest.ts"
+import { sumFromConsole } from "./scripts/sumFromConsole.ts"
+import type { Test } from "../types.ts"
+import { strToInt } from "./scripts/strToInt.ts"
+import { twoIntsFromStr } from "./scripts/twoIntsFromStr.ts"
+import { readStrFromFile } from "./scripts/readStrFromFile.ts"
 
 
 const testCases : Test[] = [
     
-    /*
+    
     {
         body : {
             code : codeHelloWorld,
@@ -34,7 +34,7 @@ const testCases : Test[] = [
         },
         result : '-69'
     },
-    */
+    
 /*
     {
         body : {
@@ -90,7 +90,7 @@ const testCases : Test[] = [
        result: -1625,
    },
 */   
-
+/*
   {
       body: {
           code: twoIntsFromStr,
@@ -109,7 +109,7 @@ const testCases : Test[] = [
       },
       result: "17"
   },
-       
+*/       
 ]
 
 const newTestCases : Test[] = Array(5).map(
@@ -125,7 +125,11 @@ const newTestCases : Test[] = Array(5).map(
 
 const PORT = 3000
 
-const url = `http://localhost:${PORT}/api/compile`
+const serverIp = 
+            'localhost' 
+            // '130.49.150.32'
+
+const url = `http://${serverIp}:${PORT}/api/compile`
 
 const runTestCases = () => {
     testCases.forEach(test => runTest(test, url))

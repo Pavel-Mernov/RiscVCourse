@@ -76,24 +76,7 @@ const readCurrentDir = async () => {
 
 
 async function redirectInput(filename : string, inputData : string) {
-  
-  
-  // создаем поток записи в файл
-  const output = fileSystem.createWriteStream(filename);
-
-  // записываем входные данные в поток
-  output.write(inputData, (error) => {
-    if (error) {
-      throw error
-    }
-  })
-
-  output.end()
-
-  // throw { error : `wrote successfully to file: ${filename}` }
-
-  // перенаправляем ввод из консоли в файл
-  process.stdin.pipe(output);
+  await fs.writeFile(filename, inputData, 'utf8');
   
 }
 

@@ -1,10 +1,11 @@
 import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
-import { Stack, Typography, TextField, Button, colors } from "@mui/material"
+import { Stack, Typography, TextField, Button, colors, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 import { green, red } from "@mui/material/colors"
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import type { CodeData, Test } from "../pages/CreateTaskPage"
+import type { data } from "react-router-dom"
 
 function Correct() {
     return (
@@ -64,7 +65,7 @@ interface Props {
     taskData : CodeData
 }
 
-export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points } } : Props) => {
+export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown }, tests } : Props) => {
 
     const [answer, setAnswer] = useState('')
 
@@ -72,11 +73,13 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
 
     const { isTokenValid, getLogin } = useAuth()
 
-    const [verdict, _] = useState<'OK' | 'WA' | 'RE' | 'TL' | undefined>(undefined)
+    const [verdict, setVerdict] = useState<'OK' | 'WA' | 'RE' | 'TL' | undefined>(undefined)
 
     const [emptyCodeError, setEmptyCodeError] = useState(false)
 
     const isAnswerCorrect = () => verdict == 'OK'
+
+    const testsShown = tests_shown ?? 0
 
     const sendAnswer = () => {
 
@@ -85,9 +88,30 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
             return
         }
 
-        // tests.forEach(async test => {
+        setVerdict('OK')
 
-        // })
+        tests.forEach(async ({ input,  }) => {
+            const body = {
+                input : input,
+                code : answer,
+            }
+
+            const serverIp = '130.49.150.32'
+            const PORT = 3000
+            const url = `http://${serverIp}:${PORT}/api/compile`    
+            const method = 'POST'
+
+            const data = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body : JSON.stringify(body)
+            })
+            .then(resp => resp.json())
+
+            console.log(JSON.stringify(data))
+        })
 
         setCorrectAnswerShown(true)
 
@@ -149,6 +173,59 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
                     </Typography>
                 }
             </Stack>
+
+            <TableContainer
+                component={Paper}
+                sx={{ maxWidth: '60%', margin: 'auto', mt: 4, borderRadius: 2, overflow: 'hidden' }}
+            >
+            <Table>
+                <TableHead>
+                <TableRow
+                    sx={{
+                    backgroundColor: '#f5f5f5',
+                    MozBorderRadiusTopright: '12px', // Работает для TableContainer, для TableRow нет
+                    MozBorderRadiusTopleft: '12px', // Работает для TableContainer, для TableRow нет
+                    }}
+                >
+                    <TableCell
+                        sx={{
+                            fontWeight: 'bold',
+                            
+                            borderTopLeftRadius: '12px',
+                            borderBottomLeftRadius: '12px',
+                            backgroundColor: '#e0e0e0',
+                        }}
+                    >
+                    Входные данные
+                    </TableCell>
+                    <TableCell
+                    sx={{
+                        fontWeight: 'bold',
+                        borderTopRightRadius: '12px',
+                        borderBottomRightRadius: '12px',
+                        backgroundColor: '#e0e0e0',
+                    }}
+                    >
+                    Выходные данные
+                    </TableCell>
+                </TableRow>
+                </TableHead>
+                <TableBody>
+                { tests.map((row, index) => (
+                    <TableRow
+                    key={index}
+                    sx={{
+                        borderTop: index === 0 ? '1px solid #444' : undefined,
+                        borderBottom: index === tests.length - 1 ? '1px solid #444' : undefined,
+                    }}
+                    >
+                    <TableCell sx={{ whiteSpace: 'pre-line', fontSize : '20px' }} >{row.input}</TableCell>
+                    <TableCell sx={{ whiteSpace: 'pre-line', fontSize : '20px' }} >{row.expected_output}</TableCell>
+                    </TableRow>
+                ))}
+                </TableBody>
+            </Table>
+            </TableContainer>
 
             <Stack 
                 spacing='20px'

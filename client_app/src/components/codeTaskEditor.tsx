@@ -139,6 +139,15 @@ const CodeTaskEditor: React.FC<Props> = ({ taskData, setData, enableSetPointsAnd
         Добавить тест
       </Button>
 
+    
+    <TextField
+        label="Количество показывать тестов"
+        value={taskData.tests_shown ?? ""}
+        onChange={(e) => handlePositiveInt('tests_shown', e.target.value)}
+        inputProps={{ inputMode: "numeric" }}
+    />
+    
+
     { enableSetPointsAndAttempts &&
       <TextField
         label="Количество баллов"

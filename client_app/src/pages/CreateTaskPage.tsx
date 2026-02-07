@@ -72,6 +72,7 @@ export interface CodeData {
   memory_limit_kb?: number
   points?: number
   attempts?: number
+  tests_shown?: number
 }
 
 export interface TextAnswer {
