@@ -126,7 +126,7 @@ async function runCode(res : Response, code : string, input ?: string, inputFile
 
 
         
-        const cmd = `java -jar "${RARS_JAR_PATH}" "${tempPath}" nc ${redirectString}`;
+        const cmd = `java -Djava.util.prefs.userRoot=/tmp -jar "${RARS_JAR_PATH}" "${tempPath}" nc ${redirectString}`;
 
         logger.info(`Procceeding command: ${cmd}`)
 
