@@ -73,6 +73,8 @@ export interface CodeData {
   points?: number
   attempts?: number
   tests_shown?: number
+  input_data_format ?: string
+  output_data_format ?: string
 }
 
 export interface TextAnswer {

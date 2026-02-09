@@ -42,6 +42,10 @@ paths:
                   type: string
                   description: Имя файла с входными данными для программы
 
+                timeout:
+                  type: number
+                  description: Ограничение по времени для исполнения кода
+
       responses:
         '200':
           description: Результат компиляции
@@ -90,7 +94,10 @@ paths:
                 inputFilename:
                   type: string
                   description: Имя файла с входными данными
-
+                timeout:
+                  type: number
+                  description: Ограничение по времени для исполнения кода
+                  
       responses:
         '200':
           description: Результат компиляции

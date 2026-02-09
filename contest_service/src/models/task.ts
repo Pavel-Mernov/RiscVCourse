@@ -24,7 +24,9 @@ export interface CodeData {
   memory_limit_kb?: number
   points?: number
   attempts?: number
-  tests_shown ?: number
+  tests_shown?: number
+  input_data_format ?: string
+  output_data_format ?: string
 }
 
 export interface TextAnswer {

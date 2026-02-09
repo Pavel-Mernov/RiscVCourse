@@ -2,10 +2,10 @@ import express from 'express';
 
 import * as path from 'path';
 
-import fileSystem, { mkdtemp } from "fs"
+import { mkdtemp } from "fs"
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
-import multer, { diskStorage, memoryStorage } from 'multer';
+import multer, { memoryStorage } from 'multer';
 import logger from './logger/logger.js';
 import client from 'prom-client'
 
@@ -23,6 +23,7 @@ type CodeRequest = {
         code : string,
         input ?: string,
         filename ?: string,
+        timeout ?: string
         // type ?: 'stdin' | 'file' | 'both',
     }
 }
@@ -33,9 +34,11 @@ type RunFileRequest = {
         
         input ?: string,
         inputFilename ?: string,
+        timeout ?: string
         // type ?: 'stdin' | 'file' | 'both',
     }
-} & Record<string, any>
+    [key : string] : any
+}
 
 type Response = {
     status : (status : number) => Response,
@@ -80,7 +83,7 @@ async function redirectInput(filename : string, inputData : string) {
   
 }
 
-async function runCode(res : Response, code : string, input ?: string, inputFilename ?: string) {
+async function runCode(res : Response, code : string, input ?: string, inputFilename ?: string, timeout ?: number) {
     let tempDir = ''
 
     if ((inputFilename) && !input) {
@@ -134,7 +137,7 @@ async function runCode(res : Response, code : string, input ?: string, inputFile
 
         // const currentDirectory = await readCurrentDir()
 
-        exec(cmd, { timeout: 5000 }, async (error, stdout, stderr) => {
+        exec(cmd, { timeout: timeout ?? 1000 }, async (error, stdout, stderr) => {
             logger.info("Stdout : " + stdout)
 
             if (error) {
@@ -170,10 +173,11 @@ async function compile(req : CodeRequest, res : Response) {
         code, 
         input, 
         filename, 
+        timeout
         // type 
     } = req.body;
     
-    const requestMessage = `POST /api/compile. Code: ${code}. Input: ${input}. Filename: ${filename}`
+    const requestMessage = `POST /api/compile. Code: ${code}. Input: ${input}. Filename: ${filename}. Timeout: ${timeout}`
 
     logger.info(requestMessage)
 
@@ -186,7 +190,16 @@ async function compile(req : CodeRequest, res : Response) {
         return res.status(400).json({ error });
     }
 
-    return await runCode(res, code, input, filename)
+    if (timeout && !(Array.from(timeout).every(c => '0123456789'.includes(c)))) {
+        const error = 'Значение timeout не является целым неотрицательным числом'
+
+        logger.error(error)
+        return res.status(400).json({ error });        
+    }
+
+    const timeoutNumber = timeout ? parseInt(timeout) : undefined
+
+    return await runCode(res, code, input, filename, timeoutNumber)
 }
 
 // Настройка хранения файлов
@@ -200,7 +213,8 @@ async function compileFile(req : RunFileRequest, res : Response) {
     const { file,
     body:  {
         input,
-        inputFilename
+        inputFilename,
+        timeout
     }} = req
 
     const requestMessage = `POST /api/compile/file. File name: ${inputFilename}. Input: ${input}.`
@@ -213,9 +227,19 @@ async function compileFile(req : RunFileRequest, res : Response) {
         return res.status(400).json({ error })
     }
 
+    if (timeout && !(Array.from(timeout).every(c => '0123456789'.includes(c)))) {
+        const error = 'Значение timeout не является целым неотрицательным числом'
+
+        logger.error(error)
+        return res.status(400).json({ error });        
+    }
+
+    const timeoutNumber = timeout ? parseInt(timeout) : undefined
+
     const code = file.buffer.toString('utf-8')
 
-    return await runCode(res, code, input, inputFilename)
+
+    return await runCode(res, code, input, inputFilename, timeoutNumber)
 }
 
 const app = express();
