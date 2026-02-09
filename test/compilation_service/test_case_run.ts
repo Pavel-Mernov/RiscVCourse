@@ -14,6 +14,7 @@ const testCases : Test[] = [
     {
         body : {
             code : codeHelloWorld,
+            timeout : '1500'
         },
         result : 'Hello, World!'
     },
@@ -23,6 +24,7 @@ const testCases : Test[] = [
             code : sumFromConsole,
             input : `12
             9`,
+            timeout : '1500',
         },
         result : '21'
     },  
@@ -31,6 +33,36 @@ const testCases : Test[] = [
             code : sumFromConsole,
             input : `-78
             9`,
+        },
+        result : '-69'
+    },
+
+    {
+        body : {
+            code : sumFromConsole,
+            input : `-78
+            9`,
+            timeout : 1500
+        },
+        result : '-69'
+    },
+
+    {
+        body : {
+            code : sumFromConsole,
+            input : `-78
+            9`,
+            timeout : '1200'
+        },
+        result : '-69'
+    },
+
+    {
+        body : {
+            code : sumFromConsole,
+            input : `-78
+            9`,
+            timeout : 'a750'
         },
         result : '-69'
     },
