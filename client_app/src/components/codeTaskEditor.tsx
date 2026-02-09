@@ -57,8 +57,8 @@ const CodeTaskEditor: React.FC<Props> = ({ taskData, setData, enableSetPointsAnd
   return (
     <Box display="flex" flexDirection="column" gap={2}>
 
-    {
-    /*
+    
+    
       <TextField
         label="Ограничение по времени исполнения, мс"
         value={taskData.points ?? ""}
@@ -69,11 +69,29 @@ const CodeTaskEditor: React.FC<Props> = ({ taskData, setData, enableSetPointsAnd
       <TextField
         label="Ограничение по памяти, кБ"
         value={taskData.points ?? ""}
-        onChange={(e) => handlePositiveInt('time_limit_ms', e.target.value)}
+        onChange={(e) => handlePositiveInt('memory_limit_kb', e.target.value)}
         inputProps={{ inputMode: "numeric" }}
       />
-    */
-    }
+
+      <TextField
+        label="Формат входных данных"
+        value={taskData.input_data_format ?? ""}
+        multiline
+        minRows={5}
+        maxRows={8}
+        onChange={(e) => setData({...taskData, input_data_format : e.target.value })}
+        
+      />
+
+      <TextField
+        label="Формат выходных данных"
+        value={taskData.output_data_format ?? ""}
+        multiline
+        minRows={3}
+        maxRows={5}
+        onChange={(e) => setData({...taskData, output_data_format : e.target.value })}
+        
+      />
 
       {tests.map(({ input, expected_output }, index) => (
         <Box
@@ -82,6 +100,7 @@ const CodeTaskEditor: React.FC<Props> = ({ taskData, setData, enableSetPointsAnd
           flexDirection="column"
           border="1px solid #ccc"
           padding='20px'
+          
           borderRadius={1}
           gap={1}
           width='60%'
@@ -141,7 +160,7 @@ const CodeTaskEditor: React.FC<Props> = ({ taskData, setData, enableSetPointsAnd
 
     
     <TextField
-        label="Количество показывать тестов"
+        label="Показывать тестов"
         value={taskData.tests_shown ?? ""}
         onChange={(e) => handlePositiveInt('tests_shown', e.target.value)}
         inputProps={{ inputMode: "numeric" }}

@@ -64,7 +64,8 @@ interface Props {
     taskData : CodeData
 }
 
-export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown }, tests } : Props) => {
+export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
+        tests } : Props) => {
 
     const [answer, setAnswer] = useState('')
 
@@ -153,7 +154,48 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
         <Stack
             spacing='80px'
         >
+            { input_data_format &&
+                <Stack
+                    spacing='10px'
+                >
+                    <Typography
+                        variant="h2"
+                        fontWeight='bold'
+                        fontSize='28px'
+                    >
+                        Формат входных данных
+                    </Typography>
 
+                    <Typography
+                        variant="body1"                        
+                        fontSize='24px'
+                    >
+                        { input_data_format }
+                    </Typography>
+                </Stack>
+            }
+
+            { output_data_format &&
+                <Stack
+                    spacing='10px'
+                >
+                    <Typography
+                        variant="h2"
+                        fontWeight='bold'
+                        fontSize='28px'
+                    >
+                        Формат выходных данных
+                    </Typography>
+
+                    <Typography
+                        variant="body1"                        
+                        fontSize='24px'
+                    >
+                        { output_data_format }
+                    </Typography>
+                </Stack>
+            }
+            
             <Stack
                 spacing='20px'
             >
