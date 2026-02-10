@@ -1,0 +1,1 @@
+export const notACode = "Not a code"

@@ -4,13 +4,14 @@ import { runTest } from "./runTest.ts"
 import { sumFromConsole } from "./scripts/sumFromConsole.ts"
 import type { Test } from "../types.ts"
 import { strToInt } from "./scripts/strToInt.ts"
+import { notACode } from "./scripts/notACode.ts"
 import { twoIntsFromStr } from "./scripts/twoIntsFromStr.ts"
 import { readStrFromFile } from "./scripts/readStrFromFile.ts"
 
 
 const testCases : Test[] = [
     
-    
+/*    
     {
         body : {
             code : codeHelloWorld,
@@ -66,6 +67,27 @@ const testCases : Test[] = [
         },
         result : '-69'
     },
+*/
+    {
+        body : {
+            code : notACode,
+        },
+        result : '',
+    },
+    {
+        body : {
+            code : notACode,
+            input : 'hi'
+        },
+        result : '',
+    },
+    {
+        body : {
+            code : notACode,
+            filename : 'in.txt'
+        },
+        result : '',
+    }
     
 /*
     {
@@ -158,8 +180,8 @@ const newTestCases : Test[] = Array(5).map(
 const PORT = 3000
 
 const serverIp = 
-            'localhost' 
-            // '130.49.150.32'
+            // 'localhost' 
+            '130.49.150.32'
 
 const url = `http://${serverIp}:${PORT}/api/compile`
 

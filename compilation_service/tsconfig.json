@@ -5,9 +5,13 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "target": "es2022",
-    "types": [],
+    "types": ["node", "jest"],
     "outDir": "./dist",
     "rootDir": "./src",
+
+    "allowImportingTsExtensions": true,
+
+    "noEmit": true,
 
     "forceConsistentCasingInFileNames": true,
 

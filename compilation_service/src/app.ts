@@ -6,7 +6,7 @@ import { mkdtemp } from "fs"
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import multer, { memoryStorage } from 'multer';
-import logger from './logger/logger.js';
+import logger from './logger/logger.ts';
 import client from 'prom-client'
 
 import cors from 'cors'
@@ -45,7 +45,7 @@ type Response = {
     json : (obj : object) => Response,
 }
 
-async function makeTempDir(dirname : string, suffix : string, relpath ?: string,) : Promise<string> {
+export async function makeTempDir(dirname : string, suffix : string, relpath ?: string,) : Promise<string> {
     const baseDir = (!relpath) ? dirname : path.resolve(dirname, relpath)
 
     const tempDirName = path.join(baseDir, suffix)
@@ -58,32 +58,13 @@ async function makeTempDir(dirname : string, suffix : string, relpath ?: string,
     });
 }
 
-/*
-const readCurrentDir = async () => {
-    try {
-        const currentDirectory = process.cwd();
-        const files = await fs.readdir(currentDirectory);
-        const resultString = files.join(', ');
-        
-        return resultString
-    } catch (err) {
-        const errorString = 'Ошибка при чтении каталога: ' + err
 
-        console.error(errorString);
-
-        return errorString
-    }
-  
-}
-    */
-
-
-async function redirectInput(filename : string, inputData : string) {
+export async function redirectInput(filename : string, inputData : string) {
   await fs.writeFile(filename, inputData, 'utf8');
   
 }
 
-async function runCode(res : Response, code : string, input ?: string, inputFilename ?: string, timeout ?: number) {
+export async function runCode(res : Response, code : string, input ?: string, inputFilename ?: string, timeout ?: number) {
     let tempDir = ''
 
     if ((inputFilename) && !input) {
@@ -167,7 +148,7 @@ async function runCode(res : Response, code : string, input ?: string, inputFile
 }
 
 // Handler for POST: /compile endpoint
-async function compile(req : CodeRequest, res : Response) {
+export async function compile(req : CodeRequest, res : Response) {
 
     const { 
         code, 
@@ -185,6 +166,13 @@ async function compile(req : CodeRequest, res : Response) {
 
     if (!code) {
         const error = 'Нет кода в теле запроса'
+
+        logger.error(error)
+        return res.status(400).json({ error });
+    }
+
+    if ((filename) && !input) {
+        const error = 'Нет входных данных для имени файла в теле запроса'
 
         logger.error(error)
         return res.status(400).json({ error });
@@ -208,6 +196,7 @@ const storage = memoryStorage()
 // Инициализируем multer
 const upload = multer({ storage });
 
+/*
 // Handler for POST: api/compile/file endpoint
 async function compileFile(req : RunFileRequest, res : Response) {
     const { file,
@@ -241,8 +230,9 @@ async function compileFile(req : RunFileRequest, res : Response) {
 
     return await runCode(res, code, input, inputFilename, timeoutNumber)
 }
+*/
 
-const app = express();
+export const app = express();
 const collectDefaultMetrics = client.collectDefaultMetrics;
 
 // Запускаем сбор стандартных метрик Node.js (CPU, память и т.д.)
@@ -289,7 +279,7 @@ app.use((req, res, next) => {
   next();
 });
 
-const PORT = 3000;
+
 
 // app.use(bodyParser.text({ type: '*/*' }));
 app.use(express.json());
@@ -300,11 +290,6 @@ app.get('/metrics', async (_, res) => {
   res.end(await client.register.metrics());
 });
 
-app.post('/api/compile/file', upload.single('file'), compileFile);
+// app.post('/api/compile/file', upload.single('file'), compileFile);
 
 app.post('/api/compile', compile);
-
-app.listen(PORT, () => {
-  logger.info(`Server started on PORT ${PORT}`);
-});
-
