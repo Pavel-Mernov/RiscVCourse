@@ -61,14 +61,14 @@ const CodeTaskEditor: React.FC<Props> = ({ taskData, setData, enableSetPointsAnd
     
       <TextField
         label="Ограничение по времени исполнения, мс"
-        value={taskData.points ?? ""}
+        value={taskData.time_limit_ms ?? ""}
         onChange={(e) => handlePositiveInt('time_limit_ms', e.target.value)}
         inputProps={{ inputMode: "numeric" }}
       />
 
       <TextField
         label="Ограничение по памяти, кБ"
-        value={taskData.points ?? ""}
+        value={taskData.memory_limit_kb ?? ""}
         onChange={(e) => handlePositiveInt('memory_limit_kb', e.target.value)}
         inputProps={{ inputMode: "numeric" }}
       />
