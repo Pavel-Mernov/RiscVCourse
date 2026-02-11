@@ -1,30 +1,13 @@
-# Используем базовый образ для вашего приложения : node
-FROM node:18
 
-# Установим рабочую директорию
+FROM node:18 as app
+
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# Копируем package.json и package-lock.json
-COPY package*.json ./
-
-# Установим зависимости
-RUN npm install
-
-RUN apt-get update && apt-get install -y openjdk-17-jdk && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Проверим установку
-RUN java -version
-
-# Копируем все исходные файлы
+COPY --from=app /usr/local /usr/local
 COPY . .
 
-COPY rars ./
-
-# Компилируем TypeScript в JavaScript
+RUN npm install
 RUN npm run build
 
-# Запускаем приложение
-CMD ["node", "dist/server.js"]  # Запуск скомпилированного JavaScript
-
-EXPOSE 3000
+CMD ["node", "dist/server.js"]
