@@ -96,38 +96,47 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
 
         tests.forEach(async ({ input, expected_output }) => {
             const body = {
-                input : input,
+                input,
                 code : answer,
             }
+
+            console.log(input)
 
             const serverIp = '130.49.150.32'
             const PORT = 3000
             const url = `http://${serverIp}:${PORT}/api/compile`    
             const method = 'POST'
 
-            const data = await fetch(url, {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body : JSON.stringify(body)
-            })
-            .then(resp => resp.json())
+            try {
+                const data = await fetch(url, {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body : JSON.stringify(body)
+                })
+                .then(resp => resp.json())
 
-            console.log(data)
+                console.log(data)
 
-            if ('output' in data && 'error' in data) {
-                if (data.output.trim() !== expected_output) {
-                    setVerdict('WA')
-                    return
+                if ('output' in data && 'error' in data) {
+                    if (data.output.trim() !== expected_output) {
+                        setVerdict('WA')
+                        return
+                    }
+                }
+                else {
+                    setVerdict('RE')
+
+                    if ('error' in data) {
+                        console.log('Error: ' + data.error)
+                    }
                 }
             }
-            else {
-                setVerdict('RE')
+            catch (err : any) {
+                console.log((err as Error).message)
 
-                if ('error' in data) {
-                    console.log('Error: ' + data.error)
-                }
+                setVerdict('RE')
             }
         })
 

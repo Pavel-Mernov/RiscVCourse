@@ -1,46 +1,39 @@
+
 {
   "compilerOptions": {
-    
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+
+
     "esModuleInterop": true,
-    "target": "es2022",
+    "target": "esnext",
     "types": ["node", "jest"],
     "outDir": "./dist",
     "rootDir": "./src",
+    "resolveJsonModule": true,
 
-    "allowImportingTsExtensions": true,
+    "noEmit": false,
+    "allowJs": false,
+    "allowImportingTsExtensions": false,
 
-    "noEmit": true,
-
-    "forceConsistentCasingInFileNames": true,
-
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
-
-    // Other Outputs
+    "emitDeclarationOnly": false,
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
 
-    // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    // "noEmit": false,
-    // "allowImportingTsExtensions": true,
 
-
-    // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
     "verbatimModuleSyntax": false,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  
+  "include": ["src/**/*.ts"],
+
   "exclude": ["node_modules"]
 }

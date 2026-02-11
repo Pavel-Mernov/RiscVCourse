@@ -46,10 +46,15 @@ docker-compose.override.yml
 coverage/
 *.lcov
 
+.jest-temp/
+
 # Temporary
 tmp/
 temp/
+temp-*/
 
 # Logs
 logs/
 *.log
+
+

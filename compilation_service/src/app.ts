@@ -6,7 +6,7 @@ import { mkdtemp } from "fs"
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import multer, { memoryStorage } from 'multer';
-import logger from './logger/logger.ts';
+import logger from './logger/logger';
 import client from 'prom-client'
 
 import cors from 'cors'

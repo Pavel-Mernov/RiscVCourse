@@ -5,8 +5,8 @@
   "description": "",
   "main": "./src/server.ts",
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/main.js",
+    "build": "tsc && tsc-esm-fix dist",
+    "start": "node dist/server.js",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
@@ -32,6 +32,7 @@
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",
     "ts-node": "^10.9.2",
+    "tsc-esm-fix": "^3.1.2",
     "typescript": "^5.9.3"
   }
 }
