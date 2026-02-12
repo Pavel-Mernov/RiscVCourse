@@ -2,23 +2,23 @@
 import { Router } from 'express'
 import { v4 as uuid } from 'uuid'
 import type { Contest, ContestCreate } from '../models/contest'
-import type { Task, TaskCreate } from '../models/task.js'
-import type { Test } from '../models/test'
-import { getContests } from '../sql/scripts/contests/getContests.js'
-import { sqlPool } from '../index.js'
-import { createContest } from '../sql/scripts/contests/createContest.js'
-import { deleleContest } from '../sql/scripts/contests/deleteContest.js'
-import { updateContest } from '../sql/scripts/contests/updateContest.js'
-import { getTasks } from '../sql/scripts/tasks/getTasks.js'
-import { createTask } from '../sql/scripts/tasks/createTask.js'
-import { updateTask } from '../sql/scripts/tasks/updateTask.js'
-import { deleteTask } from '../sql/scripts/tasks/deleteTask.js'
-import { getTests } from '../sql/scripts/tests/getTests.js'
-import { updateTest } from '../sql/scripts/tests/updateTest.js'
-import { deleteTest } from '../sql/scripts/tests/deleteTest.js'
-import { createTest } from '../sql/scripts/tests/createTest.js'
-import { authenticate, authenticateTeacher } from './authenticate.js'
-import logger from '../logger/logger.js'
+import type { Task, TaskCreate } from '../models/task'
+import type { Test } from '../models/test_model'
+import { getContests } from '../sql/scripts/contests/getContests'
+import { sqlPool } from '../sql/sqlPool'
+import { createContest } from '../sql/scripts/contests/createContest'
+import { deleteContest } from '../sql/scripts/contests/deleteContest'
+import { updateContest } from '../sql/scripts/contests/updateContest'
+import { getTasks } from '../sql/scripts/tasks/getTasks'
+import { createTask } from '../sql/scripts/tasks/createTask'
+import { updateTask } from '../sql/scripts/tasks/updateTask'
+import { deleteTask } from '../sql/scripts/tasks/deleteTask'
+import { getTests } from '../sql/scripts/tests/getTests'
+import { updateTest } from '../sql/scripts/tests/updateTest'
+import { deleteTest } from '../sql/scripts/tests/deleteTest'
+import { createTest } from '../sql/scripts/tests/createTest'
+import { authenticate, authenticateTeacher } from './authenticate'
+import logger from '../logger/logger'
 
 const router = Router()
 
@@ -169,12 +169,18 @@ router.delete('/contests/:contestId', authenticateTeacher, async (req, res) => {
     // Удаляем все задачи контеста
     const tasks = await getTasks()
     .then(tasks => tasks.filter(t => t.contest_id == contestId))
+
+    // Ищем все тесты, связанные с задачами данного контеста
+    const tests = await getTests()
+      .then(tests => tests.filter(t => tasks.map(task => task.id).includes(t.task_id)))
     
+    tests.forEach(async t => await deleteTest(t.id))
+
     tasks.forEach(async t => {
       await deleteTask(t.id)
     })
 
-    await deleleContest(contestId)
+    await deleteContest(contestId)
 
     logger.info('Deletion successful')
     res.status(204).send()
@@ -354,6 +360,12 @@ router.delete('/tasks/:taskId', authenticateTeacher, async (req, res) => {
   }
 
   try {
+
+    const tests = await getTests()
+      .then(tests => tests.filter(t => t.task_id == taskId))
+
+    tests.forEach(async t => await deleteTest(t.id))
+
     await deleteTask(taskId)
     
     logger.info(`${requestString}. Deletion successful`)

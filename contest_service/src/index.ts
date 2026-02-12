@@ -2,12 +2,13 @@ import dotenv from 'dotenv'
 
 
 import express from 'express'
-import contestsRouter from './routes/contests.js'
+import contestsRouter from './routes/contests'
 import { Client, Pool } from 'pg'
-import { initDB } from './sql/scripts/initdb.js'
+import { initDB } from './sql/scripts/initdb'
 import cors from 'cors'
-import logger from './logger/logger.js'
+import logger from './logger/logger'
 import promClient from 'prom-client'
+import { sqlPool } from './sql/sqlPool'
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
@@ -86,13 +87,7 @@ async function connectWithRetry(pool : Pool | Client, retries : number = 15, del
   throw new Error(error)
 }
 
-export const sqlPool = new Pool({
-    user : 'pavel_mernov',
-    password : '0867',
-    database : 'contest_database',
-    host : 'contest-db',
-    port : 5432
-})
+
 
 await connectWithRetry(sqlPool)
     .then(() => initDB(sqlPool))

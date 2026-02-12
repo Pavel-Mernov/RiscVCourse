@@ -1,6 +1,6 @@
 import type { Client, Pool } from "pg";
-import { sqlPool } from "../../../index.js";
-import type { Task } from "../../../models/task.js";
+import { sqlPool } from "../../sqlPool";
+import type { Task } from "../../../models/task";
 
 const query = `
 

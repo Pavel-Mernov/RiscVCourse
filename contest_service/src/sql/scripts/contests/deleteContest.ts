@@ -1,5 +1,5 @@
 import type { Client, Pool } from "pg";
-import { sqlPool } from "../../../index.js";
+import { sqlPool } from "../../sqlPool";
 
 const query = `
 
@@ -8,6 +8,6 @@ WHERE id = $1;
 
 `
 
-export async function deleleContest(id : string, connection : Client | Pool = sqlPool) {
+export async function deleteContest(id : string, connection : Client | Pool = sqlPool) {
     await connection.query(query, [id])
 }
