@@ -797,4 +797,57 @@ describe('GET /tasks/:taskId/tests', () => {
   })
 })
 
+describe('POST /tasks/:taskId/tests', () => {
+  const url = (id : string) => `/tasks/${id}/tests`
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('успешное создание теста', async () => {
+    const taskId = 'task1'
+    const body = { input: '1 2', output: '3' }
+
+    mockedGetTasks.mockResolvedValue([{
+      id: taskId, 
+      contest_id: '1',
+      name: 'Task1',
+      text: 'Task1 text1',
+      answer_type: 'theory'
+    }])
+    mockedCreateTest.mockResolvedValue()
+
+    const res = await request(app)
+      .post(url(taskId))
+      .send(body)
+
+    expect(res.status).toBe(201)
+    expect(res.body.task_id).toBe(taskId)
+    expect(createTest).toHaveBeenCalledTimes(1)
+  })
+
+  test('задача не найдена', async () => {
+    mockedGetTasks.mockResolvedValue([])
+
+    const res = await request(app)
+      .post(url('unknown'))
+      .send({ input: '1', output: '1' })
+
+    expect(res.status).toBe(404)
+    expect(res.body.error).toBe('Task not found')
+    expect(createTest).not.toHaveBeenCalled()
+  })
+
+  test('ошибка внутри try/catch', async () => {
+    mockedGetTasks.mockRejectedValue(new Error('DB error'))
+
+    const res = await request(app)
+      .post(url('taskX'))
+      .send({ input: 'a', output: 'b' })
+
+    expect(res.status).toBe(500)
+    expect(res.body.error).toBe('DB error')
+  })
+})
+
 })
