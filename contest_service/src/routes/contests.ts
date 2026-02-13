@@ -460,7 +460,7 @@ router.get('/tests/:idTest', authenticateTeacher, async (req, res) => {
   logger.info(requestString)
 
   const tests = await getTests()
-  const test = tests.filter(t => t.id === idTest)
+  const test = tests.find(t => t.id === idTest)
 
   if (!test) {
     const error = 'Test not found'

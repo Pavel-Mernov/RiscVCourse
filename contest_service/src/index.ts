@@ -7,15 +7,16 @@ import { Client, Pool } from 'pg'
 import { initDB } from './sql/scripts/initdb'
 import cors from 'cors'
 import logger from './logger/logger'
-import promClient from 'prom-client'
+
 import { sqlPool } from './sql/sqlPool'
+import { getMetrics, requestCounterFunction } from './routes/metrics'
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
 const app = express()
 
-const { collectDefaultMetrics } = promClient
+
 
 const allowedOrigins = [
   'http://localhost:5173',
@@ -23,7 +24,7 @@ const allowedOrigins = [
   'http://riscvcourse.ru'  
 ];
 
-collectDefaultMetrics(); 
+ 
 
 const originFunction = (origin : any, callback : any) => {
     // Если origin не пришел (например, Postman или same-origin), разрешаем запрос
@@ -36,11 +37,7 @@ const originFunction = (origin : any, callback : any) => {
     }
   }
 
-const httpRequestsCounter = new promClient.Counter({
-  name: 'http_requests_total',
-  help: 'Total number of HTTP requests',
-  labelNames: ['method', 'route', 'status_code'],
-});
+
 
 app.use(cors({
   origin: originFunction, // динамическое определение
@@ -48,25 +45,13 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-app.use((req, res, next) => {
-  res.on('finish', () => {
-    httpRequestsCounter.inc({
-      method: req.method,
-      route: req.route ? req.route.path : req.path,
-      status_code: res.statusCode.toString(),
-    });
-  });
-  next();
-});
+app.use(requestCounterFunction);
 
 app.use(express.json())
 app.use('/api', contestsRouter)
 
 // Маршрут для отдачи метрик в Prometheus-формате
-app.get('/metrics', async (_, res) => {
-  res.set('Content-Type', promClient.register.contentType);
-  res.end(await promClient.register.metrics());
-});
+app.get('/metrics', getMetrics);
 
 // console.log(`JWT Secret: ${JWT_SECRET}`)
 

@@ -1,6 +1,6 @@
 
 import request from 'supertest'
-import express from 'express'
+import express, { Router } from 'express'
 import router from '../routes/contests'
 import { getContests } from '../sql/scripts/contests/getContests'
 import { createContest } from '../sql/scripts/contests/createContest'
@@ -19,6 +19,7 @@ import logger from '../logger/logger'
 
 import { updateTask } from '../sql/scripts/tasks/updateTask'
 import { createTest } from '../sql/scripts/tests/createTest'
+import { updateTest } from '../sql/scripts/tests/updateTest'
 
 jest.mock('../sql/scripts/contests/getContests')
 jest.mock('../sql/scripts/contests/createContest')
@@ -54,6 +55,7 @@ const mockedDeleteTask = deleteTask as jest.MockedFunction<typeof deleteTask>
 
 const mockedGetTests = getTests as jest.MockedFunction<typeof getTests>
 const mockedCreateTest = createTest as jest.MockedFunction<typeof createTest>
+const mockedUpdateTest = updateTest as jest.MockedFunction<typeof updateTest>
 const mockedDeleteTest = deleteTest as jest.MockedFunction<typeof deleteTest>
 
 
@@ -849,5 +851,191 @@ describe('POST /tasks/:taskId/tests', () => {
     expect(res.body.error).toBe('DB error')
   })
 })
+
+describe('GET /tests/:idTest', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('Успешное получение теста по id', async () => {
+    const mockTest = { id: '123', task_id : '', input : '', expected_output : '' };
+    mockedGetTests.mockResolvedValue([mockTest]);
+
+    const res = await request(app).get('/tests/123');
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(mockTest);
+
+    expect(logger.info).toHaveBeenCalledWith('GET /tests/123');
+    expect(logger.info).toHaveBeenCalledWith(
+      'GET /tests/123. Get test successful. New test: ' + JSON.stringify(mockTest)
+    );
+  });
+
+  test('Тест не найден', async () => {
+    mockedGetTests.mockResolvedValue([{
+      id: '1',
+      task_id: '',
+      input: '',
+      expected_output: ''
+    }, {
+      id: '2',
+      task_id: '',
+      input: '',
+      expected_output: ''
+    }]);
+
+    const res = await request(app).get('/tests/999');
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: 'Test not found' });
+
+    expect(logger.error).toHaveBeenCalledWith(
+      'GET /tests/999. Test not found'
+    );
+  });
+
+  test('Пустой массив тестов приводит к "не найден"', async () => {
+    mockedGetTests.mockResolvedValue([]);
+
+    const res = await request(app).get('/tests/555');
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Test not found');
+  });
+
+  /*
+  test('authenticateTeacher блокирует доступ при отсутствии авторизации', async () => {
+    jest.doMock('../routes/authenticate', () => {
+      return (_ : any, res : any) => res.status(401).json({ error: 'Unauthorized' });
+    });
+    const appReloaded = express()
+    app.use(express.json())
+    app.use(router)
+
+    const res = await request(appReloaded).get('/tests/123');
+
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({ error: 'Unauthorized' });
+  });
+  */
+
+  test('Корректность обработки некорректного формата getTests', async () => {
+    mockedGetTests.mockResolvedValue([]);
+
+    const res = await request(app).get('/tests/222');
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Test not found');
+  });
+});
+
+describe('PUT /tests/:idTest', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('Успешное обновление теста', async () => {
+    const existingTest = { id: '123', task_id : '1', input : '', expected_output: 'Old' };
+    const updatedPayload = { expected_output: 'New title' };
+
+    mockedGetTests.mockResolvedValue([existingTest]);
+    mockedUpdateTest.mockResolvedValue();
+
+    const res = await request(app)
+      .put('/tests/123')
+      .send(updatedPayload);
+
+    expect(res.status).toBe(200);
+    expect(res.body.expected_output).toBe('New title');
+
+    expect(mockedUpdateTest).toHaveBeenCalledTimes(1)
+    expect(mockedUpdateTest).toHaveBeenCalledWith({
+      ...existingTest,
+      expected_output: 'New title'
+    });
+  });
+
+  test('Тест не найден (404)', async () => {
+    mockedGetTests.mockResolvedValue([]);
+
+    const res = await request(app)
+      .put('/tests/999')
+      .send({ expected_output: 'x' });
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Test not found');
+  });
+
+  test('Ошибка обновления (500)', async () => {
+    const existingTest = { id: '123', input : '', task_id : '', expected_output: 'Old' };
+
+    mockedGetTests.mockResolvedValue([existingTest]);
+    mockedUpdateTest.mockRejectedValue(new Error('DB error'));
+
+    const res = await request(app)
+      .put('/tests/123')
+      .send({ expected_output: 'New' });
+
+    expect(res.status).toBe(500);
+    expect(res.body.error).toContain('DB error');
+  });
+
+
+});
+
+describe('DELETE /tests/:idTest', () => {
+
+  beforeEach(() => {
+
+    jest.clearAllMocks();
+  });
+
+  test('успешное удаление теста', async () => {
+    mockedGetTests.mockResolvedValue([
+      { id: '123', task_id : '1', input : '', expected_output: 'Demo' }
+    ]);
+
+    mockedDeleteTest.mockResolvedValue();
+
+    const res = await request(app).delete('/tests/123');
+
+    expect(res.status).toBe(204);
+    expect(res.text).toBe('');
+
+    expect(getTests).toHaveBeenCalledTimes(1);
+    expect(deleteTest).toHaveBeenCalledWith('123');
+    expect(logger.info).toHaveBeenCalled();
+  });
+
+  test('удаление несуществующего теста', async () => {
+    mockedGetTests.mockResolvedValue([
+      { id: '999', task_id : '1', input : '', expected_output: 'Other' }
+    ]);
+
+    const res = await request(app).delete('/tests/123');
+
+    expect(res.status).toBe(404);
+    expect(res.body.error).toBe('Test not found');
+
+    expect(deleteTest).not.toHaveBeenCalled();
+    expect(logger.error).toHaveBeenCalled();
+  });
+
+  test('ошибка при deleteTest', async () => {
+    mockedGetTests.mockResolvedValue([
+      { id: '123', task_id : '1', input : '', expected_output: 'Demo' }
+    ]);
+
+    mockedDeleteTest.mockRejectedValue(new Error('DB failure'));
+
+    const res = await request(app).delete('/tests/123');
+
+    expect(res.status).toBe(500);
+    expect(res.body.error).toBe('DB failure');
+
+    expect(logger.error).toHaveBeenCalled();
+  });
+});
 
 })
