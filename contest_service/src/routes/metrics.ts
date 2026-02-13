@@ -2,7 +2,9 @@ import promClient from 'prom-client'
 
 const { collectDefaultMetrics } = promClient
 
-collectDefaultMetrics();
+if (collectDefaultMetrics) {
+    collectDefaultMetrics();
+}
 
 const httpRequestsCounter = new promClient.Counter({
   name: 'http_requests_total',
