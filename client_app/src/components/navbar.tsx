@@ -17,6 +17,7 @@ const Navbar = () => {
   const logout = async () => {
     setAccessToken(undefined)
 
+    /*
     const serverIp = '130.49.150.32'
     const url = `http://${serverIp}:3003/api/logout`
     const method = 'POST'
@@ -29,6 +30,7 @@ const Navbar = () => {
       },
             
     })
+      */
   }
 
   return (

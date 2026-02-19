@@ -60,6 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [accessToken]);
 
+  /*
   useEffect(() => {
     const fetchRefresh = async () => {
       if (!accessToken || isTokenValid()) {
@@ -89,6 +90,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     fetchRefresh();
   }, [])
+  */
 
   const context : AuthContextType = { 
     accessToken, 
