@@ -1,5 +1,5 @@
 
-import { makeTempDir } from '../../src/app';
+import { makeTempDir } from '../../app';
 import fs from 'fs';
 
 

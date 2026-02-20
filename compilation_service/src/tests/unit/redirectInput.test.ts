@@ -1,5 +1,5 @@
 
-import { redirectInput } from '../../src/app';
+import { redirectInput } from '../../app';
 import fs from 'fs/promises';
 
 test('redirectInput записывает данные в файл', async () => {

@@ -1,5 +1,5 @@
 
-import { runCode } from '../../src/app';
+import { runCode } from '../../app';
 import fs from 'fs/promises';
 import { exec as execOriginal } from 'child_process';
 

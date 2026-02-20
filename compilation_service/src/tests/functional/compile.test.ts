@@ -1,7 +1,6 @@
 
 import request from 'supertest';
-import { app } from '../../src/app';
-import { codeHelloWorld } from './codes/helloWorld';
+import { app } from '../../app';
 
 // afterAll(() => {
 //  server.close();

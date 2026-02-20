@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from '../../src/app';          // где объявлен ваш app
+import { app } from '../../app';          // где объявлен ваш app
 import client from 'prom-client';
 
 describe('GET /metrics', () => {
