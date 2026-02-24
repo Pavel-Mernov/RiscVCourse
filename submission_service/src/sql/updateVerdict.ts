@@ -1,5 +1,5 @@
 import type { Client, Pool } from "pg";
-import type { Verdict } from "..";
+import type { Verdict } from "../controllers/submissionController";
 
 const query = `
     UPDATE Submission SET verdict = $1 WHERE submission_id = $2;

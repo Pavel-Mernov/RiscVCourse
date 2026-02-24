@@ -1,7 +1,8 @@
 import { Client, Pool } from "pg";
-import type { Submission } from "../index.js";
+import type { Submission } from "../controllers/submissionController";
+import { sqlPool } from "./sqlPool";
 
-export async function createSubmission(submission : Submission, connection : Pool | Client) {
+export async function createSubmission(submission : Submission, connection : Pool | Client = sqlPool) {
     
     // const { submission_id, task_id, student_id, timestamp, text, verdict } = submission
 
