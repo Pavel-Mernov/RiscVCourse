@@ -31,13 +31,28 @@ spec:
             - name: POSTGRES_USER
               value: pavel_mernov
           image: postgres:18
+          startupProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - pavel_mernov
+                - -d
+                - submission_database
+            failureThreshold: 30
+            periodSeconds: 5
+
           livenessProbe:
             exec:
               command:
-                - pg_isready -U pavel_mernov -d submission_database
+                - pg_isready
+                - -U
+                - pavel_mernov
+                - -d
+                - submission_database
+            initialDelaySeconds: 60
+            periodSeconds: 15
             failureThreshold: 5
-            periodSeconds: 5
-            timeoutSeconds: 5
           name: submission-db
           ports:
             - containerPort: 5432
