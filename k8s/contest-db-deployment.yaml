@@ -34,6 +34,18 @@ spec:
           volumeMounts:
             - name: pgdata
               mountPath: /var/lib/postgresql/data
+          
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - pavel_mernov
+                - -d
+                - contest_database
+            initialDelaySeconds: 10
+            periodSeconds: 5
+
           livenessProbe:
             exec:
               command:

@@ -23,10 +23,22 @@ spec:
       containers:
         - args:
             - node
-            - dist/index.js
+            - dist/main.js
           env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: trust
             - name: NODE_ENV
               value: production
+            - name: DB_HOST
+              value: contest-db
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: contest_database
+            - name: DB_USER
+              value: pavel_mernov
+            - name: DB_PASSWORD
+              value: "0867"
           image: pavelmernov/contest-service
           imagePullPolicy: Never
           name: contest-service

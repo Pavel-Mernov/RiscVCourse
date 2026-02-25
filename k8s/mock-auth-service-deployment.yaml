@@ -27,7 +27,10 @@ spec:
           env:
             - name: NODE_ENV
               value: production
-          image: mock-auth-service
+
+          image: pavelmernov/mock-auth-service
+          imagePullPolicy: IfNotPresent
+
           name: mock-auth-service
           ports:
             - containerPort: 3003
