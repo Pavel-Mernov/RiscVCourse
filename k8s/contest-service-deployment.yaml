@@ -28,6 +28,7 @@ spec:
             - name: NODE_ENV
               value: production
           image: pavelmernov/contest-service
+          imagePullPolicy: Never
           name: contest-service
           ports:
             - containerPort: 3002

@@ -27,7 +27,8 @@ spec:
           env:
             - name: NODE_ENV
               value: production
-          image: compilation-service
+          image: pavelmernov/compilation-service
+          imagePullPolicy: Never
           name: compilation-service
           ports:
             - containerPort: 3000
