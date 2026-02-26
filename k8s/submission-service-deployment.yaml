@@ -27,7 +27,17 @@ spec:
           env:
             - name: NODE_ENV
               value: production
-          image: submission-service
+            - name: DB_HOST
+              value: submission-db
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: submission_database
+            - name: DB_USER
+              value: pavel_mernov
+            - name: DB_PASSWORD
+              value: "0867"
+          image: pavelmernov/submission-service
           name: submission-service
           ports:
             - containerPort: 3004

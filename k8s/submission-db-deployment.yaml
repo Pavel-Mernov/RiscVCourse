@@ -27,7 +27,7 @@ spec:
             - name: POSTGRES_DB
               value: submission_database
             - name: POSTGRES_PASSWORD
-              value: "867"
+              value: "0867"
             - name: POSTGRES_USER
               value: pavel_mernov
           image: postgres:18
