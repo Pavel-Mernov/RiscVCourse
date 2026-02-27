@@ -7,7 +7,7 @@ export async function createSubmission(submission : Submission, connection : Poo
     // const { submission_id, task_id, student_id, timestamp, text, verdict } = submission
 
     const query = `
-        INSERT INTO Submission(submission_id, task_id, student_id, timestamp, text, verdict)
+        INSERT INTO submissions(submission_id, task_id, student_id, timestamp, text, verdict)
         VALUES ($1, $2, $3, $4, $5, $6);
     `
 
