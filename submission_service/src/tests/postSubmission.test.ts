@@ -1,4 +1,7 @@
 
+import request from 'supertest'
+import express from 'express'
+
 jest.mock('uuid', () => ({
   v4: jest.fn(),
   validate: jest.fn()
@@ -103,5 +106,24 @@ describe('POST /api/submission', () => {
         expect(result.verdict).toBeUndefined();
     });
 
+    test('Возвращает 500 при ошибке сервера', async () => {
 
+        const app = express();
+        app.use(express.json());
+        app.post('/api/submissions', PostSubmissionHandler);
+
+
+        (createSubmission as jest.Mock).mockRejectedValueOnce(new Error('DB error'))
+
+        const res = await request(app)
+        .post('/api/submissions')
+        .send({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: 'hello world 2'
+        })
+
+        expect(res.status).toBe(500)
+        expect(res.body.error).toBe('DB error')
+    })
 })

@@ -187,7 +187,7 @@ export default () => {
                 {
                     task.answer_type == 'code' && task.task_data 
                         &&
-                            <CodeTaskView taskData={task.task_data} tests={tests} />
+                            <CodeTaskView taskId={ task.id } taskName={ task.name } taskData={task.task_data} tests={tests} />
                     
                 }
                 

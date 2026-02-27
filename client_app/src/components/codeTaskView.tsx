@@ -5,6 +5,18 @@ import { green, red } from "@mui/material/colors"
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import type { CodeData, Test } from "../pages/CreateTaskPage"
+import SubmissionsTable from "./submissionsTable"
+
+type Verdict = 'OK' | 'WA' | 'RE' | 'TL'
+
+export interface Submission {
+  submission_id: string;
+  task_id: string;
+  student_id: string;
+  timestamp: string; // ISO string
+  text: string | string[];
+  verdict?: Verdict | undefined;
+}
 
 function Correct() {
     return (
@@ -60,11 +72,13 @@ function Wrong() {
 }
 
 interface Props {
+    taskId : string
+    taskName : string
     tests : Test[]
     taskData : CodeData
 }
 
-export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
+export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
         tests } : Props) => {
 
     const [answer, setAnswer] = useState('')
@@ -73,9 +87,11 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
 
     const { isTokenValid, getLogin } = useAuth()
 
-    const [verdict, setVerdict] = useState<'OK' | 'WA' | 'RE' | 'TL' | undefined>(undefined)
+    const [verdict, setVerdict] = useState<Verdict | undefined>(undefined)
 
     const [emptyCodeError, setEmptyCodeError] = useState(false)
+
+    const [submissions, setSubmissions] = useState<Submission[]>([])
 
     const isAnswerCorrect = () => verdict == 'OK'
 
@@ -92,17 +108,59 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
 
         setVerdict(undefined);
 
+        const serverIp = '130.49.150.32'
+            
+        if (getLogin()) {
+            const submissionPort = 3004
+            const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions`
+            const submissionMethod1 = 'POST'
+
+            const submissionBody1 = {
+                task_id: taskId,
+                student_id: getLogin(),
+                text: answer
+            }
+
+            try {
+            const text = await fetch(submissionUrl1, {
+                method : submissionMethod1,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body : JSON.stringify(submissionBody1)
+            })
+            .then(resp => resp.text())
+
+            console.log(text)
+
+            const data = JSON.parse(text)
+
+            if (!('error' in data)) {
+                setSubmissions([...submissions, data as Submission])
+            }
+            }
+            catch (err : any) {
+                console.error(err)
+            }
+        }
+        
         await (async () => {
 
+        
         tests.forEach(async ({ input, expected_output }) => {
+            
+
+            // console.log(input)
+
+            
+
+            
+
             const body = {
                 input,
                 code : answer,
             }
 
-            console.log(input)
-
-            const serverIp = '130.49.150.32'
             const PORT = 3000
             const url = `http://${serverIp}:${PORT}/api/compile`    
             const method = 'POST'
@@ -399,6 +457,24 @@ export default ({ 'taskData' : { time_limit_ms, memory_limit_kb, attempts, point
                     </Typography>
                 }
             </Stack>
+
+            {
+                isTokenValid() && <Stack spacing='20px'>
+
+                <Typography
+                    variant="h2"
+                    fontSize='28px'
+                    fontWeight='bold'
+                >
+                    Посылки:
+                </Typography>
+
+                    <SubmissionsTable taskName={taskName} submissions={submissions} />    
+                </Stack>
+                
+            }
+            
+
         </Stack>
     )
 }

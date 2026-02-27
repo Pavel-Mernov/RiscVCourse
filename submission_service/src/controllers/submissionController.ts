@@ -61,48 +61,54 @@ export const getSubmissionHandler = async (req : any, res : any) => {
   res.json(result);
 }
 
-// POST /api/submission
+// POST /api/submissions
 export const PostSubmissionHandler = async (req : any, res : any) => {
-  const body: SubmissionCreate = req.body;
-  const { task_id, student_id, text, verdict } = body;
 
-  const queryMessage = 'POST /api/submission. Body: ' + JSON.stringify(body)
-  logger.info(queryMessage)
+  try {
+      const body: SubmissionCreate = req.body;
+      const { task_id, student_id, text, verdict } = body;
 
-  if (
-    typeof task_id !== 'string' ||
-    typeof student_id !== 'string' ||
-    typeof text !== 'string' ||
-    text.trim() === ''
-  ) {
-    const error = 'Invalid input data'
+      const queryMessage = 'POST /api/submission. Body: ' + JSON.stringify(body)
+      logger.info(queryMessage)
 
-    logger.error(error)
-    return res.status(400).json({ error });
+      if (
+        typeof task_id !== 'string' ||
+        typeof student_id !== 'string' ||
+        typeof text !== 'string' ||
+        text.trim() === ''
+      ) {
+        const error = 'Invalid input data'
+
+        logger.error(error)
+        return res.status(400).json({ error });
+      }
+
+      const validVerdicts: Verdict[] = ['OK', 'WA', 'RE', 'TL', 'IG'];
+      if (verdict && !validVerdicts.includes(verdict)) {
+
+        const error = 'Invalid verdict value: ' + verdict
+
+        logger.error(error)
+        return res.status(400).json({ error });
+      }
+
+      const newSubmission: Submission = {
+        submission_id: uuidv4(),
+        task_id,
+        student_id,
+        text: text.trim(),
+        timestamp: new Date().toISOString(),
+        verdict,
+      };
+
+      await createSubmission(newSubmission, sqlPool);
+
+      logger.info(queryMessage + '. Status: OK')
+      res.status(201).json(newSubmission);
   }
-
-  const validVerdicts: Verdict[] = ['OK', 'WA', 'RE', 'TL', 'IG'];
-  if (verdict && !validVerdicts.includes(verdict)) {
-
-    const error = 'Invalid verdict value: ' + verdict
-
-    logger.error(error)
-    return res.status(400).json({ error });
+  catch (err : any) {
+    res.status(500).json({ error : (err as Error).message })
   }
-
-  const newSubmission: Submission = {
-    submission_id: uuidv4(),
-    task_id,
-    student_id,
-    text: text.trim(),
-    timestamp: new Date().toISOString(),
-    verdict,
-  };
-
-  await createSubmission(newSubmission, sqlPool);
-
-  logger.info(queryMessage + '. Status: OK')
-  res.status(201).json(newSubmission);
 }
 
 // PUT /api/submission/{id}/verdict
