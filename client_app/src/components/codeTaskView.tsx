@@ -137,7 +137,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
         setVerdict(undefined);
 
-        
+        let lastSubmission : Submission | undefined = undefined
             
         if (getLogin() && isTokenValid()) {
             const submissionPort = 3004
@@ -166,6 +166,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
             if (!('error' in data)) {
                 setSubmissions([data as Submission, ...submissions])
+                lastSubmission = data as Submission
             }
             }
             catch (err : any) {
@@ -233,9 +234,9 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             setVerdict('OK')
         }
 
-        if (getLogin() && isTokenValid()) {
+        if (getLogin() && isTokenValid() && lastSubmission) {
 
-            const lastSubmissionId = submissions[0].submission_id
+            const lastSubmissionId = lastSubmission.submission_id
 
             const submissionPort = 3004
             const submissionUrl = `http://${serverIp}:${submissionPort}/api/submissions/${lastSubmissionId}/verdict`
@@ -258,7 +259,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
 
 
-            setSubmissions([{ verdict, ...submissions[0] }, ...submissions.slice(1, )])
+            // setSubmissions([{ verdict, ...submissions[0] }, ...submissions.slice(1, )])
 
         }
         catch (err : any) {
