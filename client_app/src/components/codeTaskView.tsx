@@ -2,7 +2,7 @@ import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
 import { Stack, Typography, TextField, Button, colors, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
 import { green, red } from "@mui/material/colors"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import type { CodeData, Test } from "../pages/CreateTaskPage"
 import SubmissionsTable from "./submissionsTable"
@@ -93,6 +93,35 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
     const [submissions, setSubmissions] = useState<Submission[]>([])
 
+    const serverIp = '130.49.150.32'
+
+    useEffect(() => { 
+
+        if (!getLogin() || !isTokenValid()) {
+            return
+        }
+
+        const fetchSubmissions = async () => {
+            const submissionPort = 3004
+            const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions?userId=${getLogin()}&taskId=${taskId}`
+            const submissionMethod1 = 'GET'        
+
+            const text = await fetch(submissionUrl1, {
+                method : submissionMethod1,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(resp => resp.text())
+
+            const submissionsData = JSON.parse(text) as Submission[]
+
+            setSubmissions(submissionsData.sort((a, b) => ( +(new Date(b.timestamp)) - +new Date(a.timestamp) )))
+        }
+
+        fetchSubmissions()
+    }, [])
+
     const isAnswerCorrect = () => verdict == 'OK'
 
     const testsShown = tests_shown ?? 3
@@ -108,9 +137,9 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
         setVerdict(undefined);
 
-        const serverIp = '130.49.150.32'
+        
             
-        if (getLogin()) {
+        if (getLogin() && isTokenValid()) {
             const submissionPort = 3004
             const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions`
             const submissionMethod1 = 'POST'
@@ -131,12 +160,12 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             })
             .then(resp => resp.text())
 
-            console.log(text)
+            // console.log(text)
 
             const data = JSON.parse(text)
 
             if (!('error' in data)) {
-                setSubmissions([...submissions, data as Submission])
+                setSubmissions([data as Submission, ...submissions])
             }
             }
             catch (err : any) {
@@ -204,13 +233,41 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             setVerdict('OK')
         }
 
+        if (getLogin() && isTokenValid()) {
+
+            const lastSubmissionId = submissions[0].submission_id
+
+            const submissionPort = 3004
+            const submissionUrl = `http://${serverIp}:${submissionPort}/api/submissions/${lastSubmissionId}/verdict`
+            const submissionMethod = 'PUT'
+
+            const submissionBody = {
+                verdict : verdict || 'OK'
+            }
+
+            try {
+            // const text = 
+            await fetch(submissionUrl, {
+                method : submissionMethod,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body : JSON.stringify(submissionBody)
+            })
+            .then(resp => resp.text())
+
+
+
+            setSubmissions([{ verdict, ...submissions[0] }, ...submissions.slice(1, )])
+
+        }
+        catch (err : any) {
+            console.error(err)
+        }
+        }
+
         setCorrectAnswerShown(true)
 
-        if (!isTokenValid) return
-
-        const login = getLogin()
-
-        if (!login) return
 
         // const answer = selectedAnswer == correct_answer ? 'OK' : 'WA'
 

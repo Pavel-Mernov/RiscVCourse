@@ -111,7 +111,7 @@ export const PostSubmissionHandler = async (req : any, res : any) => {
   }
 }
 
-// PUT /api/submission/{id}/verdict
+// PUT /api/submissions/{id}/verdict
 export const putSubmission = async (req: any, res: Response) => {
   const submission_id = req.params.id;
   const { verdict } = req.body as { verdict?: Verdict };
