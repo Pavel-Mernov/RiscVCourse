@@ -6,6 +6,7 @@ import WrongIcon from "@mui/icons-material/Cancel"
 import { green, red } from "@mui/material/colors"
 import { useAuth } from "../context/AuthContext"
 import SubmissionsTable from "./submissionsTable"
+import type { Submission } from "./codeTaskView"
 
 function Correct() {
     return (
@@ -64,17 +65,6 @@ interface Props {
     taskId : string
     taskName : string
     taskData : ChoiceAnswers
-}
-
-type Verdict = 'OK' | 'WA' | 'RE' | 'TL'
-
-export interface Submission {
-  submission_id: string;
-  task_id: string;
-  student_id: string;
-  timestamp: string; // ISO string
-  text: string | string[];
-  verdict?: Verdict | undefined;
 }
 
 export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, attempts, points } } : Props) => {

@@ -173,7 +173,7 @@ export default () => {
                 {
                     task.answer_type == 'multichoice' && task.task_data 
                         && ('answers' in task.task_data ) && !('correct_answer' in task.task_data) &&
-                            <MultichoiceTaskView taskData={ task.task_data } />
+                            <MultichoiceTaskView taskId={ task.id } taskName={task.name} taskData={ task.task_data } />
                     
                 }
 

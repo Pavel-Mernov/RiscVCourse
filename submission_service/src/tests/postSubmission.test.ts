@@ -87,6 +87,30 @@ describe('POST /api/submission', () => {
         expect(sent.submission_id).toBe('new-submission-id');
     });
 
+    test('В text можно вставить массив строк', async () => {
+        (uuidv4 as jest.Mock).mockReturnValue('new-submission-id');
+
+        const req = mockReq({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: ['hello world', 'hello world 2'],
+            verdict: 'OK'
+        });
+        const res = mockRes();
+
+        await PostSubmissionHandler(req, res);
+
+        expect(createSubmission).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
+
+        const sent = res.json.mock.calls[0][0];
+        expect(sent.task_id).toBe('uuid1');
+        expect(sent.student_id).toBe('uuid2');
+        expect(sent.verdict).toBe('OK');
+        expect(sent.text).toEqual(['hello world', 'hello world 2']);
+        expect(sent.submission_id).toBe('new-submission-id');
+    });
+
     
     test('валидно если verdict не передан', async () => {
         (uuidv4 as jest.Mock).mockReturnValue('id123');

@@ -68,14 +68,14 @@ export const PostSubmissionHandler = async (req : any, res : any) => {
       const body: SubmissionCreate = req.body;
       const { task_id, student_id, text, verdict } = body;
 
-      const queryMessage = 'POST /api/submission. Body: ' + JSON.stringify(body)
+      const queryMessage = 'POST /api/submissions. Body: ' + JSON.stringify(body)
       logger.info(queryMessage)
 
       if (
         typeof task_id !== 'string' ||
         typeof student_id !== 'string' ||
-        typeof text !== 'string' ||
-        text.trim() === ''
+        (typeof text !== 'string' && (!Array.isArray(text) || typeof text[0] !== 'string')) ||
+        (typeof text === 'string' && text.trim() === '')
       ) {
         const error = 'Invalid input data'
 
@@ -96,7 +96,7 @@ export const PostSubmissionHandler = async (req : any, res : any) => {
         submission_id: uuidv4(),
         task_id,
         student_id,
-        text: text.trim(),
+        text: Array.isArray(text) ? text.map(str => str.trim()) : text.trim(),
         timestamp: new Date().toISOString(),
         verdict,
       };
