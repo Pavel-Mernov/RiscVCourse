@@ -105,14 +105,16 @@ export default () => {
     }
 
     useEffect(() => { 
-        const findContest = async () => {
+        
+        const findContest = async (contest_id : string) => {
             if (!contest_id) {
+                console.log('no contest_id')
                 return
             }
 
             const serverIp = '130.49.150.32'
             const PORT = 3002
-            const url = `http://${serverIp}:${PORT}/api/contests/${contest_id}/tasks`    
+            const url = `http://${serverIp}:${PORT}/api/contests/${contest_id}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -124,6 +126,8 @@ export default () => {
             })
             .then(resp => resp.json())
             
+            console.log('Response contest: ' + JSON.stringify(response))
+
             if ('error' in response) {
                 return
             }
@@ -131,16 +135,13 @@ export default () => {
 
                 if ('authorized_only' in response && response.authorized_only) {
                     setContestForAuthorizedOnly(true)
+                    console.log('Contest for authorized only: ' + (response.authorized_only))
                 } 
 
                 return
             }
         }
 
-        findContest()
-    }, [])
-
-    useEffect(() => { 
         const findTaskAndTests = async () => {
             if (!id) {
                 setTaskFound(false)
@@ -171,14 +172,16 @@ export default () => {
             }
             else {
 
-                console.log(JSON.stringify(response))
+                console.log(response.contest_id)
 
                 setTaskFound(true)
 
                 setName(response.name || '')
                 setText(response.text || '')
 
-                setContestId(response.contest_id || '')
+                setContestId(response.contest_id)
+
+                await findContest(response.contest_id)
 
                 setAnswerType(response.answer_type || 'theory')
 
@@ -200,7 +203,7 @@ export default () => {
                     return
                 }
 
-                console.log(JSON.stringify(fetchedTests))
+                // console.log(JSON.stringify(fetchedTests))
 
                 setTests(fetchedTests as Test[])
 
@@ -208,7 +211,11 @@ export default () => {
             }
         }
 
-        findTaskAndTests()
+        const findAll = async () => {
+            await findTaskAndTests()
+        }
+
+        findAll()
     }, [])
 
     if (!id || !taskFound) {

@@ -116,11 +116,28 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
             const submissionsData = JSON.parse(text) as Submission[]
 
-            setSubmissions(submissionsData.sort((a, b) => ( +(new Date(b.timestamp)) - +new Date(a.timestamp) )))
+            const sortedSubmissions = submissionsData.sort((a, b) => ( +(new Date(b.timestamp)) - +new Date(a.timestamp) ))
+
+            if (sortedSubmissions.length > 0 && answer.length == 0) {
+                setAnswer(sortedSubmissions[0].text as string)
+            }
+
+            setSubmissions(sortedSubmissions)
         }
 
         fetchSubmissions()
     }, [])
+
+    useEffect(() => {
+
+        const updateVerdict = async () => {
+
+
+        }
+
+        updateVerdict()
+
+    }, [verdict])
 
     const isAnswerCorrect = () => verdict == 'OK'
 
@@ -138,6 +155,8 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
         setVerdict(undefined);
 
         let lastSubmission : Submission | undefined = undefined
+
+        let localVerdict : Verdict | undefined = undefined
             
         if (getLogin() && isTokenValid()) {
             const submissionPort = 3004
@@ -174,10 +193,9 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             }
         }
         
-        await (async () => {
 
         
-        tests.forEach(async ({ input, expected_output }) => {
+        for (const { input, expected_output } of tests) {
             
 
             // console.log(input)
@@ -210,11 +228,13 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                 if ('output' in data && 'error' in data) {
                     if (data.output.trim() !== expected_output) {
                         setVerdict('WA')
-                        return
+                        localVerdict = 'WA'
+                        console.log('Verdict: WA')
                     }
                 }
                 else {
                     setVerdict('RE')
+                    localVerdict = 'RE'
 
                     if ('error' in data) {
                         console.log('Error: ' + data.error)
@@ -225,16 +245,20 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                 console.log((err as Error).message)
 
                 setVerdict('RE')
+                localVerdict = 'RE'
             }
-        })
-
-        })()
-
-        if (!verdict) {
-            setVerdict('OK')
         }
 
-        if (getLogin() && isTokenValid() && lastSubmission) {
+
+        console.log('Local verdict: ' + localVerdict)
+
+        if (!localVerdict) {
+            setVerdict('OK')
+            
+            localVerdict = 'OK'
+        }
+
+        if (localVerdict && getLogin() && isTokenValid() && lastSubmission) {
 
             const lastSubmissionId = lastSubmission.submission_id
 
@@ -242,8 +266,10 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             const submissionUrl = `http://${serverIp}:${submissionPort}/api/submissions/${lastSubmissionId}/verdict`
             const submissionMethod = 'PUT'
 
+            console.log(localVerdict)
+
             const submissionBody = {
-                verdict : verdict || 'OK'
+                verdict : localVerdict || 'OK'
             }
 
             try {
@@ -257,10 +283,24 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             })
             .then(resp => resp.text())
 
+            const lastSubmissions = [...submissions]
+
+            const lastSubmissionIndex = lastSubmissions.findIndex(sub => sub.submission_id == lastSubmissionId)
 
 
-            // setSubmissions([{ verdict, ...submissions[0] }, ...submissions.slice(1, )])
+            if (lastSubmissionIndex == -1) {
 
+                lastSubmission.verdict = localVerdict
+
+                setSubmissions([lastSubmission, ...lastSubmissions])
+            }
+            else {
+                lastSubmissions[lastSubmissionIndex].verdict = localVerdict
+
+                setSubmissions(lastSubmissions)
+            }
+
+            
         }
         catch (err : any) {
             console.error(err)
@@ -270,9 +310,6 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
         setCorrectAnswerShown(true)
 
 
-        // const answer = selectedAnswer == correct_answer ? 'OK' : 'WA'
-
-        // const PORT = 3004 // submission service port
     }
 
     return (
@@ -527,7 +564,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                     Посылки:
                 </Typography>
 
-                    <SubmissionsTable taskName={taskName} submissions={submissions} />    
+                    <SubmissionsTable taskName={taskName} submissions={submissions} points={ points } />    
                 </Stack>
                 
             }

@@ -4,15 +4,16 @@ import { blue, green, red } from "@mui/material/colors"
 
 type Props = {
     taskName : string
+    points ?: number
     submissions : Submission[]
 }
 
-export default ({ taskName, submissions } : Props) => {
+export default ({ taskName, points, submissions } : Props) => {
 
     return (
             <TableContainer
                 component={Paper}
-                sx={{ maxWidth: '60%', margin: 'auto', mt: 4, borderRadius: 2, overflow: 'hidden' }}
+                sx={{ Width: '60%', margin: 'auto', mt: 4, borderRadius: 2, overflow: 'hidden' }}
             >
             <Table>
                 <TableHead>
@@ -26,7 +27,7 @@ export default ({ taskName, submissions } : Props) => {
                     <TableCell
                         sx={{
                             fontWeight: 'bold',
-                            
+                            fontSize: '24px',
                             borderTopLeftRadius: '12px',
                             borderBottomLeftRadius: '12px',
                             backgroundColor: '#e0e0e0',
@@ -37,6 +38,7 @@ export default ({ taskName, submissions } : Props) => {
                     <TableCell
                         sx={{
                             fontWeight: 'bold',
+                            fontSize: '24px',
                             backgroundColor: '#e0e0e0',
                         }}
                     >
@@ -45,12 +47,23 @@ export default ({ taskName, submissions } : Props) => {
                     <TableCell
                         sx={{
                             fontWeight: 'bold',
-                            borderTopRightRadius: '12px',
-                            borderBottomRightRadius: '12px',
+                            fontSize: '24px',
                             backgroundColor: '#e0e0e0',
                         }}
                     >
                         Вердикт
+                    </TableCell>
+
+                    <TableCell
+                        sx={{
+                            fontWeight: 'bold',
+                            borderTopRightRadius: '12px',
+                            fontSize: '24px',
+                            borderBottomRightRadius: '12px',
+                            backgroundColor: '#e0e0e0',
+                        }}
+                    >
+                        Баллы
                     </TableCell>
                 </TableRow>
                 </TableHead>
@@ -73,7 +86,9 @@ export default ({ taskName, submissions } : Props) => {
                     <TableCell sx={{ whiteSpace: 'pre-line', fontSize : '20px', color : (!verdict) ? blue[500] : (verdict == 'OK') ? green[500] : red[500] }} >
                         { verdict || 'Waiting' }
                     </TableCell>
-                    
+                    <TableCell sx={{ whiteSpace: 'pre-line', fontSize : '20px' }} >
+                        { verdict == 'OK' && points ? points : (points) ? '0' : '' }
+                    </TableCell>                    
                 </TableRow>
 
                 ))}
