@@ -554,7 +554,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             </Stack>
 
             {
-                isTokenValid() && <Stack spacing='20px'>
+                isTokenValid() && submissions.length > 0 && <Stack spacing='20px'>
 
                 <Typography
                     variant="h2"

@@ -166,7 +166,7 @@ export default () => {
                 {
                     task.answer_type == 'choice' && task.task_data 
                         && ('answers' in task.task_data ) && ('correct_answer' in task.task_data) &&
-                            <ChoiceTaskView taskData={ task.task_data } />
+                            <ChoiceTaskView taskId={ task.id } taskName={task.name} taskData={ task.task_data } />
                     
                 }
 
