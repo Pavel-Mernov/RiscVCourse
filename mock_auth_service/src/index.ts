@@ -30,7 +30,8 @@ const app = express()
 app.use(metricsMiddleware);
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://riscvcourse.ru'], // адрес React (vite) приложения и адрес сайта
+  origin: ['http://localhost:5173', 'http://riscvcourse.ru',  'https://riscvcourse.ru',  
+    'https://www.riscvcourse.ru', 'http://www.riscvcourse.ru',], // адрес React (vite) приложения и адрес сайта
   methods: ['GET', 'POST', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type'],
   credentials : true,

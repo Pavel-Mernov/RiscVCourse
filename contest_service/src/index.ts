@@ -21,7 +21,9 @@ const app = express()
 const allowedOrigins = [
   'http://localhost:5173',
   'https://riscvcourse.ru',
-  'http://riscvcourse.ru'  
+  'http://riscvcourse.ru',
+  'https://www.riscvcourse.ru',
+  'http://www.riscvcourse.ru',
 ];
 
  
@@ -41,6 +43,7 @@ const originFunction = (origin : any, callback : any) => {
 
 app.use(cors({
   origin: originFunction, // динамическое определение
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
