@@ -17,32 +17,8 @@ export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 const app = express()
 
 
-
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://riscvcourse.ru',
-  'http://riscvcourse.ru',
-  'https://www.riscvcourse.ru',
-  'http://www.riscvcourse.ru',
-];
-
- 
-
-const originFunction = (origin : any, callback : any) => {
-    // Если origin не пришел (например, Postman или same-origin), разрешаем запрос
-    if (!origin) return callback(null, true); 
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true); // разрешаем
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-
-
-
 app.use(cors({
-  origin: originFunction, // динамическое определение
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
