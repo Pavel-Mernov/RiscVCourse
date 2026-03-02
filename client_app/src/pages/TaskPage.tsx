@@ -180,7 +180,7 @@ export default () => {
                 {
                     task.answer_type == 'text' && task.task_data 
                         && ('correct_answers' in task.task_data ) &&
-                            <TextAnswersTaskView taskData={ task.task_data } />
+                            <TextAnswersTaskView taskId={task.id} taskName={task.name} taskData={ task.task_data } />
                     
                 }
 

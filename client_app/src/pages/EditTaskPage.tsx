@@ -126,7 +126,7 @@ export default () => {
             })
             .then(resp => resp.json())
             
-            console.log('Response contest: ' + JSON.stringify(response))
+            // console.log('Response contest: ' + JSON.stringify(response))
 
             if ('error' in response) {
                 return
@@ -135,7 +135,7 @@ export default () => {
 
                 if ('authorized_only' in response && response.authorized_only) {
                     setContestForAuthorizedOnly(true)
-                    console.log('Contest for authorized only: ' + (response.authorized_only))
+                    // console.log('Contest for authorized only: ' + (response.authorized_only))
                 } 
 
                 return
