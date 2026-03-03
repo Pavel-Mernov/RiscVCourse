@@ -24,6 +24,12 @@ http:
         - redirect-to-https
       service: noop@internal
 
+    acme-http-challenge:
+      rule: "PathPrefix(`/.well-known/acme-challenge/`)"
+      entryPoints:
+        - web
+      service: noop@internal
+
   services:
     noop:
       loadBalancer:
