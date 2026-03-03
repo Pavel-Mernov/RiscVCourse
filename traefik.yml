@@ -12,7 +12,7 @@ providers:
 certificatesResolvers:
   myresolver:
     acme:
-      email: your-email@example.com
+      email: paulmernov@gmail.com
       storage: acme.json
       httpChallenge:
         entryPoint: web
