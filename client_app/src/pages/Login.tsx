@@ -3,6 +3,7 @@ import Navbar from "../components/navbar"
 import { useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 export default () => {
     const [loginText, setLoginText] = useState('')
@@ -12,6 +13,8 @@ export default () => {
     const [passwordText, setPasswordText] = useState('')
 
     const { setAccessToken } = useAuth()
+
+    const { serverIp, mockAuthPort } = useServerConnection()
 
     const navigate = useNavigate()
 
@@ -30,8 +33,7 @@ export default () => {
             return
         }
 
-        const serverIp = '130.49.150.32'
-        const url = `http://${serverIp}:3003/api/login`
+        const url = `http://${serverIp}:${mockAuthPort}/api/login`
         const method = 'POST'
         const data = {
             login : loginText,

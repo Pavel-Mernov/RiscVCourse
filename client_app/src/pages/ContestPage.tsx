@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import TaskLink from "../components/titleLink"
 import { useAuth } from "../context/AuthContext"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 interface Contest {
   id: string
@@ -64,11 +65,11 @@ export default () => {
 
     const { isUserValidTeacher } = useAuth()
 
+    const { serverIp, contestPort } = useServerConnection()
+
     useEffect(() => {
         const fetchContest = async () => {
-            const serverIp = '130.49.150.32'
-            const PORT = 3002
-            const url = `http://${serverIp}:${PORT}/api/contests/${id}`    
+            const url = `http://${serverIp}:${contestPort}/api/contests/${id}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -90,9 +91,8 @@ export default () => {
 
     useEffect(() => {
         const fetchTasks = async () => {
-            const serverIp = '130.49.150.32'
-            const PORT = 3002
-            const url = `http://${serverIp}:${PORT}/api/contests/${id}/tasks`    
+            
+            const url = `http://${serverIp}:${contestPort}/api/contests/${id}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -141,7 +141,7 @@ export default () => {
 
     return (
         <Stack
-    
+            paddingBottom='80px'
         >
             <Navbar /> 
             

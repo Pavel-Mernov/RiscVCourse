@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import type { CodeData, Test } from "../pages/CreateTaskPage"
 import SubmissionsTable from "./submissionsTable"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 type Verdict = 'OK' | 'WA' | 'RE' | 'TL'
 
@@ -93,7 +94,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
     const [submissions, setSubmissions] = useState<Submission[]>([])
 
-    const serverIp = '130.49.150.32'
+    const { serverIp } = useServerConnection()
 
     useEffect(() => { 
 
@@ -223,7 +224,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                 })
                 .then(resp => resp.json())
 
-                console.log(data)
+                // console.log(data)
 
                 if ('output' in data && 'error' in data) {
                     if (data.output.trim() !== expected_output) {
@@ -250,7 +251,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
         }
 
 
-        console.log('Local verdict: ' + localVerdict)
+        // console.log('Local verdict: ' + localVerdict)
 
         if (!localVerdict) {
             setVerdict('OK')

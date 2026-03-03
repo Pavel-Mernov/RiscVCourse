@@ -4,31 +4,12 @@ import { useEffect, useState } from "react"
 import ContestLink from "../components/titleLink"
 import { useAuth } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 export interface Contest {
     id : string,
     title : string,
     authorized_only ?: boolean,
-}
-
-async function getContests() {
-    const PORT = 3002
-
-    const serverIp = '130.49.150.32'
-    const url = `http://${serverIp}:${PORT}/api/contests`
-
-    const contestList = await fetch(url, {
-        method : 'GET',
-        headers : {
-            'Content-Type': 'application/json'
-                
-        }
-    })
-    .then(resp => resp.json())
-    .then(resp => resp.map((c : any) => c as Contest))
-    .then(c => c as Contest[])
-
-    return contestList
 }
 
 export default () => {
@@ -39,6 +20,27 @@ export default () => {
     const [contests, setContests] = useState<Contest[]>([])
 
     const navigate = useNavigate()
+
+    const { serverIp, contestPort } = useServerConnection()
+
+    const getContests = async () => {
+
+
+        const url = `http://${serverIp}:${contestPort}/api/contests`
+
+        const contestList = await fetch(url, {
+            method : 'GET',
+            headers : {
+                'Content-Type': 'application/json'
+                    
+            }
+        })
+        .then(resp => resp.json())
+        .then(resp => resp.map((c : any) => c as Contest))
+        .then(c => c as Contest[])
+
+        return contestList
+    }
 
     useEffect(() => {
         const fetchContests = async () => { 

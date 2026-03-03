@@ -3,38 +3,12 @@ import Navbar from "../components/navbar"
 import { Description } from "../components/description"
 import { useEffect, useState } from "react"
 import PreviewTaskLink from "../components/previewTaskLink"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 interface Task {
     id : string,
     name : string,
     text : string,
-}
-
-const fetchTask = async (taskId : string, setTask : (task : Task) => void) => {
-    try {
-            const PORT = 3002
-            const serverIp = '130.49.150.32'
-            const url = `http://${serverIp}:${PORT}/api/tasks/${taskId}`    
-            const method = 'GET'
-
-            const response = await fetch(url, {
-            method,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            
-            })
-            .then(resp => resp.json()) 
-            
-            if ('error' in response) {
-                return
-            }
-
-            // console.log('Fetch Task. Id: ' + taskId + ' Result: ' + JSON.stringify(response))
-
-            setTask(response)
-    }
-    catch {}
 }
 
 export default () => {
@@ -44,6 +18,34 @@ export default () => {
 
     const [task1, setTask1] = useState<Task | undefined>(undefined)
     const [task2, setTask2] = useState<Task | undefined>(undefined)
+
+    const { serverIp, contestPort } = useServerConnection()
+
+    const fetchTask = async (taskId : string, setTask : (task : Task) => void) => {
+        try {
+                
+                const url = `http://${serverIp}:${contestPort}/api/tasks/${taskId}`    
+                const method = 'GET'
+
+                const response = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                
+                })
+                .then(resp => resp.json()) 
+                
+                if ('error' in response) {
+                    return
+                }
+
+                // console.log('Fetch Task. Id: ' + taskId + ' Result: ' + JSON.stringify(response))
+
+                setTask(response)
+        }
+        catch {}
+    }
 
     useEffect(() => { 
         

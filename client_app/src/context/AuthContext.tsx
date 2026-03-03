@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return
       }
 
-      const serverIp = '130.49.150.32'
+      
       const url = `http://${serverIp}:3003/api/refresh`
 
       const response = await fetch(url, {

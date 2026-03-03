@@ -4,6 +4,7 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/navbar";
 import { useAuth } from "../context/AuthContext";
 import DeletionDialog from "../components/deletionDialog";
+import { useServerConnection } from "../context/ServerConnectionContext";
 
 const isValidDate = (dateStr: string) => {
     // Регулярное выражение для двух форматов: с временем и без
@@ -106,11 +107,12 @@ export default () => {
 
     const navigate = useNavigate()
 
+    const { serverIp, contestPort } = useServerConnection()
+
     useEffect(() => { 
         const fetchContest = async () => {
-            const PORT = 3002
-            const serverIp = '130.49.150.32'
-            const url = `http://${serverIp}:${PORT}/api/contests/${id}`
+
+            const url = `http://${serverIp}:${contestPort}/api/contests/${id}`
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -228,9 +230,7 @@ export default () => {
                             deadline : deadlineTimestampTz
                         }
 
-                        const PORT = 3002
-                        const serverIp = '130.49.150.32'
-                        const url = `http://${serverIp}:${PORT}/api/contests/${id}`
+                        const url = `http://${serverIp}:${contestPort}/api/contests/${id}`
 
                         // const response = 
                         await fetch(url, {
@@ -250,9 +250,7 @@ export default () => {
     const fetchDeleteContest = async () => {
 
                     try {
-                        const PORT = 3002
-                        const serverIp = '130.49.150.32'
-                        const url = `http://${serverIp}:${PORT}/api/contests/${id}`
+                        const url = `http://${serverIp}:${contestPort}/api/contests/${id}`
 
                         // const response = 
                         await fetch(url, {

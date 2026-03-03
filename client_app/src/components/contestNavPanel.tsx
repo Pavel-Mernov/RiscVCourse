@@ -1,6 +1,7 @@
 import { Link, Stack, Typography } from "@mui/material"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 interface Props {
     curTaskId : string,
@@ -19,11 +20,12 @@ export function ContestNavPanel(props : Props) {
 
     const [ taskNames, setTaskNames ] = useState<TaskName[]>([])
 
+    const { serverIp, contestPort } = useServerConnection()
+
     useEffect(() => {
         const fetchContest = async () => {
-            const serverIp = '130.49.150.32'
-            const PORT = 3002
-            const url = `http://${serverIp}:${PORT}/api/contests/${contestId}`    
+            
+            const url = `http://${serverIp}:${contestPort}/api/contests/${contestId}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -47,9 +49,8 @@ export function ContestNavPanel(props : Props) {
 
     useEffect(() => {
         const fetchTasks = async () => {
-            const serverIp = '130.49.150.32'
-            const PORT = 3002
-            const url = `http://${serverIp}:${PORT}/api/contests/${contestId}/tasks`    
+            
+            const url = `http://${serverIp}:${contestPort}/api/contests/${contestId}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {

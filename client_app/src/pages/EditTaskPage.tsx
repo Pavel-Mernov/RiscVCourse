@@ -10,6 +10,7 @@ import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
 import MultichoiceEditor from "../components/multichoiceEditor"
 import TextAnswersEditor from "../components/textAnswersEditor"
 import CodeTaskEditor from "../components/codeTaskEditor"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -64,6 +65,8 @@ export default () => {
 
     const [deletedTests, setDeletedTests] = useState<Test[]>([])
 
+    const { serverIp, contestPort } = useServerConnection()
+
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
         
         const newAnswer : ChoiceAnswers = isContestForAuthorizedOnly ? 
@@ -112,9 +115,7 @@ export default () => {
                 return
             }
 
-            const serverIp = '130.49.150.32'
-            const PORT = 3002
-            const url = `http://${serverIp}:${PORT}/api/contests/${contest_id}`    
+            const url = `http://${serverIp}:${contestPort}/api/contests/${contest_id}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -152,9 +153,7 @@ export default () => {
                 return
             }
 
-            const serverIp = '130.49.150.32'
-            const PORT = 3002
-            const url = `http://${serverIp}:${PORT}/api/tasks/${id}`    
+            const url = `http://${serverIp}:${contestPort}/api/tasks/${id}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -187,7 +186,7 @@ export default () => {
 
                 setTaskAnswers({ ...taskAnswers, [response.answer_type] : response.task_data })
 
-                const testsUrl = `http://${serverIp}:${PORT}/api/tasks/${id}/tests`
+                const testsUrl = `http://${serverIp}:${contestPort}/api/tasks/${id}/tests`
 
                 const fetchedTests = await fetch(testsUrl, {
                 method,
@@ -279,9 +278,7 @@ export default () => {
                             task_data : taskAnswers[answer_type as Exclude<AnswerType, 'theory'>]
                         }
 
-                        const PORT = 3002
-                        const serverIp = '130.49.150.32'
-                        const url = `http://${serverIp}:${PORT}/api/tasks/${id}`
+                        const url = `http://${serverIp}:${contestPort}/api/tasks/${id}`
 
                         const response = await fetch(url, {
                             method: 'PUT',
@@ -300,7 +297,7 @@ export default () => {
                         tests.filter(test => !test.id).forEach(async (test) => {
                             
 
-                            const postUrl = `http://${serverIp}:${PORT}/api/tasks/${id}/tests`
+                            const postUrl = `http://${serverIp}:${contestPort}/api/tasks/${id}/tests`
 
                             await fetch(postUrl, {
                                 method: 'POST',
@@ -316,7 +313,7 @@ export default () => {
                             
                             const { id } = test
 
-                            const putUrl = `http://${serverIp}:${PORT}/api/tests/${id}`
+                            const putUrl = `http://${serverIp}:${contestPort}/api/tests/${id}`
 
                             await fetch(putUrl, {
                                 method: 'PUT',
@@ -333,7 +330,7 @@ export default () => {
                                 return
                             }
 
-                            const deleteUrl = `http://${serverIp}:${PORT}/api/tests/${id}`
+                            const deleteUrl = `http://${serverIp}:${contestPort}/api/tests/${id}`
 
                             await fetch(deleteUrl, {
                                 method: 'DELETE',
@@ -350,9 +347,7 @@ export default () => {
 
     const fetchDeleteTask = async () => {
 
-                        const PORT = 3002
-                        const serverIp = '130.49.150.32'
-                        const url = `http://${serverIp}:${PORT}/api/tasks/${id}`
+                        const url = `http://${serverIp}:${contestPort}/api/tasks/${id}`
 
                         const response = await fetch(url, {
                             method: 'DELETE',
@@ -366,7 +361,7 @@ export default () => {
                         console.log(JSON.stringify(response))
 
                         deletedTests.forEach(async ({ id }) => {
-                            const url = `http://${serverIp}:${PORT}/api/tests/${id}`
+                            const url = `http://${serverIp}:${contestPort}/api/tests/${id}`
 
                             const response = await fetch(url, {
                                 method: 'DELETE',
@@ -381,7 +376,7 @@ export default () => {
                         })
 
                         tests.forEach(async ({ id }) => {
-                            const url = `http://${serverIp}:${PORT}/api/tests/${id}`
+                            const url = `http://${serverIp}:${contestPort}/api/tests/${id}`
 
                             const response = await fetch(url, {
                                 method: 'DELETE',

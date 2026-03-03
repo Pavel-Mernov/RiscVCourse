@@ -7,6 +7,7 @@ import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
 import MultichoiceEditor from "../components/multichoiceEditor"
 import TextAnswersEditor from "../components/textAnswersEditor"
 import CodeTaskEditor from "../components/codeTaskEditor"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -120,6 +121,8 @@ export default () => {
 
     const [tests, setTests] = useState<Test[]>([])
 
+    const { serverIp, contestPort } = useServerConnection()
+
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
         
         const newAnswer : ChoiceAnswers = isContestForAuthorizedOnly ? 
@@ -171,9 +174,7 @@ export default () => {
                 return
             }
 
-            const serverIp = '130.49.150.32'
-            const PORT = 3002
-            const url = `http://${serverIp}:${PORT}/api/contests/${contestId}/tasks`    
+            const url = `http://${serverIp}:${contestPort}/api/contests/${contestId}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -265,9 +266,7 @@ export default () => {
                             task_data : taskAnswers[answer_type as Exclude<AnswerType, 'theory'>]
                         }
 
-                        const PORT = 3002
-                        const serverIp = '130.49.150.32'
-                        const url = `http://${serverIp}:${PORT}/api/contests/${contestId}/tasks`
+                        const url = `http://${serverIp}:${contestPort}/api/contests/${contestId}/tasks`
 
                         const addedTask = await fetch(url, {
                             method: 'POST',
@@ -291,7 +290,7 @@ export default () => {
                         if (answer_type == 'code') {
                             tests.forEach(async test => {
 
-                                const url = `http://${serverIp}:${PORT}/api/tasks/${taskId}/tests`
+                                const url = `http://${serverIp}:${contestPort}/api/tasks/${taskId}/tests`
 
                                 await fetch(url, {
                                     method: 'POST',

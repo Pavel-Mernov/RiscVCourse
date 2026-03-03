@@ -7,6 +7,7 @@ import { green, red } from "@mui/material/colors"
 import { useAuth } from "../context/AuthContext"
 import SubmissionsTable from "./submissionsTable"
 import type { Submission } from "./codeTaskView"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 function Correct() {
     return (
@@ -77,6 +78,8 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, atte
 
     const { isTokenValid, getLogin } = useAuth()
 
+    const { serverIp, submissionPort } = useServerConnection()
+
     useEffect(() => { 
 
         if (!getLogin() || !isTokenValid()) {
@@ -84,8 +87,6 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, atte
         }
 
         const fetchSubmissions = async () => {
-            const serverIp = '130.49.150.32'
-            const submissionPort = 3004
             const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions?userId=${getLogin()}&taskId=${taskId}`
             const submissionMethod1 = 'GET'        
 
@@ -116,13 +117,10 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, atte
 
         const login = getLogin()
 
-        const serverIp = '130.49.150.32'
-
         if (!login) return
 
         if (selectedAnswer == -1) return
 
-            const submissionPort = 3004
             const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions`
             const submissionMethod1 = 'POST'
 

@@ -8,6 +8,7 @@ import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
 import type { Submission } from "./codeTaskView"
 import SubmissionsTable from "./submissionsTable"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 function Correct() {
     return (
@@ -78,6 +79,8 @@ export default ({ taskId, taskName, 'taskData' : { answers, attempts, points } }
 
     const [submissions, setSubmissions] = useState<Submission[]>([])
 
+    const { serverIp, submissionPort } = useServerConnection()
+
     useEffect(() => { 
 
         if (!getLogin() || !isTokenValid()) {
@@ -85,8 +88,7 @@ export default ({ taskId, taskName, 'taskData' : { answers, attempts, points } }
         }
 
         const fetchSubmissions = async () => {
-            const serverIp = '130.49.150.32'
-            const submissionPort = 3004
+
             const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions?userId=${getLogin()}&taskId=${taskId}`
             const submissionMethod1 = 'GET'        
 
@@ -131,8 +133,6 @@ export default ({ taskId, taskName, 'taskData' : { answers, attempts, points } }
 
         if (!login) return
 
-            const serverIp = '130.49.150.32'
-            const submissionPort = 3004
             const submissionUrl = `http://${serverIp}:${submissionPort}/api/submissions`
             const submissionMethod = 'POST'
 

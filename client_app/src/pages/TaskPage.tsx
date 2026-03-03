@@ -10,6 +10,7 @@ import ChoiceTaskView from "../components/choiceTaskView"
 import MultichoiceTaskView from "../components/multichoiceTaskView"
 import TextAnswersTaskView from "../components/textAnswersTaskView"
 import CodeTaskView from "../components/codeTaskView"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -39,11 +40,11 @@ export default () => {
 
     const { isUserValidTeacher } = useAuth()
 
+    const { serverIp, contestPort } = useServerConnection()
+
     useEffect(() => {
         const fetchTaskAndTests = async () => {
-            const PORT = 3002
-            const serverIp = '130.49.150.32'
-            const url = `http://${serverIp}:${PORT}/api/tasks/${id}`    
+            const url = `http://${serverIp}:${contestPort}/api/tasks/${id}`    
             const method = 'GET'
 
             try {
@@ -62,7 +63,7 @@ export default () => {
                     return
                 }
 
-                const testUrl = `http://${serverIp}:${PORT}/api/tasks/${id}/tests` 
+                const testUrl = `http://${serverIp}:${contestPort}/api/tasks/${id}/tests` 
 
                 const testsData = await fetch(testUrl, {
                     method,

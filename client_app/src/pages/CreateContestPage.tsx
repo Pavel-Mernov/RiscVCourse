@@ -3,6 +3,7 @@ import { useState } from "react"
 import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
 import { Navigate, useNavigate } from "react-router-dom"
+import { useServerConnection } from "../context/ServerConnectionContext"
 
 const isValidDate = (dateStr: string) => {
     // Регулярное выражение для двух форматов: с временем и без
@@ -72,6 +73,8 @@ export default () => {
     const [deadLineError, setDeadlineError] = useState('')
 
     const { accessToken } = useAuth()
+
+    const { serverIp, contestPort } = useServerConnection()
 
     const navigate = useNavigate()
 
@@ -164,9 +167,7 @@ export default () => {
                             deadline : deadlineTimestampTz
                         }
 
-                        const PORT = 3002
-                        const serverIp = '130.49.150.32'
-                        const url = `http://${serverIp}:${PORT}/api/contests`
+                        const url = `http://${serverIp}:${contestPort}/api/contests`
 
                         const response = await fetch(url, {
                             method: 'POST',
