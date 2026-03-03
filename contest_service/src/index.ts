@@ -32,14 +32,16 @@ const originFunction = (origin : any, callback : any) => {
 
 }
 
-app.use(cors({
+const corsOptions = {
   origin: originFunction,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+}
 
-app.options('*', cors());
+app.use(cors(corsOptions));
+
+app.options('*', cors(corsOptions));
 
 app.use(requestCounterFunction);
 
