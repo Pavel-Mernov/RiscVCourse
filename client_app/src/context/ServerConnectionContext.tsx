@@ -8,7 +8,7 @@ interface ServerContextType {
     submission : string
 }
 
-const serverIp = 'riscvcourse.ru'
+const serverIp = 'api.riscvcourse.ru'
 
 const serverContext : ServerContextType = {
     serverIp,

@@ -3,25 +3,31 @@ version: "3.8"
 services:
 
   traefik:
-    image: traefik:v2.9
+    image: traefik:v2.11
     container_name: traefik
     command:
-      - "--configFile=/traefik.yml"
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.myresolver.acme.httpchallenge=true
+      - --certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.myresolver.acme.email=paulmernov@gmail.com
+      - --certificatesresolvers.myresolver.acme.storage=/acme.json
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik.yml:/traefik.yml:ro"
-      - "./traefik_dynamic.yml:/traefik_dynamic.yml:ro"
-      - "./acme.json:/acme.json"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./acme.json:/acme.json
+    restart: always
 
   compilation-service:
     build: ./compilation_service
     container_name: compilation-service
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.compilation.rule=Host(`riscvcourse.ru`) && PathPrefix(`/compilation`)"
+      - "traefik.http.routers.compilation.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/compilation`)"
       - "traefik.http.routers.compilation.entrypoints=websecure"
       - "traefik.http.routers.compilation.tls.certresolver=myresolver"
     expose:
@@ -35,7 +41,7 @@ services:
     container_name: mock-auth-service
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.mockauth.rule=Host(`riscvcourse.ru`) && PathPrefix(`/mockauth`)"
+      - "traefik.http.routers.mockauth.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/mockauth`)"
       - "traefik.http.routers.mockauth.entrypoints=websecure"
       - "traefik.http.routers.mockauth.tls.certresolver=myresolver"
     expose:
@@ -51,7 +57,7 @@ services:
       - contest-db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.contest.rule=Host(`riscvcourse.ru`) && PathPrefix(`/contest`)"
+      - "traefik.http.routers.contest.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/contest`)"
       - "traefik.http.routers.contest.entrypoints=websecure"
       - "traefik.http.routers.contest.tls.certresolver=myresolver"
       - "traefik.http.middlewares.contest-stripprefix.stripprefix.prefixes=/contest"
@@ -69,7 +75,7 @@ services:
       - submission-db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.submission.rule=Host(`riscvcourse.ru`) && PathPrefix(`/submission`)"
+      - "traefik.http.routers.submission.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/submission`)"
       - "traefik.http.routers.submission.entrypoints=websecure"
       - "traefik.http.routers.submission.tls.certresolver=myresolver"
     expose:
