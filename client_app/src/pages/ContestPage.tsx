@@ -57,7 +57,7 @@ export default () => {
 
     const { id } = useParams()
 
-    const [contest, setContest] = useState<Contest | { error : any } | null>(null)
+    const [contestState, setContest] = useState<Contest | { error : any } | null>(null)
 
     const [ tasks, setTasks ] = useState<Task[]>([])
 
@@ -65,11 +65,11 @@ export default () => {
 
     const { isUserValidTeacher } = useAuth()
 
-    const { serverIp, contestPort } = useServerConnection()
+    const { serverIp, contest } = useServerConnection()
 
     useEffect(() => {
         const fetchContest = async () => {
-            const url = `http://${serverIp}:${contestPort}/api/contests/${id}`    
+            const url = `https://${serverIp}/${contest}/api/contests/${id}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -92,7 +92,7 @@ export default () => {
     useEffect(() => {
         const fetchTasks = async () => {
             
-            const url = `http://${serverIp}:${contestPort}/api/contests/${id}/tasks`    
+            const url = `https://${serverIp}/${contest}/api/contests/${id}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -112,7 +112,7 @@ export default () => {
         fetchTasks()
     }, [])
 
-    if (!contest) {
+    if (!contestState) {
         return (
             <Stack
         
@@ -123,7 +123,7 @@ export default () => {
         )        
     }
 
-    if (contest && typeof contest == 'object' && 'error' in contest) {
+    if (contestState && typeof contestState == 'object' && 'error' in contestState) {
         return (
             <Stack
                 spacing='150px'
@@ -137,7 +137,7 @@ export default () => {
 
     // console.log(JSON.stringify(contest), contest.title, JSON.stringify(tasks))
 
-    const { title } = contest
+    const { title } = contestState as Contest
 
     return (
         <Stack
@@ -193,12 +193,12 @@ export default () => {
             <Title title={ title } /> 
 
             {
-                contest.description &&
+                contestState && contestState.description &&
                 <Typography
                     sx={{ marginTop : '20px', alignSelf : 'center', maxWidth : '70%' }}
                     variant="h5"
                 >
-                    { contest.description }
+                    { contestState.description }
                 </Typography>
             }
         
@@ -224,7 +224,7 @@ export default () => {
             </Stack>
 
             {
-                contest.deadline && 
+                contestState.deadline && 
                 <Stack 
                     direction='row'
                     alignSelf='center'
@@ -245,7 +245,7 @@ export default () => {
                         fontSize='22px'
                         fontWeight='semiBold'
                     >
-                        { formatDate(contest.deadline) } 
+                        { formatDate(contestState.deadline) } 
                     </Typography>
                 </Stack>
             }

@@ -18,21 +18,10 @@ const allowedOrigins = [
   'http://riscvcourse.ru'  
 ];
 
-const originFunction = (origin : any, callback : any) => {
-    // Если origin не пришел (например, Postman или same-origin), разрешаем запрос
-    if (!origin) return callback(null, true); 
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true); // разрешаем
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-
 const app = express();
 
 app.use(cors({
-  origin: originFunction, // динамическое определение
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));

@@ -20,12 +20,12 @@ export function ContestNavPanel(props : Props) {
 
     const [ taskNames, setTaskNames ] = useState<TaskName[]>([])
 
-    const { serverIp, contestPort } = useServerConnection()
+    const { serverIp, contest } = useServerConnection()
 
     useEffect(() => {
         const fetchContest = async () => {
             
-            const url = `http://${serverIp}:${contestPort}/api/contests/${contestId}`    
+            const url = `https://${serverIp}/${contest}/api/contests/${contestId}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -50,7 +50,7 @@ export function ContestNavPanel(props : Props) {
     useEffect(() => {
         const fetchTasks = async () => {
             
-            const url = `http://${serverIp}:${contestPort}/api/contests/${contestId}/tasks`    
+            const url = `https://${serverIp}/${contest}/api/contests/${contestId}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {

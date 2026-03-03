@@ -2,20 +2,20 @@ import {  createContext, useContext, type ReactNode } from "react"
 
 interface ServerContextType {
     serverIp : string
-    compilationPort : number
-    contestPort : number
-    mockAuthPort : number
-    submissionPort : number
+    compilation : string
+    contest : string
+    mockAuth : string
+    submission : string
 }
 
-const serverIp = '130.49.150.32'
+const serverIp = 'riscvcourse.ru'
 
 const serverContext : ServerContextType = {
     serverIp,
-    compilationPort : 3000,
-    contestPort : 3002,
-    mockAuthPort : 3003,
-    submissionPort : 3004,
+    compilation : 'compilation',
+    contest : 'contest',
+    mockAuth : 'mockauth',
+    submission : 'submission',
 }
 
 const ServerConnectionContext = createContext(serverContext)

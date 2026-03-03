@@ -29,8 +29,14 @@ const app = express()
 
 app.use(metricsMiddleware);
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://riscvcourse.ru',
+  'http://riscvcourse.ru'  
+];
+
 app.use(cors({
-  origin: true,
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type'],
   credentials : true,

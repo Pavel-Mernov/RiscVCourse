@@ -21,12 +21,12 @@ export default () => {
 
     const navigate = useNavigate()
 
-    const { serverIp, contestPort } = useServerConnection()
+    const { serverIp, contest } = useServerConnection()
 
     const getContests = async () => {
 
 
-        const url = `http://${serverIp}:${contestPort}/api/contests`
+        const url = `https://${serverIp}/${contest}/api/contests`
 
         const contestList = await fetch(url, {
             method : 'GET',

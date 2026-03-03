@@ -19,12 +19,12 @@ export default () => {
     const [task1, setTask1] = useState<Task | undefined>(undefined)
     const [task2, setTask2] = useState<Task | undefined>(undefined)
 
-    const { serverIp, contestPort } = useServerConnection()
+    const { serverIp, contest } = useServerConnection()
 
     const fetchTask = async (taskId : string, setTask : (task : Task) => void) => {
         try {
                 
-                const url = `http://${serverIp}:${contestPort}/api/tasks/${taskId}`    
+                const url = `https://${serverIp}/${contest}/api/tasks/${taskId}`    
                 const method = 'GET'
 
                 const response = await fetch(url, {

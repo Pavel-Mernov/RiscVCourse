@@ -107,12 +107,12 @@ export default () => {
 
     const navigate = useNavigate()
 
-    const { serverIp, contestPort } = useServerConnection()
+    const { serverIp, contest } = useServerConnection()
 
     useEffect(() => { 
         const fetchContest = async () => {
 
-            const url = `http://${serverIp}:${contestPort}/api/contests/${id}`
+            const url = `https://${serverIp}/${contest}/api/contests/${id}`
 
             const response = await fetch(url, {
                 method: 'GET',
@@ -230,7 +230,7 @@ export default () => {
                             deadline : deadlineTimestampTz
                         }
 
-                        const url = `http://${serverIp}:${contestPort}/api/contests/${id}`
+                        const url = `https://${serverIp}/${contest}/api/contests/${id}`
 
                         // const response = 
                         await fetch(url, {
@@ -250,7 +250,7 @@ export default () => {
     const fetchDeleteContest = async () => {
 
                     try {
-                        const url = `http://${serverIp}:${contestPort}/api/contests/${id}`
+                        const url = `https://${serverIp}/${contest}/api/contests/${id}`
 
                         // const response = 
                         await fetch(url, {

@@ -80,7 +80,7 @@ export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, po
 
     const [emptyCodeError, setEmptyCodeError] = useState(false)
 
-    const { serverIp, submissionPort } = useServerConnection()
+    const { serverIp, submission } = useServerConnection()
 
     useEffect(() => { 
 
@@ -90,7 +90,7 @@ export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, po
 
         const fetchSubmissions = async () => {
 
-            const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions?userId=${getLogin()}&taskId=${taskId}`
+            const submissionUrl1 = `https://${serverIp}/${submission}/api/submissions?userId=${getLogin()}&taskId=${taskId}`
             const submissionMethod1 = 'GET'        
 
             const text = await fetch(submissionUrl1, {
@@ -132,7 +132,7 @@ export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, po
 
         if (answer.trim() === '') return
 
-            const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions`
+            const submissionUrl1 = `https://${serverIp}/${submission}/api/submissions`
             const submissionMethod1 = 'POST'
 
             const submissionBody1 = {

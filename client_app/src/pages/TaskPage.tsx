@@ -40,11 +40,11 @@ export default () => {
 
     const { isUserValidTeacher } = useAuth()
 
-    const { serverIp, contestPort } = useServerConnection()
+    const { serverIp, contest } = useServerConnection()
 
     useEffect(() => {
         const fetchTaskAndTests = async () => {
-            const url = `http://${serverIp}:${contestPort}/api/tasks/${id}`    
+            const url = `https://${serverIp}/${contest}/api/tasks/${id}`    
             const method = 'GET'
 
             try {
@@ -63,7 +63,7 @@ export default () => {
                     return
                 }
 
-                const testUrl = `http://${serverIp}:${contestPort}/api/tasks/${id}/tests` 
+                const testUrl = `https://${serverIp}/${contest}/api/tasks/${id}/tests` 
 
                 const testsData = await fetch(testUrl, {
                     method,

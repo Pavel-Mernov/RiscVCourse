@@ -74,7 +74,7 @@ export default () => {
 
     const { accessToken } = useAuth()
 
-    const { serverIp, contestPort } = useServerConnection()
+    const { serverIp, contest } = useServerConnection()
 
     const navigate = useNavigate()
 
@@ -167,7 +167,7 @@ export default () => {
                             deadline : deadlineTimestampTz
                         }
 
-                        const url = `http://${serverIp}:${contestPort}/api/contests`
+                        const url = `https://${serverIp}/${contest}/api/contests`
 
                         const response = await fetch(url, {
                             method: 'POST',

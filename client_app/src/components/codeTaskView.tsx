@@ -94,7 +94,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
     const [submissions, setSubmissions] = useState<Submission[]>([])
 
-    const { serverIp } = useServerConnection()
+    const { serverIp, compilation, submission } = useServerConnection()
 
     useEffect(() => { 
 
@@ -103,8 +103,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
         }
 
         const fetchSubmissions = async () => {
-            const submissionPort = 3004
-            const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions?userId=${getLogin()}&taskId=${taskId}`
+            const submissionUrl1 = `https://${serverIp}/${submission}/api/submissions?userId=${getLogin()}&taskId=${taskId}`
             const submissionMethod1 = 'GET'        
 
             const text = await fetch(submissionUrl1, {
@@ -161,7 +160,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             
         if (getLogin() && isTokenValid()) {
             const submissionPort = 3004
-            const submissionUrl1 = `http://${serverIp}:${submissionPort}/api/submissions`
+            const submissionUrl1 = `https://${serverIp}:${submissionPort}/api/submissions`
             const submissionMethod1 = 'POST'
 
             const submissionBody1 = {
@@ -210,8 +209,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                 code : answer,
             }
 
-            const PORT = 3000
-            const url = `http://${serverIp}:${PORT}/api/compile`    
+            const url = `https://${serverIp}/${compilation}/api/compile`    
             const method = 'POST'
 
             try {
@@ -263,8 +261,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
             const lastSubmissionId = lastSubmission.submission_id
 
-            const submissionPort = 3004
-            const submissionUrl = `http://${serverIp}:${submissionPort}/api/submissions/${lastSubmissionId}/verdict`
+            const submissionUrl = `https://${serverIp}/${submission}/api/submissions/${lastSubmissionId}/verdict`
             const submissionMethod = 'PUT'
 
             console.log(localVerdict)

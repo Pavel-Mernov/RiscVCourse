@@ -121,7 +121,7 @@ export default () => {
 
     const [tests, setTests] = useState<Test[]>([])
 
-    const { serverIp, contestPort } = useServerConnection()
+    const { serverIp, contest } = useServerConnection()
 
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
         
@@ -174,7 +174,7 @@ export default () => {
                 return
             }
 
-            const url = `http://${serverIp}:${contestPort}/api/contests/${contestId}/tasks`    
+            const url = `https://${serverIp}/${contest}/api/contests/${contestId}/tasks`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -266,7 +266,7 @@ export default () => {
                             task_data : taskAnswers[answer_type as Exclude<AnswerType, 'theory'>]
                         }
 
-                        const url = `http://${serverIp}:${contestPort}/api/contests/${contestId}/tasks`
+                        const url = `https://${serverIp}/${contest}/api/contests/${contestId}/tasks`
 
                         const addedTask = await fetch(url, {
                             method: 'POST',
@@ -290,7 +290,7 @@ export default () => {
                         if (answer_type == 'code') {
                             tests.forEach(async test => {
 
-                                const url = `http://${serverIp}:${contestPort}/api/tasks/${taskId}/tests`
+                                const url = `https://${serverIp}/${contest}/api/tasks/${taskId}/tests`
 
                                 await fetch(url, {
                                     method: 'POST',
