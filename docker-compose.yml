@@ -54,6 +54,8 @@ services:
       - "traefik.http.routers.contest.rule=Host(`riscvcourse.ru`) && PathPrefix(`/contest`)"
       - "traefik.http.routers.contest.entrypoints=websecure"
       - "traefik.http.routers.contest.tls.certresolver=myresolver"
+      - "traefik.http.middlewares.contest-stripprefix.stripprefix.prefixes=/contest"
+      - "traefik.http.routers.contest.middlewares=contest-stripprefix"
     expose:
       - "3002"
     volumes:
