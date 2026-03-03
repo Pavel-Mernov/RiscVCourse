@@ -1,65 +1,80 @@
-services:
-  compilation-service:
-    build: 
-      context: ./compilation_service
-      dockerfile: Dockerfile
+version: "3.8"
 
-    container_name: compilation-service
+services:
+
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik
+    command:
+      - "--configFile=/traefik.yml"
     ports:
-      - "3000:3000"
-    command: ["node", "dist/server.js"]  
-    environment:
-      NODE_ENV: production
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik.yml:/traefik.yml:ro"
+      - "./traefik_dynamic.yml:/traefik_dynamic.yml:ro"
+      - "./acme.json:/acme.json"
+
+  compilation-service:
+    build: ./compilation_service
+    container_name: compilation-service
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.compilation.rule=Host(`riscvcourse.ru`) && PathPrefix(`/compilation`)"
+      - "traefik.http.routers.compilation.entrypoints=websecure"
+      - "traefik.http.routers.compilation.tls.certresolver=myresolver"
+    expose:
+      - "3000"
     volumes:
       - ./compilation_service/src/logs:/combined.logs
       - ./compilation_service/src/logs:/error.log
 
   mock-auth-service:
-    build: 
-      context: ./mock_auth_service
-      dockerfile: Dockerfile
-
+    build: ./mock_auth_service
     container_name: mock-auth-service
-    ports:
-      - "3003:3003"
-    command: ["node", "dist/index.js"]  
-    environment:
-      NODE_ENV: production
-      REDIS_HOST: redis
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mockauth.rule=Host(`riscvcourse.ru`) && PathPrefix(`/mockauth`)"
+      - "traefik.http.routers.mockauth.entrypoints=websecure"
+      - "traefik.http.routers.mockauth.tls.certresolver=myresolver"
+    expose:
+      - "3003"
     volumes:
       - ./mock_auth_service/src/logs:/combined.logs
       - ./mock_auth_service/src/logs:/error.log
 
-#  auth-service:
-#    build: 
-#      context: ./auth_service
-#      dockerfile: Dockerfile
+  contest-service:
+    build: ./contest_service
+    container_name: contest-service
+    depends_on:
+      - contest-db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.contest.rule=Host(`riscvcourse.ru`) && PathPrefix(`/contest`)"
+      - "traefik.http.routers.contest.entrypoints=websecure"
+      - "traefik.http.routers.contest.tls.certresolver=myresolver"
+    expose:
+      - "3002"
+    volumes:
+      - ./contest_service/src/logs:/combined.logs
+      - ./contest_service/src/logs:/error.log
 
-#    container_name: auth-service
-#    ports:
-#      - "3005:3005"
-#    command: ["node", "dist/index.js"]  
-#    environment:
-#      NODE_ENV: production
-
-#  keycloak:
-#    image: quay.io/keycloak/keycloak:25.0
-#    container_name: keycloak
-#    environment:
-#      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-#      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-#      CLIENT_SECRET: ${CLIENT_SECRET}
-#    volumes:
-#      - ./realm-template.json:/opt/keycloak/data/import/realm-template.json
-#    command: >
-#      sh -c "
-#        echo Running import template...
-#        envsubst < /opt/keycloak/data/import/realm-template.json \
-#          > /opt/keycloak/data/import/realm.json &&
-#        /opt/keycloak/bin/kc.sh start-dev --import-realm
-#      "
-#    ports:
-#      - "8080:8080"
+  submission-service:
+    build: ./submission_service
+    container_name: submission-service
+    depends_on:
+      - submission-db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.submission.rule=Host(`riscvcourse.ru`) && PathPrefix(`/submission`)"
+      - "traefik.http.routers.submission.entrypoints=websecure"
+      - "traefik.http.routers.submission.tls.certresolver=myresolver"
+    expose:
+      - "3004"
+    volumes:
+      - ./submission_service/src/logs:/combined.logs
+      - ./submission_service/src/logs:/error.log
 
   contest-db:
     image: postgres:18
@@ -68,69 +83,27 @@ services:
       POSTGRES_USER: pavel_mernov
       POSTGRES_PASSWORD: 0867
       POSTGRES_DB: contest_database
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pavel_mernov -d contest_database"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
     ports:
       - "5432:5432"
     volumes:
-      - contest_volumes:/var/lib/postgresql 
-  contest-service:
-    depends_on:
-    - contest-db
-
-    build: 
-      context: ./contest_service
-      dockerfile: Dockerfile
-
-    container_name: contest-service
-    ports:
-      - "3002:3002"
-    command: ["node", "dist/index.js"]  
-    environment:
-      NODE_ENV: production
-    volumes:
-      - ./contest_service/src/logs:/combined.logs
-      - ./contest_service/src/logs:/error.log
+      - contest_volumes:/var/lib/postgresql
 
   submission-db:
     image: postgres:18
     container_name: submission-db
-    restart: always
     environment:
       POSTGRES_USER: pavel_mernov
       POSTGRES_PASSWORD: 0867
       POSTGRES_DB: submission_database
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pavel_mernov -d submission_database"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
     ports:
       - "5433:5432"
     volumes:
-      - submission_volumes:/var/lib/postgresql 
-  submission-service:
-    depends_on:
-    - submission-db
+      - submission_volumes:/var/lib/postgresql
 
-    build: 
-      context: ./submission_service
-      dockerfile: Dockerfile
-
-    container_name: submission-service
-    ports:
-      - "3004:3004"
-    command: ["node", "dist/index.js"]  
-    environment:
-      NODE_ENV: production
-    volumes:
-      - ./submission_service/src/logs:/combined.logs
-      - ./submission_service/src/logs:/error.log
   redis:
     image: redis
+    container_name: redis
+
 volumes:
   submission_volumes:
   contest_volumes:
@@ -138,7 +111,3 @@ volumes:
 networks:
   default:
     driver: bridge
-    driver_opts:
-      com.docker.network.driver.mtu: 1450
-
-
