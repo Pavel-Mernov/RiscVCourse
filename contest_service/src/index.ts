@@ -22,12 +22,24 @@ const allowedOrigins = [
   'http://riscvcourse.ru'  
 ];
 
+const originFunction = (origin : any, callback : any) => {
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, origin);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+
+}
+
 app.use(cors({
-  origin: allowedOrigins,
+  origin: originFunction,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
+app.options('*', cors());
 
 app.use(requestCounterFunction);
 
