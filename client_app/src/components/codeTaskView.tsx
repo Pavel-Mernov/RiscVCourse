@@ -1,7 +1,7 @@
 import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
-import { Stack, Typography, TextField, Button, colors, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material"
-import { green, red } from "@mui/material/colors"
+import { Stack, Typography, TextField, Button, colors, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, ButtonGroup, Box } from "@mui/material"
+import { green, grey, red } from "@mui/material/colors"
 import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
 import type { CodeData, Test } from "../pages/CreateTaskPage"
@@ -82,7 +82,11 @@ interface Props {
 export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
         tests } : Props) => {
 
-    const [answer, setAnswer] = useState('')
+    const [textAnswer, setTextAnswer] = useState('')
+
+    const [fileAnswer, setFileAnswer] = useState('')
+
+    const [fileName, setFileName] = useState('')
 
     const [isCorrectAnswerShown, setCorrectAnswerShown] = useState(false)
 
@@ -90,9 +94,13 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
     const [verdict, setVerdict] = useState<Verdict | undefined>(undefined)
 
-    const [emptyCodeError, setEmptyCodeError] = useState(false)
+    const [emptyCodeHereError, setEmptyCodeHereError] = useState(false)
+
+    const [emptyFileError, setEmptyFileError] = useState(false)
 
     const [submissions, setSubmissions] = useState<Submission[]>([])
+
+    const [codeInputMode, setCodeInputMode] = useState<'here' | 'file'>('here')
 
     const { serverIp, compilation, submission } = useServerConnection()
 
@@ -118,8 +126,8 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
             const sortedSubmissions = submissionsData.sort((a, b) => ( +(new Date(b.timestamp)) - +new Date(a.timestamp) ))
 
-            if (sortedSubmissions.length > 0 && answer.length == 0) {
-                setAnswer(sortedSubmissions[0].text as string)
+            if (sortedSubmissions.length > 0 && textAnswer.length == 0) {
+                setTextAnswer(sortedSubmissions[0].text as string)
             }
 
             setSubmissions(sortedSubmissions)
@@ -145,8 +153,12 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
     const sendAnswer = async () => {
 
-        if (!answer || !answer.trim()) {
-            setEmptyCodeError(true)
+        if (codeInputMode == 'here' && (!textAnswer || !textAnswer.trim())) {
+            setEmptyCodeHereError(true)
+            return
+        }
+        else if (codeInputMode == 'file' && (!fileAnswer || !fileAnswer.trim())) {
+            setEmptyFileError(true)
             return
         }
 
@@ -165,7 +177,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             const submissionBody1 = {
                 task_id: taskId,
                 student_id: getLogin(),
-                text: answer
+                text: textAnswer
             }
 
             try {
@@ -205,7 +217,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
             const body = {
                 input,
-                code : answer,
+                code : codeInputMode == 'here' ? textAnswer : fileAnswer,
             }
 
             const url = `https://${serverIp}/${compilation}/api/compile`    
@@ -308,6 +320,17 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
 
     }
+
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const text = await file.text();
+
+        setEmptyFileError(false);
+        setFileAnswer(text);
+        setFileName(file.name);
+    };
 
     return (
         <Stack
@@ -451,43 +474,146 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             </Table>
             </TableContainer>
 
-            <Stack 
-                spacing='20px'
-            >
-                <Typography
-                    variant="h4"
-                    fontSize='28px'
-                    fontWeight='bold'
-                >
-                    Введите код решения:
-                </Typography>
-
+            <ButtonGroup
+                variant="contained"
                 
-            <Stack spacing='10px' >
+                sx={{
+                    width: 'fit-content',
+                    "& .MuiButtonGroup-grouped": {
+                    backgroundColor: grey[200],
+                    borderColor: grey[700],
+                    
+                    fontSize: '22px',
+                    fontWeight: 'semibold',
+                    color: "black",
+                    "&:hover": {
+                        backgroundColor: grey[300],
+                    },
+                    },
+                }}
+            >
+                <Button
+                    disabled={ codeInputMode == 'here' }
+                    onClick={() => setCodeInputMode('here')}
+                    sx={{
+                        ...(codeInputMode == 'here' && {
+                            backgroundColor: grey[700],
+                            color: "white",
+                            fontWeight: "bold",
+                            "&.Mui-disabled": {
+                            backgroundColor: grey[700],
+                            color: "white",
+                            },
+                        }),
+                        }}
+                >
+                    Ввести код здесь
+                </Button>
+                <Button
+                    disabled={ codeInputMode == 'file' }
+                    onClick={() => setCodeInputMode('file')}
+                    sx={{
+                        ...(codeInputMode == 'file' && {
+                            backgroundColor: grey[700],
+                            color: "white",
+                            fontWeight: "bold",
+                            "&.Mui-disabled": {
+                            backgroundColor: grey[700],
+                            color: "white",
+                            },
+                        }),
+                        }}
+                >
+                    Выбрать файл
+                </Button>
+            </ButtonGroup>
 
-                <TextField
-                    fullWidth
-                    multiline
-                    minRows={10}
-                    maxRows={15}
-                    error={ emptyCodeError }
-                    helperText={emptyCodeError ? 'Код не может быть пустым' : ''}
-                    label={"Введите код"}
-                    value={answer}
-                    onChange={(e) => { 
-                        setAnswer(e.target.value)
-                        setCorrectAnswerShown(false)
-                        setEmptyCodeError(false)
-                    }}
-                />
-                {
-                    isCorrectAnswerShown && verdict && isAnswerCorrect() && <Correct />
-                }
-                {
-                    isCorrectAnswerShown && verdict && !isAnswerCorrect() && <Wrong />
-                }
-            </Stack>
-            </Stack>
+            {
+                codeInputMode == 'file' &&
+                    <Box gap='10px'>
+                        {/* Скрытый input */}
+                        <input
+                            accept=".s,.asm"
+                            style={{ display: "none" }}
+                            id="file-upload"
+                            type="file"
+                            onChange={handleFileChange}
+                        />
+
+                        {/* Кнопка MUI */}
+                        <label htmlFor="file-upload">
+                            <Button 
+                                variant="contained" 
+                                component="span"
+                                sx={{
+                                    backgroundColor: grey[200],
+                                    fontSize : '20px',
+                                    fontWeight : 'bold',
+                                    color : grey[700],
+                                    borderRadius : '10px',
+                                    border : '2px solid',
+                                    borderColor : emptyFileError ? 'red' : grey[400],
+                                    paddingInline : '50px'
+                                }}
+                            >
+                            Загрузить
+                            </Button>
+                        </label>
+
+                            <Typography
+                                variant='body1'
+                                sx={{
+                                    marginTop : '18px',
+                                    color : emptyFileError ? 'red' : grey[700],
+                                    fontSize : '22px',
+                                    fontWeight : 'semiBold'
+                                }}
+                            >
+                                { fileName || 'Файл не выбран или пуст' }
+                            </Typography>
+                    
+                    </Box>
+            }
+
+            { codeInputMode == 'here' &&
+                <Stack 
+                    spacing='20px'
+                >
+                    <Typography
+                        variant="h4"
+                        fontSize='28px'
+                        fontWeight='bold'
+                    >
+                        Введите код решения:
+                    </Typography>
+
+                    
+                    <Stack spacing='10px' >
+
+                        <TextField
+                            fullWidth
+                            multiline
+                            minRows={10}
+                            maxRows={15}
+                            error={ emptyCodeHereError }
+                            helperText={ emptyCodeHereError ? 'Код не может быть пустым' : '' }
+                            label={"Введите код"}
+                            value={textAnswer}
+                            onChange={(e) => { 
+                                setTextAnswer(e.target.value)
+                                setCorrectAnswerShown(false)
+                                setEmptyCodeHereError(false)
+                            }}
+                        />
+                        {
+                            isCorrectAnswerShown && verdict && isAnswerCorrect() && <Correct />
+                        }
+                        {
+                            isCorrectAnswerShown && verdict && !isAnswerCorrect() && <Wrong />
+                        }
+                    </Stack>
+                </Stack>
+            }
 
             <Button
                 variant='contained'
