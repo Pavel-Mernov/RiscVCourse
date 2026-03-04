@@ -30,8 +30,12 @@ services:
       - "traefik.http.routers.compilation.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/compilation`)"
       - "traefik.http.routers.compilation.entrypoints=websecure"
       - "traefik.http.routers.compilation.tls.certresolver=myresolver"
+      - "traefik.http.middlewares.compilation-stripprefix.stripprefix.prefixes=/compilation"
+      - "traefik.http.routers.compilation.middlewares=compilation-stripprefix"
     expose:
       - "3000"
+    environment:
+      NODE_ENV: production
     volumes:
       - ./compilation_service/src/logs:/combined.logs
       - ./compilation_service/src/logs:/error.log
@@ -44,8 +48,13 @@ services:
       - "traefik.http.routers.mockauth.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/mockauth`)"
       - "traefik.http.routers.mockauth.entrypoints=websecure"
       - "traefik.http.routers.mockauth.tls.certresolver=myresolver"
+      - "traefik.http.middlewares.mockauth-stripprefix.stripprefix.prefixes=/mockauth"
+      - "traefik.http.routers.mockauth.middlewares=mockauth-stripprefix"
     expose:
       - "3003"
+    environment:
+      NODE_ENV: production
+      REDIS_HOST: redis
     volumes:
       - ./mock_auth_service/src/logs:/combined.logs
       - ./mock_auth_service/src/logs:/error.log
@@ -64,6 +73,8 @@ services:
       - "traefik.http.routers.contest.middlewares=contest-stripprefix"
     expose:
       - "3002"
+    environment:
+      NODE_ENV: production
     volumes:
       - ./contest_service/src/logs:/combined.logs
       - ./contest_service/src/logs:/error.log
@@ -78,8 +89,12 @@ services:
       - "traefik.http.routers.submission.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/submission`)"
       - "traefik.http.routers.submission.entrypoints=websecure"
       - "traefik.http.routers.submission.tls.certresolver=myresolver"
+      - "traefik.http.middlewares.submission-stripprefix.stripprefix.prefixes=/submission"
+      - "traefik.http.routers.submission.middlewares=submission-stripprefix"
     expose:
       - "3004"
+    environment:
+      NODE_ENV: production
     volumes:
       - ./submission_service/src/logs:/combined.logs
       - ./submission_service/src/logs:/error.log
@@ -91,8 +106,6 @@ services:
       POSTGRES_USER: pavel_mernov
       POSTGRES_PASSWORD: 0867
       POSTGRES_DB: contest_database
-    ports:
-      - "5432:5432"
     volumes:
       - contest_volumes:/var/lib/postgresql
 
@@ -103,8 +116,6 @@ services:
       POSTGRES_USER: pavel_mernov
       POSTGRES_PASSWORD: 0867
       POSTGRES_DB: submission_database
-    ports:
-      - "5433:5432"
     volumes:
       - submission_volumes:/var/lib/postgresql
 
