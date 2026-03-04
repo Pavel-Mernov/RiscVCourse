@@ -159,8 +159,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
         let localVerdict : Verdict | undefined = undefined
             
         if (getLogin() && isTokenValid()) {
-            const submissionPort = 3004
-            const submissionUrl1 = `https://${serverIp}:${submissionPort}/api/submissions`
+            const submissionUrl1 = `https://${serverIp}:${submission}/api/submissions`
             const submissionMethod1 = 'POST'
 
             const submissionBody1 = {
