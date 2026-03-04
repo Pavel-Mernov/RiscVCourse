@@ -19,6 +19,7 @@ const app = express()
 const allowedOrigins = [
   'http://localhost:5173',
   'https://riscvcourse.ru',
+  'https://www.riscvcourse.ru',
   'http://riscvcourse.ru'  
 ];
 
