@@ -15,6 +15,7 @@ export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 const allowedOrigins = [
   'http://localhost:5173',
   'https://riscvcourse.ru',
+  'https://www.riscvcourse.ru',
   'http://riscvcourse.ru'  
 ];
 
