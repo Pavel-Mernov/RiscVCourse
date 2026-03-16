@@ -13,11 +13,17 @@ interface Task {
 
 export default () => {
 
-    const id1 = '8895b056-6892-4374-9d62-e0c319a46713'
-    const id2 = '59e305d9-daf7-4caf-ab8f-ea8d7505ef16'
+    const id_s = [
+        '8895b056-6892-4374-9d62-e0c319a46713', 
+        '751e35e8-7d78-4e10-855f-b795244dee0a',
+        '14b60a3b-a237-4322-b8d4-68c9ea02a15a',
+        '936722a1-a0ea-4ca8-ba00-a073867d2b4e',
+        '2ab56204-7f59-4a16-9dd4-ae86c382578c',
+        '59e305d9-daf7-4caf-ab8f-ea8d7505ef16',
+    ]
 
-    const [task1, setTask1] = useState<Task | undefined>(undefined)
-    const [task2, setTask2] = useState<Task | undefined>(undefined)
+
+    const [tasks, setTasks] = useState<Task[]>([])
 
     const { serverIp, contest } = useServerConnection()
 
@@ -49,11 +55,21 @@ export default () => {
 
     useEffect(() => { 
         
-        fetchTask(id1, setTask1)
-    }, [])
+        const fetchTasks = async () => {
+            const newTasks : Task[] = []
 
-    useEffect(() => { 
-        fetchTask(id2, setTask2)
+            for (const id of id_s) {
+                await fetchTask(id, task => { 
+                    if (task) { 
+                        newTasks.push(task)
+                    }
+                })
+            }
+
+            setTasks(newTasks)
+        }
+
+        fetchTasks()
     }, [])
 
     return <Stack
@@ -68,7 +84,7 @@ export default () => {
             marginTop='180px'
             spacing='40px'
         >
-        { (!!task1 || !!task2) &&
+        { (tasks.length > 0) &&
         
         <Typography
             
@@ -82,12 +98,9 @@ export default () => {
         }
 
         {
-            task1 && <PreviewTaskLink task={task1} maxTextLength={600} />
+            tasks.map( task => <PreviewTaskLink task={task} maxTextLength={600} />)
         }
 
-        {
-            task2 && <PreviewTaskLink task={task2} />
-        }
         </Stack>
 
         
