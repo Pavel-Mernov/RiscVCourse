@@ -51,7 +51,6 @@ export interface ChoiceAnswers {
   correct_answer : number,
   answers : [string, ...string[]], // все ответы
   points?: number
-  attempts?: number
 }
 
 export interface MultichoiceAnswer {
@@ -65,7 +64,6 @@ export interface MultichoiceAnswers {
     ...MultichoiceAnswer[]],
     
   points?: number
-  attempts?: number
 }
 
 export interface CodeData {
@@ -126,7 +124,7 @@ export default () => {
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
         
         const newAnswer : ChoiceAnswers = isContestForAuthorizedOnly ? 
-            answer : { ...answer, points : undefined, attempts : undefined }
+            answer : { ...answer, points : undefined }
 
         const newTaskAnswers = { ...taskAnswers, choice : newAnswer } as TaskAnswers
 
@@ -136,7 +134,7 @@ export default () => {
     const setMultichoiceAnswers = (answer : MultichoiceAnswers) => {
 
         const newAnswer : MultichoiceAnswers = isContestForAuthorizedOnly ? 
-            answer : { ...answer, points : undefined, attempts : undefined }
+            answer : { ...answer, points : undefined }
 
         const newAnswers : TaskAnswers = { ...taskAnswers, multichoice : newAnswer }
 

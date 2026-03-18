@@ -21,7 +21,7 @@ describe('PUT /api/submissions/:id/verdict', () => {
     let app : any
 
     beforeEach(() => {
-        jest.clearAllMocks()
+        jest.resetAllMocks()
 
         app = express()
         app.use(express.json())
@@ -88,6 +88,84 @@ describe('PUT /api/submissions/:id/verdict', () => {
 
         expect(res.status).toBe(200)
         expect(res.body.message).toContain('Вердикт обновлен')
+    })
+
+    test('Возвращает 200 и сообщение при успешном обновлении и установке целого положительного числа баллов', async () => {
+        (updateVerdict as jest.Mock).mockResolvedValueOnce(1)
+
+        const res = await request(app)
+        .put('/api/submissions/333/verdict')
+        .send({ verdict: 'WA', points : 2 })
+
+        expect(res.status).toBe(200)
+        expect(res.body.message).toContain('Вердикт обновлен')
+    })
+
+    test('Возвращает 200 и сообщение при успешном обновлении и установке 0 баллов', async () => {
+        (updateVerdict as jest.Mock).mockResolvedValueOnce(1)
+
+        const res = await request(app)
+        .put('/api/submissions/000/verdict')
+        .send({ verdict: 'WA', points : 0 })
+
+        expect(res.status).toBe(200)
+        expect(res.body.message).toContain('Вердикт обновлен')
+    })
+
+    test('Возвращает 200 и сообщение при успешном обновлении и установке дробного положительного числа баллов', async () => {
+        (updateVerdict as jest.Mock).mockResolvedValueOnce(1)
+
+        const res = await request(app)
+        .put('/api/submissions/444/verdict')
+        .send({ verdict: 'WA', points : 2.6667 })
+
+        expect(res.status).toBe(200)
+        expect(res.body.message).toContain('Вердикт обновлен')
+    })
+
+    test('Возвращает 200 и сообщение при успешном обновлении и установке дробного положительного числа баллов', async () => {
+        (updateVerdict as jest.Mock).mockResolvedValueOnce(1)
+
+        const res = await request(app)
+        .put('/api/submissions/444/verdict')
+        .send({ verdict: 'WA', points : 2.6667 })
+
+        expect(res.status).toBe(200)
+        expect(res.body.message).toContain('Вердикт обновлен')
+    })
+
+    test('Возвращает 200 и сообщение при успешном обновлении и установке числа баллов, указанного в виде строки', async () => {
+        (updateVerdict as jest.Mock).mockResolvedValueOnce(1)
+
+        const res = await request(app)
+        .put('/api/submissions/555/verdict')
+        .send({ verdict: 'WA', points : '2.5' })
+
+        expect(res.status).toBe(200)
+        expect(res.body.message).toContain('Вердикт обновлен')
+    })
+
+    test('Возвращает 400 и сообщение при указании отрицательного числа баллов', async () => {
+        (updateVerdict as jest.Mock).mockResolvedValueOnce(1)
+
+        const res = await request(app)
+        .put('/api/submissions/666/verdict')
+        .send({ verdict: 'WA', points : -1 })
+
+        expect(res.status).toBe(400)
+        expect(res.body.error).toContain('Недопустимое значение points: ')
+    })
+
+
+    test('Возвращает 400 и сообщение при указании числа баллов - не является числом', async () => {
+        (updateVerdict as jest.Mock).mockResolvedValueOnce(1)
+
+        const res = await request(app)
+        .put('/api/submissions/777/verdict')
+        .send({ verdict: 'WA', points : '1err' })
+
+        expect(res.status).toBe(400)
+        expect(res.body.error).toContain('Недопустимое значение points: ')
     })
 
     test('Возвращает 500 при ошибке сервера', async () => {

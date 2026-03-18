@@ -120,14 +120,6 @@ const MultichoiceEditor: React.FC<Props> = ({ multichoiceAnswers, enableSetPoint
       />
     }
 
-    { enableSetPointsAndAttempts &&
-      <TextField
-        label="Количество попыток"
-        value={multichoiceAnswers.attempts ?? ""}
-        onChange={(e) => handlePositiveInt("attempts", e.target.value)}
-        inputProps={{ inputMode: "numeric" }}
-      />
-    }
     </Box>
   );
 };

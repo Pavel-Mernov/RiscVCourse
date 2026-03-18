@@ -17,6 +17,7 @@ export interface Submission {
   timestamp: string; // ISO string
   text: string | string[];
   verdict?: Verdict | undefined;
+  points?: number;
 }
 
 function Correct() {
@@ -278,7 +279,10 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             console.log(localVerdict)
 
             const submissionBody = {
-                verdict : localVerdict || 'OK'
+                verdict : localVerdict || 'OK',
+                points : !isTokenValid() || points === undefined ? undefined : 
+                    (!localVerdict || localVerdict === 'OK')
+                    ? points : 0,
             }
 
             try {
@@ -571,6 +575,13 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                             >
                                 { fileName || 'Файл не выбран или пуст' }
                             </Typography>
+
+                            {
+                                isCorrectAnswerShown && verdict && isAnswerCorrect() && <Correct />
+                            }
+                            {
+                                isCorrectAnswerShown && verdict && !isAnswerCorrect() && <Wrong />
+                            }
                     
                     </Box>
             }
@@ -687,7 +698,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                     Посылки:
                 </Typography>
 
-                    <SubmissionsTable taskName={taskName} submissions={submissions} points={ points } />    
+                    <SubmissionsTable taskName={taskName} submissions={submissions} />    
                 </Stack>
                 
             }

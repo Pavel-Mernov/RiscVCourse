@@ -69,7 +69,7 @@ interface Props {
     taskData : MultichoiceAnswers
 }
 
-export default ({ taskId, taskName, 'taskData' : { answers, attempts, points } } : Props) => {
+export default ({ taskId, taskName, 'taskData' : { answers, points } } : Props) => {
 
     const [selectedAnswers, setSelectedAnswers] = useState(answers.map(_ => false))
 
@@ -123,6 +123,8 @@ export default ({ taskId, taskName, 'taskData' : { answers, attempts, points } }
 
     // useEffect(() => console.log(selectedAnswers), [selectedAnswers])
 
+    const isAnswerCorrect = () => answers.every(({ is_correct }, i) => selectedAnswers[i] == is_correct)
+
     const sendAnswer = async () => {
 
         setCorrectAnswerShown(true)
@@ -140,7 +142,9 @@ export default ({ taskId, taskName, 'taskData' : { answers, attempts, points } }
                 task_id: taskId,
                 student_id: getLogin(),
                 text: answers.filter((_, i) => selectedAnswers[i]).map(({ answer }) => answer),
-                verdict: answers.every(({ is_correct }, i) => selectedAnswers[i] == is_correct) ? 'OK' : 'WA' 
+                verdict: isAnswerCorrect() ? 'OK' : 'WA',
+                points: points === undefined || !isTokenValid() ? undefined :
+                    isAnswerCorrect() ? points : 0
             }
 
             try {
@@ -247,25 +251,6 @@ export default ({ taskId, taskName, 'taskData' : { answers, attempts, points } }
                         </Typography>
                     </Typography>
                 }
-                { attempts && isTokenValid() &&
-                    <Typography>
-                        <Typography
-                            component="span"
-                            fontWeight={700}
-                            fontSize="25px"
-                        >
-                            Максимальное количество попыток:
-                        </Typography>
-
-                        <Typography
-                            component="span"
-                            fontSize="24px"
-                            sx={{ marginLeft: "6px" }}
-                        >
-                            { attempts }.
-                        </Typography>
-                    </Typography>
-                }
             </Stack>
 
             {
@@ -279,7 +264,7 @@ export default ({ taskId, taskName, 'taskData' : { answers, attempts, points } }
                     Посылки:
                 </Typography>
 
-                    <SubmissionsTable taskName={taskName} submissions={submissions} points={ points } />    
+                    <SubmissionsTable taskName={taskName} submissions={submissions} />    
                 </Stack>
                 
             }

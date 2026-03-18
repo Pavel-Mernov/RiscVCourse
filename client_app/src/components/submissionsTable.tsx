@@ -4,11 +4,10 @@ import { blue, green, red } from "@mui/material/colors"
 
 type Props = {
     taskName : string
-    points ?: number
     submissions : Submission[]
 }
 
-export default ({ taskName, points, submissions } : Props) => {
+export default ({ taskName, submissions } : Props) => {
 
     return (
             <TableContainer
@@ -68,7 +67,7 @@ export default ({ taskName, points, submissions } : Props) => {
                 </TableRow>
                 </TableHead>
                 <TableBody>
-                { submissions.map(({ timestamp, verdict }, index) => (
+                { submissions.map(({ timestamp, verdict, points }, index) => (
                     <TableRow
                     key={index}
                     sx={{
@@ -87,7 +86,7 @@ export default ({ taskName, points, submissions } : Props) => {
                         { verdict || 'Waiting' }
                     </TableCell>
                     <TableCell sx={{ whiteSpace: 'pre-line', fontSize : '20px' }} >
-                        { verdict == 'OK' && points ? points : (points) ? '0' : '' }
+                        { points }
                     </TableCell>                    
                 </TableRow>
 

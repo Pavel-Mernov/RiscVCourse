@@ -19,6 +19,7 @@ jest.mock('../logger/logger', () => ({
 import { v4 as uuidv4 } from 'uuid';
 import { createSubmission } from '../sql/createSubmission';
 import { PostSubmissionHandler } from '../controllers/submissionController';
+import { error } from 'node:console';
 
 const mockReq = (body : any) => ({ body });
 const mockRes = () => {
@@ -128,6 +129,172 @@ describe('POST /api/submission', () => {
         expect(res.status).toHaveBeenCalledWith(201);
         const result = res.json.mock.calls[0][0];
         expect(result.verdict).toBeUndefined();
+    });
+
+    test('создаёт submission с указанием баллов', async () => {
+        (uuidv4 as jest.Mock).mockReturnValue('new-submission-id');
+
+        const req = mockReq({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: 'hello world 2',
+            verdict: 'OK',
+            points: 1
+        });
+        const res = mockRes();
+
+        await PostSubmissionHandler(req, res);
+
+        expect(createSubmission).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
+
+        const sent = res.json.mock.calls[0][0];
+        expect(sent.task_id).toBe('uuid1');
+        expect(sent.student_id).toBe('uuid2');
+        expect(sent.verdict).toBe('OK');
+        expect(sent.points).toBe(1);
+        expect(sent.text).toBe('hello world 2');
+        expect(sent.submission_id).toBe('new-submission-id');
+    });
+
+    test('создаёт submission с указанием числа баллов в виде строки', async () => {
+        (uuidv4 as jest.Mock).mockReturnValue('new-submission-id');
+
+        const req = mockReq({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: 'hello world 2',
+            verdict: 'OK',
+            points: '1'
+        });
+        const res = mockRes();
+
+        await PostSubmissionHandler(req, res);
+
+        expect(createSubmission).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
+
+        const sent = res.json.mock.calls[0][0];
+        expect(sent.task_id).toBe('uuid1');
+        expect(sent.student_id).toBe('uuid2');
+        expect(sent.verdict).toBe('OK');
+        expect(sent.points).toBe(1);
+        expect(sent.text).toBe('hello world 2');
+        expect(sent.submission_id).toBe('new-submission-id');
+    });
+
+    test('создаёт submission с указанием 0 баллов', async () => {
+        (uuidv4 as jest.Mock).mockReturnValue('new-submission-id');
+
+        const req = mockReq({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: 'hello world 2',
+            verdict: 'OK',
+            points: 0
+        });
+        const res = mockRes();
+
+        await PostSubmissionHandler(req, res);
+
+        expect(createSubmission).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
+
+        const sent = res.json.mock.calls[0][0];
+        expect(sent.task_id).toBe('uuid1');
+        expect(sent.student_id).toBe('uuid2');
+        expect(sent.verdict).toBe('OK');
+        expect(sent.points).toBe(0);
+        expect(sent.text).toBe('hello world 2');
+        expect(sent.submission_id).toBe('new-submission-id');
+    });
+
+    test('создаёт submission с указанием нецелого числа баллов', async () => {
+        (uuidv4 as jest.Mock).mockReturnValue('new-submission-id');
+
+        const req = mockReq({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: 'hello world 2',
+            verdict: 'OK',
+            points: 1.5
+        });
+        const res = mockRes();
+
+        await PostSubmissionHandler(req, res);
+
+        expect(createSubmission).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
+
+        const sent = res.json.mock.calls[0][0];
+        expect(sent.task_id).toBe('uuid1');
+        expect(sent.student_id).toBe('uuid2');
+        expect(sent.verdict).toBe('OK');
+        expect(sent.points).toBe(1.5);
+        expect(sent.text).toBe('hello world 2');
+        expect(sent.submission_id).toBe('new-submission-id');
+    });
+
+    test('создаёт submission с указанием 0 баллов', async () => {
+        (uuidv4 as jest.Mock).mockReturnValue('new-submission-id');
+
+        const req = mockReq({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: 'hello world 0',
+            verdict: 'OK',
+            points: 0
+        });
+        const res = mockRes();
+
+        await PostSubmissionHandler(req, res);
+
+        expect(createSubmission).toHaveBeenCalled();
+        expect(res.status).toHaveBeenCalledWith(201);
+
+        const sent = res.json.mock.calls[0][0];
+        expect(sent.task_id).toBe('uuid1');
+        expect(sent.student_id).toBe('uuid2');
+        expect(sent.verdict).toBe('OK');
+        expect(sent.points).toBe(0);
+        expect(sent.text).toBe('hello world 0');
+        expect(sent.submission_id).toBe('new-submission-id');
+    });
+
+    test('Возвращает ошибку 400 при указании отрицательного числа баллов', async () => {
+        (uuidv4 as jest.Mock).mockReturnValue('new-submission-id');
+
+        const req = mockReq({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: 'hello world 0',
+            verdict: 'OK',
+            points: -1
+        });
+        const res = mockRes();
+
+        await PostSubmissionHandler(req, res);
+
+        expect(res.json).toHaveBeenCalledWith({ error : 'Недопустимое значение points: -1' })
+        expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    test('Возвращает ошибку 400 если количество баллов - не целое число', async () => {
+        (uuidv4 as jest.Mock).mockReturnValue('new-submission-id');
+
+        const req = mockReq({
+            task_id: 'uuid1',
+            student_id: 'uuid2',
+            text: 'hello world 0',
+            verdict: 'OK',
+            points: '1a'
+        });
+        const res = mockRes();
+
+        await PostSubmissionHandler(req, res);
+
+        expect(res.json).toHaveBeenCalledWith({ error : 'Недопустимое значение points: 1a' })
+        expect(res.status).toHaveBeenCalledWith(400);
     });
 
     test('Возвращает 500 при ошибке сервера', async () => {

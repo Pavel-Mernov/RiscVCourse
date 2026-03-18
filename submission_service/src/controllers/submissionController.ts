@@ -18,6 +18,7 @@ export interface Submission {
   timestamp: string; // ISO string
   text: string | string[];
   verdict?: Verdict | undefined;
+  points?: number | undefined;
 }
 
 type SubmissionCreate = Omit<Submission, 'submission_id' | 'timestamp'>
@@ -66,7 +67,7 @@ export const PostSubmissionHandler = async (req : any, res : any) => {
 
   try {
       const body: SubmissionCreate = req.body;
-      const { task_id, student_id, text, verdict } = body;
+      const { task_id, student_id, text, verdict, points } = body;
 
       const queryMessage = 'POST /api/submissions. Body: ' + JSON.stringify(body)
       logger.info(queryMessage)
@@ -92,6 +93,20 @@ export const PostSubmissionHandler = async (req : any, res : any) => {
         return res.status(400).json({ error });
       }
 
+    if ((typeof points !== 'undefined' && typeof points !== 'number' && isNaN(Number(points))) || 
+        (typeof points == 'number' && points < 0) ||
+        (typeof points == 'string' && !isNaN(Number(points)) && Number(points) < 0)
+      ) {
+
+        const error = 'Недопустимое значение points: ' + points;
+
+        logger.error(error)
+        return res.status(400).json({ error })
+
+      }
+
+      const numericPoints = typeof points == 'string' ? Number(points) : points      
+
       const newSubmission: Submission = {
         submission_id: uuidv4(),
         task_id,
@@ -99,6 +114,7 @@ export const PostSubmissionHandler = async (req : any, res : any) => {
         text: Array.isArray(text) ? text.map(str => str.trim()) : text.trim(),
         timestamp: new Date().toISOString(),
         verdict,
+        points : numericPoints
       };
 
       await createSubmission(newSubmission, sqlPool);
@@ -114,7 +130,7 @@ export const PostSubmissionHandler = async (req : any, res : any) => {
 // PUT /api/submissions/{id}/verdict
 export const putSubmission = async (req: any, res: Response) => {
   const submission_id = req.params.id;
-  const { verdict } = req.body as { verdict?: Verdict };
+  const { verdict, points } = req.body as { verdict?: Verdict, points ?: string | number };
 
   const requestMessage = 'PUT /submissions/' + submission_id + '/verdict. Verdict: ' + verdict
   logger.info(requestMessage)
@@ -132,8 +148,22 @@ export const putSubmission = async (req: any, res: Response) => {
     return res.status(400).json({ error });
   }
 
+  if ((typeof points !== 'undefined' && typeof points !== 'number' && isNaN(Number(points))) || 
+      (typeof points == 'number' && points < 0) ||
+      (typeof points == 'string' && !isNaN(Number(points)) && Number(points) < 0)
+    ) {
+
+    const error = 'Недопустимое значение points: ' + points;
+
+    logger.error(error)
+    return res.status(400).json({ error })
+
+  }
+
+  const numericPoints = typeof points == 'string' ? Number(points) : points
+
   try {
-    const result = await updateVerdict(submission_id, verdict, sqlPool);
+    const result = await updateVerdict(submission_id, verdict, numericPoints, sqlPool);
 
     if (result === 0) {
       const error = 'Submission не найден'

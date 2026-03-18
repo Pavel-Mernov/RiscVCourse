@@ -4,12 +4,12 @@ import { sqlPool } from "./sqlPool";
 
 export async function createSubmission(submission : Submission, connection : Pool | Client = sqlPool) {
     
-    const { submission_id, task_id, student_id, timestamp, text, verdict } = submission
+    const { submission_id, task_id, student_id, timestamp, text, verdict, points } = submission
 
     const query = `
-        INSERT INTO submissions(submission_id, task_id, student_id, timestamp, text, verdict)
-        VALUES ($1, $2, $3, $4, $5, $6);
+        INSERT INTO submissions(submission_id, task_id, student_id, timestamp, text, verdict, points)
+        VALUES ($1, $2, $3, $4, $5, $6, $7);
     `
 
-    await connection.query(query, [submission_id, task_id, student_id, timestamp, text, verdict])
+    await connection.query(query, [submission_id, task_id, student_id, timestamp, text, verdict, points])
 }

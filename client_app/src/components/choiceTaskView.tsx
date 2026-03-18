@@ -68,7 +68,7 @@ interface Props {
     taskData : ChoiceAnswers
 }
 
-export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, attempts, points } } : Props) => {
+export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, points } } : Props) => {
 
     const [selectedAnswer, setselectedAnswer] = useState(-1)
 
@@ -128,7 +128,9 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, atte
                 task_id: taskId,
                 student_id: getLogin(),
                 text: answers[selectedAnswer],
-                verdict: (selectedAnswer == correct_answer) ? 'OK' : 'WA' 
+                verdict: (selectedAnswer == correct_answer) ? 'OK' : 'WA',
+                points: !isTokenValid() ? undefined : points && (selectedAnswer == correct_answer) ? points : 
+                    points !== undefined ? 0 : undefined 
             }
 
             try {
@@ -243,25 +245,6 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, atte
                         </Typography>
                     </Typography>
                 }
-                { attempts && isTokenValid() &&
-                    <Typography>
-                        <Typography
-                            component="span"
-                            fontWeight={700}
-                            fontSize="25px"
-                        >
-                            Максимальное количество попыток:
-                        </Typography>
-
-                        <Typography
-                            component="span"
-                            fontSize="24px"
-                            sx={{ marginLeft: "6px" }}
-                        >
-                            { attempts }.
-                        </Typography>
-                    </Typography>
-                }
             </Stack>
 
             {
@@ -275,7 +258,7 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, atte
                     Посылки:
                 </Typography>
 
-                    <SubmissionsTable taskName={taskName} submissions={submissions} points={ points } />    
+                    <SubmissionsTable taskName={taskName} submissions={submissions} />    
                 </Stack>
                 
             }

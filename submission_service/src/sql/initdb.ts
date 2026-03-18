@@ -8,6 +8,7 @@ const script = `
     timestamp        TIMESTAMP    NOT NULL,
     text             JSONB        NOT NULL,
     verdict          VARCHAR(2),
+    points           NUMERIC,
     CONSTRAINT verdict_check CHECK (verdict IN ('OK', 'WA', 'RE', 'TL', 'IG') OR verdict IS NULL)
     );
 `

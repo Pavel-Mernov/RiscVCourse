@@ -139,7 +139,9 @@ export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, po
                 task_id: taskId,
                 student_id: getLogin(),
                 text: answer.trim(),
-                verdict: isAnswerCorrect() ? 'OK' : 'WA' 
+                verdict: isAnswerCorrect() ? 'OK' : 'WA',
+                points: !isTokenValid() || points === undefined ? undefined :
+                    isAnswerCorrect() ? points : 0, 
             }
 
             try {
@@ -278,7 +280,7 @@ export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, po
                     Посылки:
                 </Typography>
 
-                    <SubmissionsTable taskName={taskName} submissions={submissions} points={ points } />    
+                    <SubmissionsTable taskName={taskName} submissions={submissions} />    
                 </Stack>
                 
             }
