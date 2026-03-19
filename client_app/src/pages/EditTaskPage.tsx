@@ -70,7 +70,7 @@ export default () => {
     const setChoiceAnswers = (answer : ChoiceAnswers) => {
         
         const newAnswer : ChoiceAnswers = isContestForAuthorizedOnly ? 
-            answer : { ...answer, points : undefined, attempts : undefined }
+            answer : { ...answer, points : undefined }
 
         const newTaskAnswers = { ...taskAnswers, choice : newAnswer } as TaskAnswers
 
@@ -80,7 +80,7 @@ export default () => {
     const setMultichoiceAnswers = (answer : MultichoiceAnswers) => {
 
         const newAnswer : MultichoiceAnswers = isContestForAuthorizedOnly ? 
-            answer : { ...answer, points : undefined, attempts : undefined }
+            answer : { ...answer, points : undefined }
 
         const newAnswers : TaskAnswers = { ...taskAnswers, multichoice : newAnswer }
 

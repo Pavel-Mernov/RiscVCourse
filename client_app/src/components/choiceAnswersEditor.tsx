@@ -118,13 +118,6 @@ export default function ChoiceAnswersEditor({ choiceAnswers, enableSetPointsAndA
           onChange={e => updatePositiveInt("points", e.target.value)}
           sx={{ marginBottom: 2 }}
         />
-
-        <TextField
-          label="Попытки"
-          fullWidth
-          value={choiceAnswers.attempts ?? ""}
-          onChange={e => updatePositiveInt("attempts", e.target.value)}
-        />
       </Box>
     }
 
