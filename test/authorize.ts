@@ -11,8 +11,8 @@ const defaultCredentials = {
     }
 
 export async function authorizeMock(credentials : Credentials = defaultCredentials) {
-    const serverIp = '130.49.150.32'
-    const res = await sendRequest(`http://${serverIp}:3003/api/login`, credentials, 'POST')
+    
+    const res = await sendRequest(`https://api.riscvcourse.ru/mockauth/api/login`, credentials, 'POST')
 
     return res
 }

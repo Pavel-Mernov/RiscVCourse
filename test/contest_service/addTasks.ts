@@ -24,9 +24,8 @@ async function authorizeForAddTasks() {
 }
 
 async function addContest(token : string, title : string, description ?: string, authorized_only = false) {
-    const PORT = 3002
     
-    const url = `http://localhost:${PORT}/api/contests`
+    const url = `https://api.riscvcourse.ru/contest/api/contests`
     
     const body = {
         title,
@@ -47,9 +46,9 @@ async function addContest(token : string, title : string, description ?: string,
     return id
 }
 
-// const authResult = await authorizeForAddTasks()
+const authResult = await authorizeForAddTasks()
 
-// console.log(authResult)
+console.log(authResult)
 
 async function addContest1(token : string | { error : any } = '') {
     
@@ -96,7 +95,7 @@ async function addTask(token : string, contestId : string, name : string, text :
         answer_type,
     }
 
-    const url = `http://localhost:${PORT}/api/contests/${contestId}/tasks`
+    const url = `https://riscvcourse.ru/contest/api/contests/${contestId}/tasks`
 
     await sendRequest(url, body, 'POST', token)
 
