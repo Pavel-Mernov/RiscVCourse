@@ -118,7 +118,7 @@ export async function runCode(res : Response, code : string, input ?: string, in
 
         // const currentDirectory = await readCurrentDir()
 
-        exec(cmd, { timeout : timeout || 5000 }, async (error, stdout, stderr) => {
+        exec(cmd, { timeout : timeout || 30000 }, async (error, stdout, stderr) => {
             logger.info("Stdout : " + stdout)
 
             if (error) {
