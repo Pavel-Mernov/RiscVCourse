@@ -11,6 +11,7 @@ interface Contest {
   deadline?: string
   title: string
   description?: string
+  authorized_only ?: boolean
 }
 
 interface Task {
@@ -63,7 +64,7 @@ export default () => {
 
     const navigate = useNavigate()
 
-    const { isUserValidTeacher } = useAuth()
+    const { isUserValidTeacher, isTokenValid } = useAuth()
 
     const { serverIp, contest } = useServerConnection()
 
@@ -131,6 +132,18 @@ export default () => {
                 <Navbar /> 
                 
                 <Title title="Контест не найден" />
+            </Stack>
+        )        
+    }
+
+    if (contestState && typeof contestState == 'object' && contestState.authorized_only && !isTokenValid()) {
+        return (
+            <Stack
+                spacing='150px'
+            >
+                <Navbar /> 
+                
+                <Title title="403 Доступ запрещён" />
             </Stack>
         )        
     }

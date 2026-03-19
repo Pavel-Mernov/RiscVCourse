@@ -36,9 +36,13 @@ export default () => {
 
     const [tests, setTests] = useState<Test[]>([])
 
+    const [authorizedOnly, setAuthorizedOnly] = useState<boolean | undefined>(undefined)
+
+    const [, setDeadline] = useState('')
+
     const navigate = useNavigate()
 
-    const { isUserValidTeacher } = useAuth()
+    const { isUserValidTeacher, isTokenValid } = useAuth()
 
     const { serverIp, contest } = useServerConnection()
 
@@ -58,6 +62,23 @@ export default () => {
                 .then(resp => resp.json()) 
 
                 setTask(response)
+
+
+                const contestUrl = `https://${serverIp}/${contest}/api/contests/${response.contest_id}` 
+                const contestsResponse = await fetch(contestUrl, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                
+                })
+                .then(resp => resp.json()) 
+
+                console.log(JSON.stringify(contestsResponse))
+
+                setAuthorizedOnly(contestsResponse.authorized_only)
+
+                setDeadline(contestsResponse.deadline)
 
                 if (response.answer_type != 'code') {
                     return
@@ -84,6 +105,8 @@ export default () => {
                 console.log(err)
             }
         }
+
+
 
         try {
             fetchTaskAndTests()
@@ -114,6 +137,22 @@ export default () => {
                 </Typography>
             </Stack>
         )        
+    }
+
+    if (authorizedOnly && !isTokenValid()) {
+        return (
+            <Stack>
+                <Navbar />
+
+                <Typography
+                    variant="h2"
+                    alignSelf='center'
+                    marginTop='150px'
+                >
+                    403 Доступ запрещён
+                </Typography>
+            </Stack>
+        )  
     }
 
     return (
