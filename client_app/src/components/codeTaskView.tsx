@@ -219,6 +219,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             const body = {
                 input,
                 code : codeInputMode == 'here' ? textAnswer : fileAnswer,
+                timeout : time_limit_ms ? time_limit_ms + 2000 : undefined
             }
 
             const url = `https://${serverIp}/${compilation}/api/compile`    
@@ -277,6 +278,8 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             const submissionMethod = 'PUT'
 
             console.log(localVerdict)
+
+            // console.log(points)
 
             const submissionBody = {
                 verdict : localVerdict || 'OK',
