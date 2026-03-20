@@ -38,6 +38,8 @@ export default () => {
 
     const [authorizedOnly, setAuthorizedOnly] = useState<boolean | undefined>(undefined)
 
+    const [isActive, setActive] = useState(false)
+
     const [, setDeadline] = useState('')
 
     const navigate = useNavigate()
@@ -77,7 +79,7 @@ export default () => {
                 console.log(JSON.stringify(contestsResponse))
 
                 setAuthorizedOnly(contestsResponse.authorized_only)
-
+                setActive(contestsResponse.is_active)
                 setDeadline(contestsResponse.deadline)
 
                 if (response.answer_type != 'code') {
@@ -139,7 +141,7 @@ export default () => {
         )        
     }
 
-    if (authorizedOnly && !isTokenValid()) {
+    if ((authorizedOnly && !isTokenValid()) || (!isUserValidTeacher() && !isActive)) {
         return (
             <Stack>
                 <Navbar />

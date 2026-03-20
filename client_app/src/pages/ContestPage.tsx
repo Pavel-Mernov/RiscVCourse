@@ -12,7 +12,7 @@ interface Contest {
   title: string
   description?: string
   authorized_only ?: boolean
-  is_active ?: boolean
+  is_active : boolean
 }
 
 interface Task {
@@ -137,7 +137,8 @@ export default () => {
         )        
     }
 
-    if (contestState && typeof contestState == 'object' && contestState.authorized_only && !isTokenValid()) {
+    if (contestState && typeof contestState == 'object' && ((contestState.authorized_only && !isTokenValid()) || 
+        (!contestState.is_active && !isUserValidTeacher()))) {
         return (
             <Stack
                 spacing='150px'

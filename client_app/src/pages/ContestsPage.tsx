@@ -162,7 +162,12 @@ export default () => {
             >
                 {
                     contests
-                        .filter(contest => isTokenValid() || !contest.authorized_only)
+                        .filter(contest => {
+                            if (isUserValidTeacher()) return true
+                            if (isTokenValid()) return contest.is_active
+                            
+                            return contest.is_active && !contest.authorized_only
+                        })
                         .map(({ title, id }, i) => <ContestLink key={`link_${i}`} title={ title } link={ `/contests/${id}` } />)
                 }
             </Stack>
