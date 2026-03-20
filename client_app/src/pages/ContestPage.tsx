@@ -12,6 +12,7 @@ interface Contest {
   title: string
   description?: string
   authorized_only ?: boolean
+  is_active ?: boolean
 }
 
 interface Task {

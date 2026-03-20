@@ -66,6 +66,14 @@ router.post('/contests', authenticateTeacher, async (req, res) => {
     return res.status(400).json({ error })
   }
 
+  if ((typeof body.is_active) !== 'boolean') {
+    const error = 'is_active can only be true or false'
+
+    logger.error(requestString + '. ' + error)
+    
+    return res.status(400).json({ error })
+  }
+
   const contest: Contest = { id: uuid(), ...body }
 
 

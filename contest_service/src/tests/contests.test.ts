@@ -73,12 +73,12 @@ describe('Contest API', () => {
 
     
 
-    mockedGetContests.mockResolvedValue([{ id: '1', title: 'Test' }])
+    mockedGetContests.mockResolvedValue([{ id: '1', title: 'Test', is_active : true }])
 
     const res = await request(app).get('/contests')
 
     expect(res.status).toBe(200)
-    expect(res.body).toEqual([{ id: '1', title: 'Test' }])
+    expect(res.body).toEqual([{ id: '1', title: 'Test', is_active : true }])
   })
 
   test('GET /contests handles server error', async () => {
@@ -98,7 +98,19 @@ describe('Contest API', () => {
 
     const res = await request(app)
       .post('/contests')
-      .send({ title: 'New Contest' })
+      .send({ title: 'New Contest', is_active : true })
+
+    expect(res.status).toBe(201)
+    expect(res.body.title).toBe('New Contest')
+    expect(res.body.id).toBeDefined()
+  })
+
+  test('POST /contests creates a non-active contest', async () => {
+    mockedCreateContest.mockResolvedValue()
+
+    const res = await request(app)
+      .post('/contests')
+      .send({ title: 'New Contest', is_active : false })
 
     expect(res.status).toBe(201)
     expect(res.body.title).toBe('New Contest')
@@ -108,10 +120,28 @@ describe('Contest API', () => {
   test('POST /contests rejects blank title', async () => {
     const res = await request(app)
       .post('/contests')
-      .send({ title: '' })
+      .send({ title: '', is_active : true })
 
     expect(res.status).toBe(400)
     expect(res.body.error).toBe('Contest title is required and cannot be blank')
+  })
+
+  test('POST /contests rejects empty is_active status', async () => {
+    const res = await request(app)
+      .post('/contests')
+      .send({ title: 'Contest' })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBe('is_active can only be true or false')
+  })
+
+  test('POST /contests rejects non-boolean is_active status', async () => {
+    const res = await request(app)
+      .post('/contests')
+      .send({ title: 'Contest', is_active : 1 })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBe('is_active can only be true or false')
   })
 
   test('POST /contests handles DB error', async () => {
@@ -119,7 +149,7 @@ describe('Contest API', () => {
 
     const res = await request(app)
       .post('/contests')
-      .send({ title: 'Valid Title' })
+      .send({ title: 'Valid Title', is_active : true })
 
     expect(res.status).toBe(500)
     expect(res.body.error).toBe('DB error')
@@ -129,12 +159,13 @@ describe('Contest API', () => {
   // GET /contests/:id
   // ------------------------------
   test('GET /contests/:id returns a contest', async () => {
-    mockedGetContests.mockResolvedValue([{ id: '123', title: 'Contest' }])
+    mockedGetContests.mockResolvedValue([{ id: '123', title: 'Contest', is_active : true }])
 
     const res = await request(app).get('/contests/123')
 
     expect(res.status).toBe(200)
     expect(res.body.title).toBe('Contest')
+    expect(res.body.is_active).toBe(true)
   })
 
   test('GET /contests/:id returns 404 if not found', async () => {
@@ -159,7 +190,7 @@ describe('Contest API', () => {
   // PUT /contests/:id
   // ------------------------------
   test('PUT /contests/:id updates contest', async () => {
-    mockedGetContests.mockResolvedValue([{ id: '1', title: 'Old' }])
+    mockedGetContests.mockResolvedValue([{ id: '1', title: 'Old', is_active : true }])
     mockedUpdateContest.mockResolvedValue(undefined)
 
     const res = await request(app)
@@ -182,7 +213,7 @@ describe('Contest API', () => {
   })
 
   test('PUT /contests/:id handles DB error', async () => {
-    mockedGetContests.mockResolvedValue([{ id: '1', title: 'Old' }])
+    mockedGetContests.mockResolvedValue([{ id: '1', title: 'Old', is_active : true }])
     mockedUpdateContest.mockRejectedValue(new Error('DB error'))
 
     const res = await request(app)
@@ -215,7 +246,7 @@ describe('DELETE /contests/:contestId', () => {
 
   test('Успешное удаление контеста вместе с задачами и тестами', async () => {
     mockedGetContests.mockResolvedValue([
-      { id: '10', title: 'Contest' }
+      { id: '10', title: 'Contest', is_active : true }
     ])
 
     mockedGetTasks.mockResolvedValue([
@@ -285,7 +316,8 @@ describe('DELETE /contests/:contestId', () => {
   test('Возвращает 500 при ошибке удаления контеста', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '10',
-      title: ''
+      title: '',
+      is_active : true
     }])
 
     mockedGetTasks.mockResolvedValue([])
@@ -305,7 +337,7 @@ describe('DELETE /contests/:contestId', () => {
 
   test('GET /contests/:contestId/tasks возвращает список задач контеста', async () => {
     mockedGetContests.mockResolvedValue([
-      { id: '10', title: 'Contest 10' }
+      { id: '10', title: 'Contest 10', is_active : true }
     ])
 
     const tasks = [
@@ -342,7 +374,7 @@ describe('DELETE /contests/:contestId', () => {
 
   test('GET /contests/:contestId/tasks возвращает 404 если контест не найден', async () => {
     mockedGetContests.mockResolvedValue([
-      { id: '1', title: 'Other contest' }
+      { id: '1', title: 'Other contest', is_active : true }
     ])
 
     const res = await request(app).get('/contests/10/tasks')
@@ -362,7 +394,7 @@ describe('DELETE /contests/:contestId', () => {
 
   test('GET /contests/:contestId/tasks возвращает 500 если getTasks выбросил ошибку', async () => {
     mockedGetContests.mockResolvedValue([
-      { id: '10', title: 'Contest 10' }
+      { id: '10', title: 'Contest 10', is_active : true }
     ])
 
     mockedGetTasks.mockRejectedValue(new Error('DB error in getTasks'))
@@ -381,7 +413,8 @@ describe('POST contests/:id/tasks', () => {
   test('Should create task successfully', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '1',
-      title: ''
+      title: '',
+      is_active : true
     }])
     mockedCreateTask.mockResolvedValue()
 
@@ -425,7 +458,8 @@ describe('POST contests/:id/tasks', () => {
   test('should return 400 when name is missing', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '1',
-      title: ''
+      title: '',
+      is_active : true
     }])
 
     const res = await request(app)
@@ -443,7 +477,8 @@ describe('POST contests/:id/tasks', () => {
   test('should return 400 when name is empty string', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '1',
-      title: ''
+      title: '',
+      is_active : true
     }])
 
     const res = await request(app)
@@ -462,7 +497,8 @@ describe('POST contests/:id/tasks', () => {
   test('should return 400 when text is missing', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '1',
-      title: ''
+      title: '',
+      is_active : true
     }])
 
     const res = await request(app)
@@ -481,7 +517,8 @@ describe('POST contests/:id/tasks', () => {
   test('should return 400 when answer_type is missing', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '1',
-      title: ''
+      title: '',
+      is_active : true
     }])
 
     const res = await request(app)
@@ -500,7 +537,8 @@ describe('POST contests/:id/tasks', () => {
   test('should return 400 when answer_type is empty', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '1',
-      title: ''
+      title: '',
+      is_active : true
     }])
 
     const res = await request(app)
@@ -518,7 +556,8 @@ describe('POST contests/:id/tasks', () => {
   test('should return 400 for invalid answer_type', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '1',
-      title: ''
+      title: '',
+      is_active : true
     }])
 
     const res = await request(app)
@@ -540,7 +579,7 @@ describe('POST contests/:id/tasks', () => {
     
   beforeEach(() => {
     jest.clearAllMocks()
-    console.log('Before test calls:', mockedGetTasks.mock.calls.length)
+    // console.log('Before test calls:', mockedGetTasks.mock.calls.length)
   })
 
 
@@ -552,7 +591,8 @@ describe('POST contests/:id/tasks', () => {
 
     mockedGetContests.mockResolvedValue([{
       id: '1',
-      title: ''
+      title: '',
+      is_active : true
     }]) 
 
       const mockTasks = [
@@ -568,7 +608,7 @@ describe('POST contests/:id/tasks', () => {
       expect(res.body).toEqual(mockTasks[0])
 
       
-      console.log('After test calls:', mockedGetTasks.mock.calls.length)
+      // console.log('After test calls:', mockedGetTasks.mock.calls.length)
 
 
       expect(mockedGetTasks).toHaveBeenCalledTimes(1)
@@ -602,7 +642,7 @@ describe('PUT /tasks/:taskId', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    console.log('Before test calls:', mockedGetTasks.mock.calls.length)
+    // console.log('Before test calls:', mockedGetTasks.mock.calls.length)
   })
 
 

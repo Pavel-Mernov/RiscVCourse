@@ -72,6 +72,8 @@ export default () => {
     const [deadline, setDeadline] = useState<string>('')
     const [deadLineError, setDeadlineError] = useState('')
 
+    const [is_active, setActive] = useState(true)
+
     const { accessToken } = useAuth()
 
     const { serverIp, contest } = useServerConnection()
@@ -164,7 +166,8 @@ export default () => {
                             title,
                             description,
                             authorized_only,
-                            deadline : deadlineTimestampTz
+                            deadline : deadlineTimestampTz,
+                            is_active
                         }
 
                         const url = `https://${serverIp}/${contest}/api/contests`
@@ -253,6 +256,22 @@ export default () => {
                     helperText={deadLineError}
                     inputProps={{ maxLength: 17 }} // учтем 8 (дата) + 4 (время) + 2 точки
                 />
+
+                <Stack
+                    direction='row'
+                    alignItems='center'
+                    spacing='15px'
+                >
+                    <Typography
+                        fontSize='24px'
+                    >
+                        Сделать контест активным:
+                    </Typography>
+                    <Checkbox
+                        checked={is_active}
+                        onChange={(e) => { setActive(e.target.checked) }}
+                    />
+                </Stack>
 
                 <Button 
                     sx={{ background : colors.green[500], fontSize : '24px', fontWeight : 'bold' }}

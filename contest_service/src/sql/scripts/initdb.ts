@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS contests (
   deadline          TIMESTAMPTZ,
   title             TEXT NOT NULL,
   description       TEXT,
-  authorized_only   BOOLEAN
+  authorized_only   BOOLEAN,
+  is_active         BOOLEAN NOT NULL
 );
 
 

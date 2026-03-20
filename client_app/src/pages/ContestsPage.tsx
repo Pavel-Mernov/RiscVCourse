@@ -10,6 +10,7 @@ export interface Contest {
     id : string,
     title : string,
     authorized_only ?: boolean,
+    is_active : boolean,
 }
 
 export default () => {
