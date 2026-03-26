@@ -84,6 +84,10 @@ const isTextUnder10KB = (text : string) => {
     return new TextEncoder().encode(text).length <= 10 * 1024
 } 
 
+type FileError = '' | 'Файл не выбран или пуст' | 'Превышен максимальный размер входного файла: 10 КБайт'
+
+type CodeError = '' | 'Код не может быть пустым' | 'Превышен максимальный размер кода: 10 КБайт'
+
 export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
         tests } : Props) => {
 
@@ -99,9 +103,9 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
     const [verdict, setVerdict] = useState<Verdict | undefined>(undefined)
 
-    const [emptyCodeHereError, setEmptyCodeHereError] = useState(false)
+    const [codeHereError, setCodeHereError] = useState<CodeError>('')
 
-    const [fileError, setFileError] = useState('')
+    const [fileError, setFileError] = useState<FileError>('')
 
     const [submissions, setSubmissions] = useState<Submission[]>([])
 
@@ -158,12 +162,12 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
     const sendAnswer = async () => {
 
-        if (codeInputMode == 'here' && (!textAnswer || !textAnswer.trim())) {
-            setEmptyCodeHereError(true)
+        if (codeInputMode == 'here' && (!textAnswer || !textAnswer.trim() || !isTextUnder10KB(textAnswer))) {
+            setCodeHereError(!isTextUnder10KB(textAnswer) ? 'Превышен максимальный размер кода: 10 КБайт' : 'Код не может быть пустым')
             return
         }
-        else if (codeInputMode == 'file' && (!fileAnswer || !fileAnswer.trim())) {
-            setFileError('Файл не выбран или пуст')
+        else if (codeInputMode == 'file' && (!fileAnswer || !fileAnswer.trim() || !isTextUnder10KB(fileAnswer))) {
+            setFileError((!fileAnswer || !fileAnswer.trim()) ? 'Файл не выбран или пуст' : 'Превышен максимальный размер входного файла: 10 КБайт')
             return
         }
 
@@ -575,6 +579,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                             </Button>
                         </label>
 
+                        { fileName &&
                             <Typography
                                 variant='body1'
                                 sx={{
@@ -584,8 +589,25 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                                     fontWeight : 'semiBold'
                                 }}
                             >
-                                { fileName || 'Файл не выбран или пуст' }
+                                { fileName }
                             </Typography>
+                        }
+                        
+                            {
+                                fileError &&
+                                    <Typography
+                                        variant='body1'
+                                        sx={{
+                                            marginTop : '18px',
+                                            color : 'red',
+                                            fontSize : '22px',
+                                            fontWeight : 'semiBold'
+                                        }}
+                                    >
+                                        { fileError }
+                                    </Typography>
+
+                            }
 
                             {
                                 isCorrectAnswerShown && verdict && isAnswerCorrect() && <Correct />
@@ -617,14 +639,14 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                             multiline
                             minRows={10}
                             maxRows={15}
-                            error={ emptyCodeHereError }
-                            helperText={ emptyCodeHereError ? 'Код не может быть пустым' : '' }
+                            error={ !!codeHereError }
+                            helperText={ codeHereError }
                             label={"Введите код"}
                             value={textAnswer}
                             onChange={(e) => { 
                                 setTextAnswer(e.target.value)
                                 setCorrectAnswerShown(false)
-                                setEmptyCodeHereError(false)
+                                setCodeHereError('')
                             }}
                         />
                         {
