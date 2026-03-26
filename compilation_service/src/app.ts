@@ -178,6 +178,14 @@ export async function compile(req : CodeRequest, res : Response) {
         return res.status(400).json({ error });
     }
 
+    // if code size > 10 KBytes
+    if (Buffer.byteLength(code, 'utf-8') > 10 * 1024) {
+        const error = 'Превышен максимальный размер кода: 10 Кбайт'
+
+        logger.error(error)
+        return res.status(400).json({ error })
+    }
+
     if (timeout && !(Array.from(timeout).every(c => '0123456789'.includes(c)))) {
         const error = 'Значение timeout не является целым неотрицательным числом'
 

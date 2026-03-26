@@ -2,6 +2,8 @@
 import request from 'supertest';
 import { app } from '../../app';
 
+import code10KB from "./codes/code10kb"
+
 // afterAll(() => {
 //  server.close();
 // });
@@ -78,6 +80,16 @@ describe('POST /compile', () => {
 
         expect(res.status).toBe(400)
         expect(res.body.error).toBe('Нет кода в теле запроса')
+    })
+
+    test('Должно вернуть 400 если размер кода больше 10 КБайт', async () => {
+        const res = await request(app)
+            .post('/api/compile')
+            .send({ code : code10KB })
+
+        expect(res.status).toBe(400)
+        expect(res.body.error).toBe('Превышен максимальный размер кода: 10 Кбайт');
+
     })
 
     test('должно вернуть 400 при некорректном timeout в теле запроса', async () => {
