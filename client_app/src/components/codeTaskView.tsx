@@ -80,6 +80,10 @@ interface Props {
     taskData : CodeData
 }
 
+const isTextUnder10KB = (text : string) => {
+    return new TextEncoder().encode(text).length <= 10 * 1024
+} 
+
 export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
         tests } : Props) => {
 
@@ -97,7 +101,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
     const [emptyCodeHereError, setEmptyCodeHereError] = useState(false)
 
-    const [emptyFileError, setEmptyFileError] = useState(false)
+    const [fileError, setFileError] = useState('')
 
     const [submissions, setSubmissions] = useState<Submission[]>([])
 
@@ -159,7 +163,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
             return
         }
         else if (codeInputMode == 'file' && (!fileAnswer || !fileAnswer.trim())) {
-            setEmptyFileError(true)
+            setFileError('Файл не выбран или пуст')
             return
         }
 
@@ -334,9 +338,13 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
         const text = await file.text();
 
-        setEmptyFileError(false);
+        
         setFileAnswer(text);
         setFileName(file.name);
+
+        const fileErrorValue = isTextUnder10KB(text) ? '' : 'Превышен максимальный размер входного файла: 10 КБайт'
+
+        setFileError(fileErrorValue)
     };
 
     return (
@@ -559,7 +567,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                                     color : grey[700],
                                     borderRadius : '10px',
                                     border : '2px solid',
-                                    borderColor : emptyFileError ? 'red' : grey[400],
+                                    borderColor : fileError ? 'red' : grey[400],
                                     paddingInline : '50px'
                                 }}
                             >
@@ -571,7 +579,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
                                 variant='body1'
                                 sx={{
                                     marginTop : '18px',
-                                    color : emptyFileError ? 'red' : grey[700],
+                                    color : fileError ? 'red' : grey[700],
                                     fontSize : '22px',
                                     fontWeight : 'semiBold'
                                 }}
