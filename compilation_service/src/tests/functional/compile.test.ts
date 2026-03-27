@@ -8,6 +8,26 @@ import code10KB from "./codes/code10kb"
 //  server.close();
 // });
 
+jest.mock("child_process", () => {
+  const { EventEmitter } = require("events");
+
+  return {
+    spawn: jest.fn(() => {
+      const proc = new EventEmitter();
+
+      proc.stdout = new EventEmitter();
+      proc.stderr = new EventEmitter();
+
+      setTimeout(() => {
+        proc.stdout.emit("data", "5\n");
+        proc.emit("close", 0);
+      }, 10);
+
+      return proc;
+    })
+  };
+});
+
 let server : any;
 
 beforeAll(() => {
@@ -38,6 +58,7 @@ describe('POST /compile', () => {
 
         expect(res.status).toBe(200)
         expect(res.body).toHaveProperty('output')
+        expect(res.body.output).toContain('5')
     })
 
     test('должно вернуть 200 при корректных данных и при данных в файле', async () => {

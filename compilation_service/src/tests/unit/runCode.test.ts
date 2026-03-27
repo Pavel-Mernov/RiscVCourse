@@ -1,13 +1,33 @@
 
-import { runCode } from '../../app';
+import { runCode } from '../../runCode';
 import fs from 'fs/promises';
-import { exec as execOriginal } from 'child_process';
+import { exec as execOriginal, spawn } from 'child_process';
+import EventEmitter from 'events';
 
 jest.mock('child_process', () => ({
-  exec: jest.fn((cmd, opts, cb) => cb(null, 'RESULT', ''))
+  exec: jest.fn((cmd, opts, cb) => cb(null, 'RESULT', '')),
+  spawn: jest.fn()
 }));
 
 jest.mock('fs/promises');
+
+function createMockProcess(stdoutData: string, stderrData = "", code = 0) {
+  const process = new EventEmitter() as any;
+
+  process.stdout = new EventEmitter();
+  process.stderr = new EventEmitter();
+
+  process.kill = jest.fn();
+
+  // эмулируем асинхронное выполнение
+  setTimeout(() => {
+    process.stdout.emit("data", stdoutData);
+    process.stderr.emit("data", stderrData);
+    process.emit("close", code);
+  }, 10);
+
+  return process;
+}
 
 describe('runCode', () => {
   let res: any;
@@ -28,16 +48,25 @@ describe('runCode', () => {
     (fs.writeFile as any).mockResolvedValue(undefined);
     (fs.rm as any).mockResolvedValue(undefined);
 
+    (spawn as jest.Mock).mockReturnValue(
+      createMockProcess("Hello world\n")
+    );
+
     await runCode(res, 'addi $v0,$0,1', 'test');
 
-    expect(res.json).toHaveBeenCalledWith({ output: 'RESULT', error: '' });
+    expect(spawn).toHaveBeenCalled();
+
+    expect(res.json).toHaveBeenCalledWith({
+      output: "Hello world",
+      error: ""
+    });
+    
   });
 
   test('ошибка exec вызывает 500', async () => {
-    const mockExec = require('child_process').exec;
-    mockExec.mockImplementation((cmd: any, opts: any, cb: any) =>
-      cb(new Error('fail'), '', '')
-    );
+    (spawn as jest.Mock).mockImplementation(() => {
+      throw new Error("spawn failed");
+    });
 
     await runCode(res, 'addi...', 'input');
 

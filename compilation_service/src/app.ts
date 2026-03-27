@@ -2,16 +2,14 @@ import express from 'express';
 
 import * as path from 'path';
 
-import { mkdtemp } from "fs"
-import * as fs from 'fs/promises';
-import { exec } from 'child_process';
 import multer, { memoryStorage } from 'multer';
 import logger from './logger/logger';
 import client from 'prom-client'
-
+import { type Response } from './types'
 import cors from 'cors'
+import { runCode } from './runCode';
 
-const _dirname = process.cwd()
+export const _dirname = process.cwd()
 
 // Путь к rars jar, поместите свой rars.jar в нужную папку
 const RARS_JAR_PATH = path.resolve(_dirname, './rars/rars1_6.jar');
@@ -40,112 +38,7 @@ type RunFileRequest = {
     [key : string] : any
 }
 
-type Response = {
-    status : (status : number) => Response,
-    json : (obj : object) => Response,
-}
 
-export async function makeTempDir(dirname : string, suffix : string, relpath ?: string,) : Promise<string> {
-    const baseDir = (!relpath) ? dirname : path.resolve(dirname, relpath)
-
-    const tempDirName = path.join(baseDir, suffix)
-
-    return new Promise(async (resolve, reject) => {
-        mkdtemp(tempDirName, (err, directory) => {
-            if (err) return reject(err);
-            resolve(directory);
-        });
-    });
-}
-
-
-export async function redirectInput(filename : string, inputData : string) {
-  await fs.writeFile(filename, inputData, 'utf8');
-  
-}
-
-export async function runCode(res : Response, code : string, input ?: string, inputFilename ?: string, timeout ?: number) {
-    let tempDir = ''
-
-    if ((inputFilename) && !input) {
-        const error = 'Нет входных данных для имени файла в теле запроса'
-
-        logger.error(error)
-        return res.status(400).json({ error });
-    }
-
-    /*
-    if ((type == 'file' || type == 'both') && !filename) {
-        return res.status(400).json({ error: 'Нет имени фала с входными данными в теле запроса' });
-    }
-        */
-
-    try {
-        // Запишем код во временный файл
-        
-        if (typeof code == 'string') {
-            tempDir = (await makeTempDir(_dirname, 'temp-', "."))
-        }
-
-        const tempPath = path.resolve(tempDir, 'temp.s');
-
-        if (typeof code == 'string') {
-            await fs.writeFile(tempPath, code, { encoding: 'utf-8' });
-        }
-
-        if (inputFilename && input) {
-            const tempInputPath = path.resolve(tempDir, inputFilename);
-            await fs.writeFile(tempInputPath, input, { encoding: 'utf-8' });
-        }
-
-        const redirectString = !(!inputFilename && input) ? '' : await (async () => { 
-            const suffix = 'input.txt'
-
-            const filename = path.join(tempDir, suffix)
-
-            await redirectInput(filename, input)
-
-            return `< ${filename}`
-        })()
-
-
-        
-        const cmd = `java -Djava.util.prefs.userRoot=/tmp -jar "${RARS_JAR_PATH}" "${tempPath}" nc ${redirectString}`;
-
-        logger.info(`Procceeding command: ${cmd}`)
-
-        // console.log(cmd)
-
-        // const currentDirectory = await readCurrentDir()
-
-        exec(cmd, { timeout : timeout || 30000 }, async (error, stdout, stderr) => {
-            logger.info("Stdout : " + stdout)
-
-            if (error) {
-                logger.error(error.message)
-
-                await fs.rm(tempDir, { recursive : true });
-                return res.status(500).json({ error: `${error.message}`, stderr });
-            }
-
-            await fs.rm(tempDir, { recursive : true });
-
-            logger.info("Stdin: " + input + ". Stdout: " + stdout.trim() + ". Stderr: " + stderr.trim())
-            res.json({ output: stdout.trim(), error: stderr.trim() });
-            
-        });
-        
-
-        
-    } catch (err) {
-        const error = (err as Error).message
-
-        logger.error(error)
-        res.status(500).json({ error });
-    } 
-
-    
-}
 
 // Handler for POST: /compile endpoint
 export async function compile(req : CodeRequest, res : Response) {
