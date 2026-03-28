@@ -27,11 +27,23 @@ services:
     container_name: compilation-service
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.compilation.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/compilation`)"
+
+      # роутер
+      - "traefik.http.routers.compilation.rule=Host(api.riscvcourse.ru) && PathPrefix(/compilation)"
       - "traefik.http.routers.compilation.entrypoints=websecure"
       - "traefik.http.routers.compilation.tls.certresolver=myresolver"
+
+      # strip prefix
       - "traefik.http.middlewares.compilation-stripprefix.stripprefix.prefixes=/compilation"
-      - "traefik.http.routers.compilation.middlewares=compilation-stripprefix"
+
+      # CORS middleware
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
+
+      # подключаем оба middleware
+      - "traefik.http.routers.compilation.middlewares=compilation-stripprefix,cors"
     expose:
       - "3000"
     environment:

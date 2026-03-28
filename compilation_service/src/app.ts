@@ -146,6 +146,7 @@ const httpRequestsCounter = new client.Counter({
   labelNames: ['method', 'route', 'status_code'],
 });
 
+/*
 const allowedOrigins = [
   'http://localhost:5173',
   'https://riscvcourse.ru',
@@ -169,6 +170,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.options('*', cors())
+*/
 
 app.use((req, res, next) => {
   res.on('finish', () => {
