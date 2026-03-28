@@ -29,7 +29,7 @@ services:
       - "traefik.enable=true"
 
       # роутер
-      - "traefik.http.routers.compilation.rule=Host(`api.riscvcourse.ru`) && PathPrefix(/compilation)"
+      - "traefik.http.routers.compilation.rule=Host(`api.riscvcourse.ru`) && PathPrefix(`/compilation`)"
       - "traefik.http.routers.compilation.entrypoints=websecure"
       - "traefik.http.routers.compilation.tls.certresolver=myresolver"
 
@@ -44,6 +44,8 @@ services:
 
       # подключаем оба middleware
       - "traefik.http.routers.compilation.middlewares=compilation-stripprefix,cors"
+
+      - "traefik.http.services.compilation.loadbalancer.server.port=3000"
     expose:
       - "3000"
     environment:
