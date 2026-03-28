@@ -153,11 +153,21 @@ const allowedOrigins = [
   'http://riscvcourse.ru'  
 ];
 
+const originFunction = (origin: any, callback: any) => {
+    if (!origin) return callback(null, true)
+
+    if (allowedOrigins.includes(origin)) {
+        return callback(null, true)
+    }
+    return callback(new Error('Not allowed by CORS'))
+}
+
 app.use(cors({
-  origin: allowedOrigins, 
+  origin: originFunction, 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+app.options('*', cors())
 
 app.use((req, res, next) => {
   res.on('finish', () => {
