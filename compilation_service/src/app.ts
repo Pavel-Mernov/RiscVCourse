@@ -163,7 +163,8 @@ const originFunction = (origin: any, callback: any) => {
 }
 
 app.use(cors({
-  origin: originFunction, 
+  origin: // originFunction,
+            true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // необходимые методы
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
