@@ -29,7 +29,7 @@ services:
       - "traefik.enable=true"
 
       # роутер
-      - "traefik.http.routers.compilation.rule=Host(api.riscvcourse.ru) && PathPrefix(/compilation)"
+      - "traefik.http.routers.compilation.rule=Host(`api.riscvcourse.ru`) && PathPrefix(/compilation)"
       - "traefik.http.routers.compilation.entrypoints=websecure"
       - "traefik.http.routers.compilation.tls.certresolver=myresolver"
 
