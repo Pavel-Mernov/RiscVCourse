@@ -43,7 +43,7 @@ export async function runCode(
 
     const containerWorkDir = "/work";
 
-    /*
+    
     // создаём input.txt
     let inputFile = "";
     if (typeof input !== "undefined") {
@@ -88,11 +88,6 @@ export async function runCode(
     });
 
     clearTimeout(timer);
-
-    */
-
-    const stdout = 'Compiled'
-    const stderr = ''
 
     const output = stdout.trim()
 
