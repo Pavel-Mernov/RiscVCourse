@@ -61,7 +61,14 @@ services:
       - "traefik.http.routers.mockauth.entrypoints=websecure"
       - "traefik.http.routers.mockauth.tls.certresolver=myresolver"
       - "traefik.http.middlewares.mockauth-stripprefix.stripprefix.prefixes=/mockauth"
-      - "traefik.http.routers.mockauth.middlewares=mockauth-stripprefix"
+
+      # CORS middleware
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
+
+      - "traefik.http.routers.mockauth.middlewares=mockauth-stripprefix,cors"
     expose:
       - "3003"
     environment:
@@ -82,7 +89,14 @@ services:
       - "traefik.http.routers.contest.entrypoints=websecure"
       - "traefik.http.routers.contest.tls.certresolver=myresolver"
       - "traefik.http.middlewares.contest-stripprefix.stripprefix.prefixes=/contest"
-      - "traefik.http.routers.contest.middlewares=contest-stripprefix"
+
+      # CORS middleware
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
+
+      - "traefik.http.routers.contest.middlewares=contest-stripprefix,cors"
     expose:
       - "3002"
     environment:

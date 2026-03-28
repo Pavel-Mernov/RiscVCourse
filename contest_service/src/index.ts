@@ -16,6 +16,7 @@ export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
 const app = express()
 
+/*
 const allowedOrigins = [
   'http://localhost:5173',
   'https://riscvcourse.ru',
@@ -43,6 +44,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.options('*', cors(corsOptions));
+
+*/
 
 app.use(requestCounterFunction);
 
