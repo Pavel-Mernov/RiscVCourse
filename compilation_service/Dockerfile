@@ -10,4 +10,6 @@ COPY . .
 RUN npm install
 RUN npm run build
 
+RUN apt-get update && apt-get install -y docker.io
+
 CMD ["node", "dist/server.js"]

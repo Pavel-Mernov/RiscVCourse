@@ -46,6 +46,8 @@ services:
       - "traefik.http.routers.compilation.middlewares=compilation-stripprefix,cors"
 
       - "traefik.http.services.compilation.loadbalancer.server.port=3000"
+
+
     expose:
       - "3000"
     environment:
@@ -53,6 +55,8 @@ services:
     volumes:
       - ./compilation_service/src/logs:/combined.logs
       - ./compilation_service/src/logs:/error.log
+      - /var/run/docker.sock:/var/run/docker.sock
+    privileged: true
 
   mock-auth-service:
     build: ./mock_auth_service
