@@ -29,7 +29,7 @@ jest.mock("dockerode", () => {
 let server : any;
 
 beforeAll(() => {
-  server = app.listen(3001);
+  server = app.listen(4000);
 });
 
 afterAll(() => {

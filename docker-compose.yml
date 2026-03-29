@@ -52,11 +52,22 @@ services:
       - "3000"
     environment:
       NODE_ENV: production
+      SANDBOX_URL: http://rars-sandbox:3006
+    
     volumes:
       - ./compilation_service/src/logs:/combined.logs
       - ./compilation_service/src/logs:/error.log
-      - /var/run/docker.sock:/var/run/docker.sock
-    privileged: true
+
+  rars-sandbox:
+    build: ./rars_sandbox
+    container_name: rars-sandbox
+    ports:
+      - "3006:3006"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: "0.5"
 
   mock-auth-service:
     build: ./mock_auth_service
