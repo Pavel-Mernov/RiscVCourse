@@ -1,6 +1,6 @@
 FROM node:18
 
-RUN apt-get update && apt-get install -y openjdk-17-jdk
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
