@@ -8,24 +8,22 @@ import code10KB from "./codes/code10kb"
 //  server.close();
 // });
 
-jest.mock("child_process", () => {
-  const { EventEmitter } = require("events");
-
-  return {
-    spawn: jest.fn(() => {
-      const proc = new EventEmitter();
-
-      proc.stdout = new EventEmitter();
-      proc.stderr = new EventEmitter();
-
-      setTimeout(() => {
-        proc.stdout.emit("data", "5\n");
-        proc.emit("close", 0);
-      }, 10);
-
-      return proc;
+jest.mock("dockerode", () => {
+  return jest.fn().mockImplementation(() => ({
+    createContainer: jest.fn().mockResolvedValue({
+      start: jest.fn().mockResolvedValue(undefined),
+      attach: jest.fn().mockResolvedValue({
+        on: (event: string, cb: any) => {
+          if (event === "data") {
+            cb(Buffer.from("5\n"));
+          }
+        },
+        write: jest.fn()
+      }),
+      wait: jest.fn().mockResolvedValue({ StatusCode: 0 }),
+      kill: jest.fn().mockResolvedValue(undefined)
     })
-  };
+  }));
 });
 
 let server : any;
