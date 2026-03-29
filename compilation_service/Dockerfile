@@ -4,7 +4,7 @@ FROM node:18 as app
 
 WORKDIR /app
 
-RUN apt-get update
+COPY package*.json ./
 
 COPY . .
 
