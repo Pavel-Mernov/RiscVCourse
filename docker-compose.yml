@@ -2,6 +2,31 @@ version: "3.8"
 
 services:
 
+  auth-service:
+    build: ./auth_service
+    container_name: auth-service
+    ports:
+      - "3005:3005"
+    environment:
+      PORT: 3005
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_REALM: pavel_mernov_realm
+      KEYCLOAK_CLIENT_ID: pavel_mernov
+      KEYCLOAK_CLIENT_SECRET: mysecret
+    depends_on:
+      - keycloak
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: start-dev
+    environment:
+      KC_DB: dev-mem
+      KEYCLOAK_ADMIN: pavel_mernov_admin
+      KEYCLOAK_ADMIN_PASSWORD: pavel_mernov_admin
+    ports:
+      - "8080:8080"
+
   traefik:
     image: traefik:v2.11
     container_name: traefik
