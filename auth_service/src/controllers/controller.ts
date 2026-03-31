@@ -64,8 +64,11 @@ const login = async (req : Request<LoginBody>, res : Response) => {
 
     res.json({ accessToken: access_token });
 
-  } catch (e) {
-    res.status(401).json({ error: 'Invalid credentials' });
+  } catch (err : any) {
+
+    console.log(err)
+
+    res.status(401).json({ error: 'Invalid credentials. ' + err.toString() });
   }
 }
 
