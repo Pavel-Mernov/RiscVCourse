@@ -15,7 +15,7 @@ services:
       - "traefik.http.middlewares.auth-stripprefix.stripprefix.prefixes=/auth"
 
       # CORS middleware
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru,http://localhost:5173"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
@@ -100,7 +100,7 @@ services:
       - "traefik.http.middlewares.compilation-stripprefix.stripprefix.prefixes=/compilation"
 
       # CORS middleware
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru,http://localhost:5173"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
@@ -143,7 +143,7 @@ services:
       - "traefik.http.middlewares.mockauth-stripprefix.stripprefix.prefixes=/mockauth"
 
       # CORS middleware
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru,http://localhost:5173"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
@@ -171,7 +171,7 @@ services:
       - "traefik.http.middlewares.contest-stripprefix.stripprefix.prefixes=/contest"
 
       # CORS middleware
-      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru,http://localhost:5173"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
