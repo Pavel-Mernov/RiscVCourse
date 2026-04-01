@@ -26,7 +26,7 @@ services:
       KEYCLOAK_URL: http://keycloak:8080
       KEYCLOAK_REALM: pavel_mernov_realm
       KEYCLOAK_CLIENT_ID: pavel_mernov
-      KEYCLOAK_CLIENT_SECRET: mysecret
+      
     depends_on:
       - keycloak
 
