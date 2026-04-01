@@ -98,7 +98,7 @@ export default () => {
         }
 
         {
-            tasks.map( task => <PreviewTaskLink task={task} maxTextLength={600} />)
+            tasks.map( task => <PreviewTaskLink key={task.id} task={task} maxTextLength={600} />)
         }
 
         </Stack>
