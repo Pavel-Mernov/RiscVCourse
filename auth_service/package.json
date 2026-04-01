@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./src/index.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-esm-fix dist",
     "start": "node dist/index.js",
     "test": "jest",
     "test:coverage": "jest --coverage"
@@ -23,7 +23,8 @@
     "jest": "^30.3.0",
     "openid-client": "^6.8.1",
     "supertest": "^7.2.2",
-    "ts-jest": "^29.4.6"
+    "ts-jest": "^29.4.6",
+    "tsc-esm-fix": "^3.1.2"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
