@@ -21,6 +21,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jest": "^30.3.0",
+    "jwt-decode": "^4.0.0",
     "openid-client": "^6.8.1",
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.6",

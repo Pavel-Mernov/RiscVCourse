@@ -5,7 +5,7 @@ import * as jwtDecodeModule from 'jwt-decode';
 const jwtDecode = (jwtDecodeModule as any).default || jwtDecodeModule.jwtDecode;
 
 interface JwtPayload {
-    login : string,
+    email ?: string,
     iat : number,
     exp : number,
 }
@@ -28,7 +28,7 @@ export function getLogin(token ?: string) {
   if (!token) return undefined
   
   const decoded = decodeToken(token);
-  return decoded?.login || undefined; // либо другое поле с данными пользователя
+  return decoded?.email || undefined; // либо другое поле с данными пользователя
 }
 
 

@@ -2,6 +2,7 @@ import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useServerConnection } from '../context/ServerConnectionContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -14,10 +15,29 @@ const Navbar = () => {
 
   const { setAccessToken, isTokenValid } = useAuth()
 
+  const { serverIp, auth } = useServerConnection()
+
   const logout = async () => {
     setAccessToken(undefined)
 
-    
+    try {
+        const url = `https://${serverIp}/${auth}/api/logout`
+        const method = 'POST'
+
+        const response = await fetch(url, {
+            method: method,
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            
+        })
+
+        const text = await response.text()
+
+        console.log(text)
+    } 
+    catch {}   
   }
 
   return (

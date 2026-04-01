@@ -16,11 +16,18 @@ export function authenticate(req : any, res : any, next : any) {
 
   const [, token] = header.split(' ')
   try {
-    const payload = jwt.verify(token, JWT_SECRET)
+    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
+
+    const login = payload.email as string
+
+    if (!(login.endsWith('@edu.hse.ru') || login.endsWith('@hse.ru'))) {
+      throw new Error('Invalid login')
+    }
+
     req.user = payload
     next()
-  } catch {
-    const error = `Invalid or expired token.`
+  } catch (e : any) {
+    const error = (e as Error).message || `Invalid or expired token.`
 
     logger.error('Authenticate. ' + error)
     return res.status(403).json({ error })
@@ -37,7 +44,7 @@ export function authenticateTeacher(req : any, res : any, next : any) {
     
     // logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
 
-    const login = payload.login as string
+    const login = payload.email as string
 
     // console.log('Login: ' + login)
 

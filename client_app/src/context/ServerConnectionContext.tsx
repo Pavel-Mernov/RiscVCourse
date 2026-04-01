@@ -4,6 +4,7 @@ interface ServerContextType {
     serverIp : string
     compilation : string
     contest : string
+    auth : string
     mockAuth : string
     submission : string
 }
@@ -12,6 +13,7 @@ const serverIp = 'api.riscvcourse.ru'
 
 const serverContext : ServerContextType = {
     serverIp,
+    auth : 'auth',
     compilation : 'compilation',
     contest : 'contest',
     mockAuth : 'mockauth',

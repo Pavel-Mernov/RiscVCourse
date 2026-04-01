@@ -14,7 +14,7 @@ export default () => {
 
     const { setAccessToken } = useAuth()
 
-    const { serverIp, mockAuth } = useServerConnection()
+    const { serverIp, auth } = useServerConnection()
 
     const navigate = useNavigate()
 
@@ -33,7 +33,7 @@ export default () => {
             return
         }
 
-        const url = `https://${serverIp}/${mockAuth}/api/login`
+        const url = `https://${serverIp}/${auth}/api/login`
         const method = 'POST'
         const data = {
             login : loginText,
