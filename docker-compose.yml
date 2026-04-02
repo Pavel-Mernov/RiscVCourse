@@ -22,7 +22,7 @@ services:
 
       - "traefik.http.routers.auth.middlewares=auth-stripprefix,cors"
     env_file:
-      - .env
+      - /auth_service/.env
       
     depends_on:
       - keycloak
