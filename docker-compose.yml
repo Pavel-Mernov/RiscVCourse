@@ -169,7 +169,7 @@ services:
 
       # CORS middleware
       - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru,http://localhost:5173"
-      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,OPTIONS"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
       - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
 
