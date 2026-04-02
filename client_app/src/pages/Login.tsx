@@ -51,6 +51,9 @@ export default () => {
         
         if (!response.ok) {
             setLoginError(true)
+            
+            const logs = await response.text()
+            console.log(logs)
             return
         }
 
