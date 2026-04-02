@@ -21,11 +21,8 @@ services:
       - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
 
       - "traefik.http.routers.auth.middlewares=auth-stripprefix,cors"
-    environment:
-      PORT: 3005
-      KEYCLOAK_URL: http://keycloak:8080
-      KEYCLOAK_REALM: pavel_mernov_realm
-      KEYCLOAK_CLIENT_ID: pavel_mernov
+    env_file:
+      - .env
       
     depends_on:
       - keycloak
