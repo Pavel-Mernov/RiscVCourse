@@ -40,9 +40,6 @@ const login = async (req : Request<LoginBody>, res : Response) => {
     return res.status(400).json({ error })
   }
 
-  console.log('client id: ' + CLIENT_ID)
-  console.log('client secret: ' + CLIENT_SECRET)
-
   try {
     const response = await axios.post(
       `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/token`,

@@ -18,6 +18,8 @@ export function authenticate(req : any, res : any, next : any) {
   try {
     const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
 
+    console.log(JSON.stringify(payload))
+
     const login = payload.email as string
 
     if (!(login.endsWith('@edu.hse.ru') || login.endsWith('@hse.ru'))) {
