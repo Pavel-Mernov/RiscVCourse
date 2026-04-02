@@ -21,8 +21,8 @@ services:
       - "traefik.http.middlewares.cors.headers.accesscontrolallowcredentials=true"
 
       - "traefik.http.routers.auth.middlewares=auth-stripprefix,cors"
-    env_file:
-      - /auth_service/.env
+    # env_file:
+    #  - /auth_service/.env
       
     depends_on:
       - keycloak
