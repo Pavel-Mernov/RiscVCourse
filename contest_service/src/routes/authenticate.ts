@@ -37,13 +37,13 @@ export function authenticate(req : any, res : any, next : any) {
   }
 }
 
-export function authenticateTeacher(req : any, res : any, next : any) {
+export async function authenticateTeacher(req : any, res : any, next : any) {
   const header = req.headers.authorization
   if (!header) return res.status(401).json({ error: 'No token' })
 
   const [, token] = header.split(' ')
   try {
-    const payload = verifyToken(token) as JwtPayload
+    const payload = await verifyToken(token)
     
     logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
 

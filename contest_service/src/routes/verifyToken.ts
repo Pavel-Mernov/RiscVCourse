@@ -27,7 +27,7 @@ function getKey(header: any, callback: any) {
   });
 }
 
-export function verifyToken(token: string) : Promise<jwt.JwtPayload | string | undefined> {
+export function verifyToken(token: string) : Promise<any> {
     
         return new Promise((resolve, reject) => {
             try {
