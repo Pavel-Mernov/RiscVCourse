@@ -3,12 +3,26 @@ import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
 const client = jwksClient({
-  jwksUri: 'https://api.riscvcourse.ru/realms/pavel_mernov_realm/protocol/openid-connect/certs'
+  jwksUri: 'http://keycloak:8080/realms/pavel_mernov_realm/protocol/openid-connect/certs'
 });
 
-function getKey(header : any, callback : any) {
-  client.getSigningKey(header.kid, (_, key) => {
-    const signingKey = key?.getPublicKey() || null;
+function getKey(header: any, callback: any) {
+  console.log('KID:', header.kid);
+
+  client.getSigningKey(header.kid, (err, key) => {
+    if (err) {
+      console.log('JWKS error:', err);
+      return callback(err, null);
+    }
+
+    if (!key) {
+      return callback(new Error('No signing key found'), null);
+    }
+
+    console.log('Key found:', !!key);
+
+    const signingKey = key?.getPublicKey();
+
     callback(null, signingKey);
   });
 }
