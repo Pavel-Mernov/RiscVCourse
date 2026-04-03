@@ -59,8 +59,8 @@ export function authenticateTeacher(req : any, res : any, next : any) {
     }
 
     next()
-  } catch {
-    const error = `Invalid or expired token.`
+  } catch (e : any) {
+    const error = JSON.stringify(e)
 
     logger.error('Authenticate teacher. ' + error)
 
