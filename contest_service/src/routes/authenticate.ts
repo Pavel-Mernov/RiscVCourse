@@ -30,7 +30,7 @@ export function authenticate(req : any, res : any, next : any) {
     req.user = payload
     next()
   } catch (e : any) {
-    const error = (e as Error).message || `Invalid or expired token.`
+    const error = (e as Error).message || JSON.stringify(e)
 
     logger.error('Authenticate. ' + error)
     return res.status(403).json({ error })
