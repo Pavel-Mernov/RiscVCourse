@@ -2,6 +2,7 @@
 import jwt, { type JwtPayload } from 'jsonwebtoken'
 import { JWT_SECRET } from '../index.js'
 import logger from '../logger/logger.js'
+import { verifyToken } from './verifyToken.js'
 
 
 
@@ -16,7 +17,7 @@ export function authenticate(req : any, res : any, next : any) {
 
   const [, token] = header.split(' ')
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
+    const payload = verifyToken(token) as JwtPayload
 
     console.log(JSON.stringify(payload))
 
