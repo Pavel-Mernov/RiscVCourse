@@ -28,19 +28,27 @@ function getKey(header: any, callback: any) {
 }
 
 export function verifyToken(token: string) : Promise<jwt.JwtPayload | string | undefined> {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, getKey, {
-      issuer: 'http://localhost:8080/realms/pavel_mernov_realm', 
-      audience: 'pavel_mernov'
-    }, (err, decoded) => {
-      if (err) {
-        console.log('Error:\n' + JSON.stringify(err))
-        reject(err);
-      } 
-      else {
-        console.log(JSON.stringify(decoded)) 
-        resolve(decoded); 
-      }
-    });
-  });
+    
+        return new Promise((resolve, reject) => {
+            try {
+                jwt.verify(token, getKey, {
+                    issuer: 'http://localhost:8080/realms/pavel_mernov_realm', 
+                    // audience: 'pavel_mernov'
+                    }, 
+                    (err, decoded) => {
+                        if (err) {
+                            console.log('Error:\n' + JSON.stringify(err))
+                            reject(err);
+                        } 
+                        else {
+                            console.log(JSON.stringify(decoded)) 
+                            resolve(decoded); 
+                        }
+                });
+            }
+            catch (err : any) {
+                console.log(JSON.stringify(err))
+                reject(err)
+            }
+        });
 }
