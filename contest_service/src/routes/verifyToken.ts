@@ -1,3 +1,4 @@
+import { error } from 'console';
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
@@ -18,8 +19,14 @@ export function verifyToken(token: string) : Promise<jwt.JwtPayload | string | u
       issuer: 'http://localhost:8080/realms/pavel_mernov_realm', 
       audience: 'pavel_mernov'
     }, (err, decoded) => {
-      if (err) reject(err);
-      else resolve(decoded);
+      if (err) {
+        console.log('Error:\n' + JSON.stringify(err))
+        reject(err);
+      } 
+      else {
+        console.log(JSON.stringify(decoded)) 
+        resolve(decoded); 
+      }
     });
   });
 }
