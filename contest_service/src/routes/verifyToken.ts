@@ -41,7 +41,7 @@ export function verifyToken(token: string) : Promise<jwt.JwtPayload | string | u
                             reject(err);
                         } 
                         else {
-                            console.log(JSON.stringify(decoded)) 
+                            // console.log(JSON.stringify(decoded)) 
                             resolve(decoded); 
                         }
                 });

@@ -45,11 +45,11 @@ export function authenticateTeacher(req : any, res : any, next : any) {
   try {
     const payload = verifyToken(token) as JwtPayload
     
-    // logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
+    logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
 
     const login = payload.email as string
 
-    // console.log('Login: ' + login)
+    console.log('Login: ' + login)
 
     if (!login.endsWith('@hse.ru')) {
       const error = `Access Denied. Invalid login. login: ${login}`
