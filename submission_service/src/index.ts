@@ -8,6 +8,7 @@ import cors from 'cors'
 import { sqlPool } from './sql/sqlPool';
 import { deleteSubmissionHandler, getSubmissionById, getSubmissionHandler, PostSubmissionHandler, putSubmission } from './controllers/submissionController.js';
 import { getMetrics, metricsMiddleware } from './controllers/metrics';
+import { authenticateTeacher } from './authenticate/authenticateTeacher';
 
 dotenv.config()
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
@@ -53,39 +54,6 @@ async function connectWithRetry(pool : Pool | Client, retries : number = 10, del
 
 
 
-
-
-
-
-
-// Middleware для авторизации
-function middleware(req: any, res: Response, next: NextFunction) {
-  
-  const header = req.headers.authorization
-
-  if (!header) {
-
-    const message = 'Unauthorized'
-
-    logger.info(message)
-    return res.status(401).json({ message });
-  }
-  const [, token] = header.split(' ')
-  try {
-    const payload = jwt.verify(token, JWT_SECRET)
-    req.user = payload
-    next()
-  } catch {
-    const error = `Invalid or expired token.`
-
-    logger.error(error)
-    return res.status(403).json({ error })
-  }
-  next();
-}
-
-
-
 // GET /api/submissions?taskId=&userId=
 app.get('/api/submissions', getSubmissionHandler);
 
@@ -99,7 +67,7 @@ app.get('/api/submissions/:id', getSubmissionById);
 app.put('/api/submissions/:id/verdict',  putSubmission);
 
 // DELETE /api/submissions/{id}
-app.delete('/api/submissions/:id', middleware, deleteSubmissionHandler);
+app.delete('/api/submissions/:id', authenticateTeacher, deleteSubmissionHandler);
 
 app.get('/metrics', getMetrics)
 
