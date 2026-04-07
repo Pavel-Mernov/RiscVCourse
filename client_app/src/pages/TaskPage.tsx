@@ -40,7 +40,7 @@ export default () => {
 
     const [isActive, setActive] = useState(false)
 
-    const [, setDeadline] = useState('')
+    const [deadline, setDeadline] = useState<string | undefined>(undefined)
 
     const navigate = useNavigate()
 
@@ -208,14 +208,14 @@ export default () => {
                 {
                     task.answer_type == 'choice' && task.task_data 
                         && ('answers' in task.task_data ) && ('correct_answer' in task.task_data) &&
-                            <ChoiceTaskView taskId={ task.id } taskName={task.name} taskData={ task.task_data } />
+                            <ChoiceTaskView deadline={deadline} taskId={ task.id } taskName={task.name} taskData={ task.task_data } />
                     
                 }
 
                 {
                     task.answer_type == 'multichoice' && task.task_data 
                         && ('answers' in task.task_data ) && !('correct_answer' in task.task_data) &&
-                            <MultichoiceTaskView taskId={ task.id } taskName={task.name} taskData={ task.task_data } />
+                            <MultichoiceTaskView deadline={deadline} taskId={ task.id } taskName={task.name} taskData={ task.task_data } />
                     
                 }
 
@@ -229,7 +229,8 @@ export default () => {
                 {
                     task.answer_type == 'code' && task.task_data 
                         &&
-                            <CodeTaskView taskId={ task.id } taskName={ task.name } taskData={task.task_data} tests={tests} />
+                            <CodeTaskView deadline={ deadline } taskId={ task.id } taskName={ task.name } 
+                                taskData={task.task_data} tests={tests} />
                     
                 }
                 

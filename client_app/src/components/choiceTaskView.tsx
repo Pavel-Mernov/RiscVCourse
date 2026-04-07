@@ -65,10 +65,11 @@ function Wrong() {
 interface Props {
     taskId : string
     taskName : string
+    deadline ?: string
     taskData : ChoiceAnswers
 }
 
-export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, points } } : Props) => {
+export default ({ taskId, taskName, deadline, 'taskData' : { answers, correct_answer, points } } : Props) => {
 
     const [selectedAnswer, setselectedAnswer] = useState(-1)
 
@@ -109,6 +110,8 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, poin
         fetchSubmissions()
     }, [])
 
+    const isDeadlineExpired = () => deadline && Date.now() > +(new Date(deadline))
+
     const sendAnswer = async () => {
 
         setCorrectAnswerShown(true)
@@ -129,8 +132,8 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, poin
                 student_id: getLogin(),
                 text: answers[selectedAnswer],
                 verdict: (selectedAnswer == correct_answer) ? 'OK' : 'WA',
-                points: !isTokenValid() ? undefined : points && (selectedAnswer == correct_answer) ? points : 
-                    points !== undefined ? 0 : undefined 
+                points: !isTokenValid() || points === undefined || isDeadlineExpired() ? undefined : 
+                    (selectedAnswer == correct_answer) ? points : 0 
             }
 
             try {
@@ -217,7 +220,9 @@ export default ({ taskId, taskName, 'taskData' : { answers, correct_answer, poin
                     borderRadius : '15px',
                     borderColor : colors.green[800],
                     maxWidth : '30%',
+                    
                 }}
+                disabled={submissions.length >= 1}
                 onClick={sendAnswer}
             >
                 Отправить ответ

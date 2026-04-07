@@ -193,7 +193,14 @@ services:
       - "traefik.http.routers.submission.entrypoints=websecure"
       - "traefik.http.routers.submission.tls.certresolver=myresolver"
       - "traefik.http.middlewares.submission-stripprefix.stripprefix.prefixes=/submission"
-      - "traefik.http.routers.submission.middlewares=submission-stripprefix"
+
+      # CORS middleware
+      - "traefik.http.middlewares.submission-cors.headers.accesscontrolalloworiginlist=https://www.riscvcourse.ru,https://riscvcourse.ru,http://localhost:5173"
+      - "traefik.http.middlewares.submission-cors.headers.accesscontrolallowmethods=GET,POST,PUT,DELETE,OPTIONS"
+      - "traefik.http.middlewares.submission-cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.submission-cors.headers.accesscontrolallowcredentials=true"
+
+      - "traefik.http.routers.submission.middlewares=submission-stripprefix,submission-cors"
     expose:
       - "3004"
     environment:

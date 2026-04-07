@@ -76,6 +76,7 @@ function Wrong() {
 interface Props {
     taskId : string
     taskName : string
+    deadline ?: string,
     tests : Test[]
     taskData : CodeData
 }
@@ -88,7 +89,7 @@ type FileError = '' | 'Файл не выбран или пуст' | 'Превы
 
 type CodeError = '' | 'Код не может быть пустым' | 'Превышен максимальный размер кода: 10 КБайт'
 
-export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
+export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
         tests } : Props) => {
 
     const [textAnswer, setTextAnswer] = useState('')
@@ -112,6 +113,8 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
     const [codeInputMode, setCodeInputMode] = useState<'here' | 'file'>('here')
 
     const { serverIp, compilation, submission } = useServerConnection()
+
+    const isDeadlineExpired = () => deadline && Date.now() > +(new Date(deadline))
 
     useEffect(() => { 
 
@@ -291,7 +294,7 @@ export default ({ taskId, taskName, 'taskData' : { time_limit_ms, memory_limit_k
 
             const submissionBody = {
                 verdict : localVerdict || 'OK',
-                points : !isTokenValid() || points === undefined ? undefined : 
+                points : !isTokenValid() || points === undefined || isDeadlineExpired() ?  undefined : 
                     (!localVerdict || localVerdict === 'OK')
                     ? points : 0,
             }

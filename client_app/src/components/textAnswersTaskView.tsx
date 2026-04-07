@@ -65,10 +65,11 @@ function Wrong() {
 interface Props {
     taskId : string
     taskName : string
+    deadline ?: string
     taskData : TextAnswer
 }
 
-export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, points } } : Props) => {
+export default ({ taskId, taskName, deadline, 'taskData' : { correct_answers, attempts, points } } : Props) => {
 
     const [answer, setAnswer] = useState('')
 
@@ -81,6 +82,8 @@ export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, po
     const [emptyCodeError, setEmptyCodeError] = useState(false)
 
     const { serverIp, submission } = useServerConnection()
+
+    const isDeadlineExpired = () => deadline && Date.now() > +(new Date(deadline))
 
     useEffect(() => { 
 
@@ -140,7 +143,7 @@ export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, po
                 student_id: getLogin(),
                 text: answer.trim(),
                 verdict: isAnswerCorrect() ? 'OK' : 'WA',
-                points: !isTokenValid() || points === undefined ? undefined :
+                points: !isTokenValid() || points === undefined || isDeadlineExpired() ? undefined :
                     isAnswerCorrect() ? points : 0, 
             }
 
@@ -221,6 +224,7 @@ export default ({ taskId, taskName, 'taskData' : { correct_answers, attempts, po
                     borderColor : colors.green[800],
                     maxWidth : '30%',
                 }}
+                disabled={!!attempts && submissions.length >= attempts}
                 onClick={sendAnswer}
             >
                 Отправить ответ

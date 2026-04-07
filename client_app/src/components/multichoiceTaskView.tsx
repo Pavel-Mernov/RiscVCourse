@@ -66,10 +66,11 @@ function Wrong() {
 interface Props {
     taskId : string
     taskName : string
+    deadline ?: string
     taskData : MultichoiceAnswers
 }
 
-export default ({ taskId, taskName, 'taskData' : { answers, points } } : Props) => {
+export default ({ taskId, taskName, deadline, 'taskData' : { answers, points } } : Props) => {
 
     const [selectedAnswers, setSelectedAnswers] = useState(answers.map(_ => false))
 
@@ -80,6 +81,8 @@ export default ({ taskId, taskName, 'taskData' : { answers, points } } : Props) 
     const [submissions, setSubmissions] = useState<Submission[]>([])
 
     const { serverIp, submission } = useServerConnection()
+
+    const isDeadlineExpired = () => deadline && (Date.now() > +(new Date(deadline)))
 
     useEffect(() => { 
 
@@ -143,7 +146,7 @@ export default ({ taskId, taskName, 'taskData' : { answers, points } } : Props) 
                 student_id: getLogin(),
                 text: answers.filter((_, i) => selectedAnswers[i]).map(({ answer }) => answer),
                 verdict: isAnswerCorrect() ? 'OK' : 'WA',
-                points: points === undefined || !isTokenValid() ? undefined :
+                points: points === undefined || !isTokenValid() || isDeadlineExpired() ? undefined :
                     isAnswerCorrect() ? points : 0
             }
 
@@ -224,6 +227,7 @@ export default ({ taskId, taskName, 'taskData' : { answers, points } } : Props) 
                     borderColor : colors.green[800],
                     
                 }}
+                disabled={submissions.length >= 1}
                 onClick={sendAnswer}
             >
                 Отправить ответ
