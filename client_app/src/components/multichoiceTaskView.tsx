@@ -175,6 +175,8 @@ export default ({ taskId, taskName, deadline, 'taskData' : { answers, points } }
 
     }
 
+    const isSendButtonDisabled = () => submissions.length >= 1
+
     return (
         <Stack
             spacing='80px'
@@ -224,10 +226,10 @@ export default ({ taskId, taskName, deadline, 'taskData' : { answers, points } }
                     border : 'solid',
                     borderWidth : '2px',
                     borderRadius : '15px',
-                    borderColor : colors.green[800],
+                    borderColor : isSendButtonDisabled() ? colors.grey[600] : colors.green[800],
                     
                 }}
-                disabled={submissions.length >= 1}
+                disabled={isSendButtonDisabled()}
                 onClick={sendAnswer}
             >
                 Отправить ответ

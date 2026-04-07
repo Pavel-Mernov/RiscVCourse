@@ -354,6 +354,8 @@ export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memo
         setFileError(fileErrorValue)
     };
 
+    const isSendButtonDisabled = () => !!attempts && submissions.length >= attempts
+
     return (
         <Stack
             spacing='80px'
@@ -672,9 +674,10 @@ export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memo
                     border : 'solid',
                     borderWidth : '2px',
                     borderRadius : '15px',
-                    borderColor : colors.green[800],
+                    borderColor : isSendButtonDisabled() ? colors.grey[600] : colors.green[800],
                     maxWidth : '30%',
                 }}
+                disabled={ isSendButtonDisabled() }
                 onClick={sendAnswer}
             >
                 Отправить
