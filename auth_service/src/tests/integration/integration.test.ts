@@ -82,4 +82,29 @@ describe('auth (integration)', () => {
 
     expect(res.status).toBe(204);
   });
+
+  it('should return only HSE students from /students', async () => {
+    const loginRes = await request(app)
+      .post('/api/login')
+      .send({
+        login: 'pkmernov@edu.hse.ru',
+        password: '12121212'
+      });
+
+    expect(loginRes.status).toBe(200);
+    expect(loginRes.body.accessToken).toBeDefined();
+
+    const res = await request(app)
+      .get('/api/students')
+      .set('Authorization', `Bearer ${loginRes.body.accessToken}`);
+
+    expect(res.status).toBe(200);
+    expect(Array.isArray(res.body)).toBe(true);
+    expect(res.body.length).toBeGreaterThan(0);
+
+    for (const user of res.body) {
+      expect(typeof user.email).toBe('string');
+      expect(user.email.toLowerCase().endsWith('@edu.hse.ru')).toBe(true);
+    }
+  });
 });

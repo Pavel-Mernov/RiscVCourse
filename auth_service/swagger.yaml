@@ -1,49 +1,192 @@
-
 openapi: 3.0.3
 info:
   title: Auth Service API
   version: 1.0.0
+  description: OpenAPI spec for the Node-based auth service endpoints.
+tags:
+  - name: Auth
+  - name: Users
 paths:
   /api/login:
     post:
-      summary: Авторизация пользователя
+      tags:
+        - Auth
+      summary: Authenticate user with login and password
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                login:
-                  type: string
-                password:
-                  type: string
-              required:
-                - login
-                - password
+              $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
-          description: Успешный вход
+          description: Access token issued and refresh token stored in cookie
+          headers:
+            Set-Cookie:
+              description: HttpOnly cookie with the refresh token
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
+        '400':
+          description: Missing login or password
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                emptyLogin:
+                  value:
+                    error: Login cannot be empty
+                emptyPassword:
+                  value:
+                    error: Password cannot be empty
         '401':
-          description: Неверные данные аутентификации
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: Invalid credentials. Error: Request failed with status code 401
   /api/refresh:
     post:
-      summary: Обновление токена авторизации
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                refreshToken:
-                  type: string
-              required:
-                - refreshToken
+      tags:
+        - Auth
+      summary: Refresh access token using the refresh token cookie
+      security:
+        - refreshTokenCookie: []
       responses:
         '200':
-          description: Успешный вход
-        '400':
-          description: Отсутствует токен авторизации
+          description: Access token refreshed and refresh cookie rotated
+          headers:
+            Set-Cookie:
+              description: Updated HttpOnly cookie with the refresh token
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessTokenResponse'
         '401':
-          description: Токен авторизации не валиден
+          description: Missing or invalid refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missing:
+                  value:
+                    error: No refresh token
+                invalid:
+                  value:
+                    error: Invalid refresh token
+  /api/logout:
+    post:
+      tags:
+        - Auth
+      summary: Clear refresh token cookie and log out from Keycloak if token is present
+      security:
+        - refreshTokenCookie: []
+      responses:
+        '204':
+          description: Logout completed or no refresh token was present
+  /api/students:
+    get:
+      tags:
+        - Users
+      summary: Return only users whose email ends with @edu.hse.ru
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          description: Bearer access token used for Keycloak admin API calls
+          schema:
+            type: string
+            example: Bearer eyJhbGciOi...
+      responses:
+        '200':
+          description: Filtered list of student users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Student'
+        '401':
+          description: Authorization header is missing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: Authorization header is required
+        '500':
+          description: Failed to load users from Keycloak
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeycloakErrorResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    refreshTokenCookie:
+      type: apiKey
+      in: cookie
+      name: refreshToken
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          type: string
+          example: student@edu.hse.ru
+        password:
+          type: string
+          example: secret
+    AccessTokenResponse:
+      type: object
+      required:
+        - accessToken
+      properties:
+        accessToken:
+          type: string
+          example: eyJhbGciOi...
+    Student:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        email:
+          type: string
+          example: student@edu.hse.ru
+      additionalProperties: true
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+    KeycloakErrorResponse:
+      type: object
+      required:
+        - error
+        - details
+      properties:
+        error:
+          type: string
+          example: Failed to load students from Keycloak
+        details:
+          description: Error payload or message returned from axios or Keycloak

@@ -1,8 +1,10 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import controller from '../controllers/controller';
+import userController from '../controllers/userController';
 
 const { login, logout, refresh } = controller
+const { getStudents } = userController
 
 export const createApp = () => {
 
@@ -14,6 +16,7 @@ export const createApp = () => {
   app.post('/api/login', login);
   app.post('/api/refresh', refresh);
   app.post('/api/logout', logout);
+  app.get('/api/students', getStudents);
 
   return app;
 };
