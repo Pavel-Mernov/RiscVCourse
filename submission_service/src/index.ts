@@ -1,12 +1,12 @@
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
-import express, { type Response, type NextFunction } from 'express';
+import express from 'express';
 import { Client, Pool } from 'pg';
 import { initDB } from './sql/initdb';
 import logger from './logger/logger';
 import cors from 'cors'
 import { sqlPool } from './sql/sqlPool';
-import { deleteSubmissionHandler, getSubmissionById, getSubmissionHandler, PostSubmissionHandler, putSubmission } from './controllers/submissionController.js';
+import { deleteSubmissionHandler, getPointsHandler, getSubmissionById, getSubmissionHandler, PostSubmissionHandler, putSubmission } from './controllers/submissionController.js';
 import { getMetrics, metricsMiddleware } from './controllers/metrics';
 import { authenticateTeacher } from './authenticate/authenticateTeacher';
 
@@ -56,6 +56,9 @@ async function connectWithRetry(pool : Pool | Client, retries : number = 10, del
 
 // GET /api/submissions?taskId=&userId=
 app.get('/api/submissions', getSubmissionHandler);
+
+// GET /api/points?taskId=&userId=
+app.get('/api/points', getPointsHandler);
 
 // POST /api/submissions
 app.post('/api/submissions', PostSubmissionHandler);

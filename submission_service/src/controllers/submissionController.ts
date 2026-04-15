@@ -62,6 +62,45 @@ export const getSubmissionHandler = async (req : any, res : any) => {
   res.json(result);
 }
 
+// GET /api/points?taskId=&userId=
+export const getPointsHandler = async (req : any, res : any) => {
+
+  const { taskId, userId } = req.query;
+  
+  const logMessage = 'GET /api/points. Task id: ' + taskId + ' user Id: ' + userId
+  logger.info(logMessage)
+
+  if (typeof taskId !== 'string') {
+    const error = 'Invalid or missing taskId'
+
+    logger.error(error)
+    return res.status(400).json({ error });
+  }
+  
+  if (typeof userId !== 'string') {
+    const error = 'Invalid or missing userId'
+
+    return res.status(400).json({ error });
+  }
+
+  const submissions = await getSubmissions()
+
+  // Фильтрация по task_id и student_id (userId)
+  const pointsForSubmissions = submissions.filter(
+    (s) => s.task_id === taskId && s.student_id === userId
+  )
+  .map(s => s.points ?? undefined);
+
+  let points : number | undefined = undefined
+
+  if (!pointsForSubmissions.every(p => p === undefined)) {
+    points = Math.max(...pointsForSubmissions.filter(p => p !== undefined) as number[])
+  }
+
+  logger.info(logMessage + '. Status: OK')
+  res.json({ points });
+}
+
 // POST /api/submissions
 export const PostSubmissionHandler = async (req : any, res : any) => {
 
