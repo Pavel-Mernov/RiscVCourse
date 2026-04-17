@@ -9,13 +9,16 @@ import ReportTable from "../components/ReportTable";
 
 export interface TaskDict {
     [contestId : string] : {
-        [taskId : string] : number | undefined, // points
+        title : string
+        tasks : {
+            [taskId : string] : { points: number | undefined, name : string }
+        }
     }
 }
 
 export default function ReportPage() {
   
-    const { getLogin  } = useAuth()
+    const { getLogin, isUserValidTeacher } = useAuth()
     const { serverIp, contest, submission } = useServerConnection()
 
 
@@ -42,6 +45,7 @@ export default function ReportPage() {
             .then(resp => resp.json())
             .then(resp => resp as any[])
             .then(resp => resp.map((c : any) => c as Contest))
+            .then(resp => resp.filter(({ is_active }) => isUserValidTeacher() || is_active))
             .then(c => c.map(({ id, title }) => ({ id, title })))
             
 
@@ -59,13 +63,13 @@ export default function ReportPage() {
                 })
                 .then(resp => resp.json())
                 .then(resp => resp as any[])
-                .then(resp => resp.map(t => t.id as string))
+                .then(resp => resp.map(({ id, name }) => { return { id, name } }))
 
             return taskList
         }
 
         const fetchPointsForTask = async (taskId : string) => {
-            const url = `https://${serverIp}/${submission}/api/tasks/${taskId}/points?userId=${login}`
+            const url = `https://${serverIp}/${submission}/api/points?userId=${login}&taskId=${taskId}`
 
             const points = await fetch(url, {
                 method : 'GET',
@@ -85,16 +89,16 @@ export default function ReportPage() {
 
             const pointsDict : TaskDict = {}
 
-            for (const { id : contestId } of contestList) {
+            for (const { id : contestId, title } of contestList) {
 
                 const taskList = await fetchTaskNames(contestId)
 
-                pointsDict[contestId] = {}
-                for (const id of taskList) {
+                pointsDict[contestId] = { title, tasks: {} }
+                for (const { id, name } of taskList) {
 
                     const points = await fetchPointsForTask(id)
 
-                    pointsDict[contestId][id] = points
+                    pointsDict[contestId].tasks[id] = { points, name }
                 }
             }
 
@@ -111,16 +115,17 @@ export default function ReportPage() {
 
     return (
         <Stack
-
+            spacing='150px'
         >
             <Navbar />
 
             <Stack 
-                spacing='30px'
+                spacing='70px'
+                alignItems='center'
             >
                 <Typography 
-                    variant='h2' 
-                    fontSize='30px' 
+                    variant='h1' 
+                    fontSize='50px' 
                     fontWeight='bold'
                     >
                     Отчёт об успеваемости пользователя

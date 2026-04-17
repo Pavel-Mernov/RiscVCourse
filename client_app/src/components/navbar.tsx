@@ -11,6 +11,8 @@ const Navbar = () => {
 
   const [contestsBtnIsEntered, setContentBtnEntered] = useState(false)
 
+  const [reportBtnIsEntered, setReportBtnEntered] = useState(false)
+
   const [loginBtnIsEntered, setLoginBtnEntered] = useState(false)
 
   const { setAccessToken, isTokenValid } = useAuth()
@@ -84,6 +86,24 @@ const Navbar = () => {
           >
             Контесты
           </Button>
+
+          {
+            isTokenValid() &&
+            <Button
+              onClick={() => navigate('/report')}
+              onMouseEnter={() => setReportBtnEntered(true)}
+              onMouseLeave={() => setReportBtnEntered(false)}
+              sx={{ 
+                color: 'white', 
+                textTransform: 'none', 
+                fontSize : '20px', 
+                transform: reportBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
+              }}
+            >
+              Оценки
+            </Button>
+
+          }
         </Box>
 
         {/* Правая кнопка */}
