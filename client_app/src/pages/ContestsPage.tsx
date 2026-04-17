@@ -37,8 +37,9 @@ export default () => {
             }
         })
         .then(resp => resp.json())
+        .then(resp => resp as any[])
         .then(resp => resp.map((c : any) => c as Contest))
-        .then(c => c as Contest[])
+        
 
         return contestList
     }
