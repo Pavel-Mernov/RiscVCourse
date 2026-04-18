@@ -29,6 +29,12 @@ describe("getStudents (unit)", () => {
   });
 
   it("should return only users with @edu.hse.ru email", async () => {
+    mockedAxios.post.mockResolvedValueOnce({
+      data: {
+        access_token: "service-token",
+      },
+    });
+
     mockedAxios.get.mockResolvedValueOnce({
       data: [
         { id: "1", email: "student1@edu.hse.ru" },
@@ -42,7 +48,16 @@ describe("getStudents (unit)", () => {
 
     await getStudents(req, res, jest.fn());
 
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
     expect(mockedAxios.get).toHaveBeenCalledTimes(1);
+    expect(mockedAxios.get).toHaveBeenCalledWith(
+      expect.stringContaining("/admin/realms/"),
+      expect.objectContaining({
+        headers: {
+          Authorization: "Bearer service-token",
+        },
+      })
+    );
     expect(res.json).toHaveBeenCalledWith([
       { id: "1", email: "student1@edu.hse.ru" },
       { id: "3", email: "student2@edu.hse.ru" },
@@ -50,6 +65,12 @@ describe("getStudents (unit)", () => {
   });
 
   it("should return 500 if keycloak request fails", async () => {
+    mockedAxios.post.mockResolvedValueOnce({
+      data: {
+        access_token: "service-token",
+      },
+    });
+
     mockedAxios.get.mockRejectedValue(new Error("boom"));
 
     const req: any = { headers: { authorization: "Bearer token" } };

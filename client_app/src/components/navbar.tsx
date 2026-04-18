@@ -15,7 +15,7 @@ const Navbar = () => {
 
   const [loginBtnIsEntered, setLoginBtnEntered] = useState(false)
 
-  const { setAccessToken, isTokenValid } = useAuth()
+  const { setAccessToken, isTokenValid, isUserValidTeacher } = useAuth()
 
   const { serverIp, auth } = useServerConnection()
 
@@ -90,7 +90,7 @@ const Navbar = () => {
           {
             isTokenValid() &&
             <Button
-              onClick={() => navigate('/report')}
+              onClick={() => navigate(isUserValidTeacher() ? '/report/teacher' : '/report')}
               onMouseEnter={() => setReportBtnEntered(true)}
               onMouseLeave={() => setReportBtnEntered(false)}
               sx={{ 
@@ -100,7 +100,7 @@ const Navbar = () => {
                 transform: reportBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
               }}
             >
-              Оценки
+              {isUserValidTeacher() ? 'Успеваемость' : 'Оценки'}
             </Button>
 
           }

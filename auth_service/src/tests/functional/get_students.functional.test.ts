@@ -20,6 +20,12 @@ describe("getStudents (functional)", () => {
   });
 
   it("GET /students returns only students with @edu.hse.ru email", async () => {
+    mockedAxios.post.mockResolvedValueOnce({
+      data: {
+        access_token: "service-token",
+      },
+    });
+
     mockedAxios.get.mockResolvedValueOnce({
       data: [
         { id: "1", email: "student1@edu.hse.ru" },
@@ -31,6 +37,7 @@ describe("getStudents (functional)", () => {
       .get("/api/students")
       .set("Authorization", "Bearer token");
 
+    expect(mockedAxios.post).toHaveBeenCalledTimes(1);
     expect(res.status).toBe(200);
     expect(res.body).toEqual([{ id: "1", email: "student1@edu.hse.ru" }]);
   });

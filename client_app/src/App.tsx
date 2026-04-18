@@ -12,6 +12,7 @@ import CreateTaskPage from './pages/CreateTaskPage';
 import EditTaskPage from './pages/EditTaskPage';
 import { ServerConnectionProvider } from './context/ServerConnectionContext';
 import ReportPage from './pages/ReportPage';
+import TeacherReportPage from './pages/TeacherReportPage';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="/tasks/:id/edit" element={<EditTaskPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/report" element={<ReportPage />} />
+            <Route path="/report/teacher" element={<TeacherReportPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

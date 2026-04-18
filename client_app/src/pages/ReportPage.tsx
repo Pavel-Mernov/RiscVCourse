@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/navbar";
-import { Navigate } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { Contest } from "./ContestsPage";
 import { useServerConnection } from "../context/ServerConnectionContext";
@@ -18,19 +18,23 @@ export interface TaskDict {
 
 export default function ReportPage() {
   
-    const { getLogin, isUserValidTeacher } = useAuth()
+    const { getLogin, isUserValidTeacher, isTokenValid } = useAuth()
     const { serverIp, contest, submission } = useServerConnection()
 
 
-    const [pointsForAllTasks, setPointsForAllTasks] = useState<TaskDict | undefined>(undefined)
+    const [pointsForAllTasks, setPointsForAllTasks] = useState<TaskDict | undefined | 'user not found'>(undefined)
+
+    const [params] = useSearchParams()
+
+    const userIdParam = params.get("userId")
 
     useEffect(() => {
 
-        if (!getLogin()) {
+        if (!getLogin() || !isTokenValid() || (isUserValidTeacher() && !userIdParam)) {
             return
         }
 
-        const login = getLogin()!
+        const login = (isUserValidTeacher() && userIdParam) ? userIdParam : getLogin()!
 
         const fetchContests = async () => {
             const url = `https://${serverIp}/${contest}/api/contests`
@@ -108,9 +112,13 @@ export default function ReportPage() {
         fetchPoints()
     }, [])
 
-    if (!getLogin()) {
+    if (!isTokenValid()) {
     
         return <Navigate to="/login" />
+    }
+
+    if (isUserValidTeacher() && !userIdParam) {
+        return <Navigate to="/report/teacher" />
     }
 
     return (
@@ -123,16 +131,26 @@ export default function ReportPage() {
                 spacing='70px'
                 alignItems='center'
             >
-                <Typography 
-                    variant='h1' 
-                    fontSize='50px' 
-                    fontWeight='bold'
-                    >
-                    Отчёт об успеваемости пользователя
-                </Typography>
-
+                { pointsForAllTasks !== 'user not found' &&
+                    <Typography 
+                        variant='h1' 
+                        fontSize='50px' 
+                        fontWeight='bold'
+                        >
+                        Отчёт об успеваемости пользователя
+                    </Typography>
+                }
+                { pointsForAllTasks === 'user not found' && userIdParam &&
+                    <Typography 
+                        variant='h1' 
+                        fontSize='50px' 
+                        fontWeight='bold'
+                        >
+                        Пользователь {userIdParam} не найден
+                    </Typography>
+                }
                 {
-                    (pointsForAllTasks) && <ReportTable pointsForAllTasks={pointsForAllTasks} />
+                    (pointsForAllTasks && pointsForAllTasks !== 'user not found') && <ReportTable pointsForAllTasks={pointsForAllTasks} />
                 }
             </Stack>
         </Stack>

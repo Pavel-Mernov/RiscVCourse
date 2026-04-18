@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { RequestHandler } from "express";
-import { KEYCLOAK_URL, REALM } from "../env";
+import { CLIENT_ID, CLIENT_SECRET, KEYCLOAK_URL, REALM } from "../env";
 
 const STUDENT_EMAIL_DOMAIN = "@edu.hse.ru";
 
@@ -8,6 +8,22 @@ interface KeycloakUser {
   email?: string | null;
   [key: string]: unknown;
 }
+
+const getAdminAccessToken = async () => {
+  const response = await axios.post(
+    `${KEYCLOAK_URL}/realms/${REALM}/protocol/openid-connect/token`,
+    new URLSearchParams({
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      grant_type: "client_credentials",
+    }),
+    {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    }
+  );
+
+  return response.data.access_token as string;
+};
 
 const getStudents: RequestHandler = async (req, res) => {
   const authorization = req.headers.authorization;
@@ -18,6 +34,7 @@ const getStudents: RequestHandler = async (req, res) => {
   }
 
   try {
+    const adminAccessToken = await getAdminAccessToken();
     const users: KeycloakUser[] = [];
     const max = 100;
     let first = 0;
@@ -27,7 +44,7 @@ const getStudents: RequestHandler = async (req, res) => {
         `${KEYCLOAK_URL}/admin/realms/${REALM}/users`,
         {
           headers: {
-            Authorization: authorization,
+            Authorization: `Bearer ${adminAccessToken}`,
           },
           params: {
             first,
@@ -53,9 +70,11 @@ const getStudents: RequestHandler = async (req, res) => {
 
     res.json(students);
   } catch (error) {
+    const details = axios.isAxiosError(error) ? error.response?.data ?? error.message : String(error);
+
     res.status(500).json({
       error: "Failed to load students from Keycloak",
-      details: axios.isAxiosError(error) ? error.response?.data ?? error.message : String(error),
+      details,
     });
   }
 };
