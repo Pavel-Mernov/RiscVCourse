@@ -35,6 +35,9 @@ const getStudents: RequestHandler = async (req, res) => {
 
   try {
     const adminAccessToken = await getAdminAccessToken();
+
+    console.log(adminAccessToken)
+
     const users: KeycloakUser[] = [];
     const max = 100;
     let first = 0;
@@ -71,6 +74,8 @@ const getStudents: RequestHandler = async (req, res) => {
     res.json(students);
   } catch (error) {
     const details = axios.isAxiosError(error) ? error.response?.data ?? error.message : String(error);
+
+    console.log(JSON.stringify(details))
 
     res.status(500).json({
       error: "Failed to load students from Keycloak",
