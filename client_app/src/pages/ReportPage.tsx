@@ -18,7 +18,7 @@ export interface TaskDict {
 
 export default function ReportPage() {
   
-    const { getLogin, isUserValidTeacher, isTokenValid } = useAuth()
+    const { getLogin, isUserValidTeacher, isTokenValid, accessToken } = useAuth()
     const { serverIp, contest, submission, auth } = useServerConnection()
 
 
@@ -43,7 +43,8 @@ export default function ReportPage() {
             const user = await fetch(url, {
                 method : 'GET',
                     headers : {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization' : `Bearer ${accessToken}`
                 }
                 })
                 .then(resp => resp.json())
@@ -92,9 +93,9 @@ export default function ReportPage() {
 
             const points = await fetch(url, {
                 method : 'GET',
-                    headers : {
+                headers : {
                     'Content-Type': 'application/json'
-                }
+                },
                 })
                 .then(resp => resp.json())
                 .then(resp => resp.points as number | undefined)
