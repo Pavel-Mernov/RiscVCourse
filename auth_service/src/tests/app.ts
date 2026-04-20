@@ -4,7 +4,7 @@ import controller from '../controllers/controller';
 import userController from '../controllers/userController';
 
 const { login, logout, refresh } = controller
-const { getStudents } = userController
+const { getStudents, getUserByEmail } = userController
 
 export const createApp = () => {
 
@@ -17,6 +17,7 @@ export const createApp = () => {
   app.post('/api/refresh', refresh);
   app.post('/api/logout', logout);
   app.get('/api/students', getStudents);
+  app.get('/api/users/:email', getUserByEmail);
 
   return app;
 };

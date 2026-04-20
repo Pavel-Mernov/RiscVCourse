@@ -84,6 +84,52 @@ const getStudents: RequestHandler = async (req, res) => {
   }
 };
 
+const getUserByEmail: RequestHandler = async (req, res) => {
+  const { email } = req.params;
+  const authorization = req.headers.authorization;
+
+  if (!authorization?.trim()) {
+    res.status(401).json({ error: "Authorization header is required" });
+    return;
+  }
+
+  try {
+    const adminAccessToken = await getAdminAccessToken();
+
+    const response = await axios.get(
+      `${KEYCLOAK_URL}/admin/realms/${REALM}/users`,
+      {
+        headers: {
+          Authorization: `Bearer ${adminAccessToken}`,
+        },
+        params: {
+          email,
+        },
+      }
+    );
+
+    const [user] = Array.isArray(response.data) ? response.data : [];
+
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    res.json(user);
+  } catch (error) {
+    const details = axios.isAxiosError(error) ? error.response?.data ?? error.message : String(error);
+
+    console.log(JSON.stringify(details))
+
+    res.status(500).json({
+      error: "Failed to load user from Keycloak",
+      details,
+    });
+  }
+};
+
+
 export default {
   getStudents,
+  getUserByEmail,
 };

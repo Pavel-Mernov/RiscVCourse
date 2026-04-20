@@ -33,41 +33,39 @@ export default () => {
             return
         }
 
-        const url = `https://${serverIp}/${auth}/api/login`
-        const method = 'POST'
-        const data = {
-            login : loginText,
-            password : passwordText,
-        }
+        try {
+            const url = `https://${serverIp}/${auth}/api/login`
+            const formData = new URLSearchParams({
+                login : loginText,
+                password : passwordText,
+            })
 
-        const response = await fetch(url, {
-            method: method,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
+            const response = await fetch(url, {
+                method: 'POST',
+                credentials: 'include',
+                body: formData,
+            })
             
-        })
-        
-        if (!response.ok) {
+            if (!response.ok) {
+                setLoginError(true)
+                
+                const logs = await response.text()
+                console.log(logs)
+                return
+            }
+
+            const result = await response.json()
+
+            if ('accessToken' in result) {
+                
+                setAccessToken(result.accessToken)
+
+                console.log('Auth successful')
+                navigate(-1)
+            }
+        } catch (error) {
             setLoginError(true)
-            
-            const logs = await response.text()
-            console.log(logs)
-            return
-        }
-
-        const result = await response.json()
-
-        // console.log(JSON.stringify(result))
-
-        if ('accessToken' in result) {
-            
-            setAccessToken(result.accessToken)
-
-            console.log('Auth successful')
-            navigate(-1)
+            console.log(error)
         }
     }
 

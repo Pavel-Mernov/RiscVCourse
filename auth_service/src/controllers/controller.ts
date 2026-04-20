@@ -1,15 +1,19 @@
 import axios from "axios";
 import { CLIENT_ID, CLIENT_SECRET, KEYCLOAK_URL, REALM } from "../env";
 
+type SameSitePolicy = 'lax' | 'strict' | 'none';
+type HeaderValue = string | string[] | undefined;
 
 interface Request<BodyType = any, CookieType = any> {
     body : BodyType
     cookies : CookieType
+    headers ?: Record<string, HeaderValue>
 }
 
 interface CookieOptions {
     httpOnly ?: boolean
     secure ?: boolean
+    sameSite ?: SameSitePolicy
 }
 
 interface LoginBody {
@@ -23,6 +27,26 @@ interface Response {
     cookie : (key : string, value : any, options ?: CookieOptions) => Response
     sendStatus : (code : number) => Response
     clearCookie : (cookie : string) => Response
+}
+
+const getFirstHeaderValue = (header : HeaderValue) => {
+  if (Array.isArray(header)) {
+    return header[0]
+  }
+
+  return header
+}
+
+const getRefreshCookieOptions = (req : Request) : CookieOptions => {
+  // Traefik forwards the external protocol, which lets us enable cross-site cookies only for HTTPS.
+  const forwardedProto = getFirstHeaderValue(req.headers?.['x-forwarded-proto'])?.split(',')[0]?.trim()
+  const isHttpsRequest = forwardedProto === 'https'
+
+  return {
+    httpOnly: true,
+    secure: isHttpsRequest,
+    sameSite: isHttpsRequest ? 'none' : 'lax',
+  }
 }
 
 const login = async (req : Request<LoginBody>, res : Response) => {
@@ -57,10 +81,7 @@ const login = async (req : Request<LoginBody>, res : Response) => {
 
     const { access_token, refresh_token } = response.data;
 
-    res.cookie('refreshToken', refresh_token, {
-      httpOnly: true,
-      secure: false,
-    });
+    res.cookie('refreshToken', refresh_token, getRefreshCookieOptions(req));
 
     res.json({ accessToken: access_token });
 
@@ -99,9 +120,7 @@ const refresh = async (req : Request<any, RefreshCookies>, res : Response) => {
 
     const { access_token, refresh_token } = response.data;
 
-    res.cookie('refreshToken', refresh_token, {
-      httpOnly: true,
-    });
+    res.cookie('refreshToken', refresh_token, getRefreshCookieOptions(req));
 
     res.json({ accessToken: access_token });
 

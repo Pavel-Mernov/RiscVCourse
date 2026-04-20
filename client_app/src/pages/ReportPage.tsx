@@ -19,7 +19,7 @@ export interface TaskDict {
 export default function ReportPage() {
   
     const { getLogin, isUserValidTeacher, isTokenValid } = useAuth()
-    const { serverIp, contest, submission } = useServerConnection()
+    const { serverIp, contest, submission, auth } = useServerConnection()
 
 
     const [pointsForAllTasks, setPointsForAllTasks] = useState<TaskDict | undefined | 'user not found'>(undefined)
@@ -35,6 +35,21 @@ export default function ReportPage() {
         }
 
         const login = (isUserValidTeacher() && userIdParam) ? userIdParam : getLogin()!
+
+
+        const checkUserExists = async () => {
+            const url = `https://${serverIp}/${auth}/api/users/${login}`
+
+            const user = await fetch(url, {
+                method : 'GET',
+                    headers : {
+                    'Content-Type': 'application/json'
+                }
+                })
+                .then(resp => resp.json())
+
+            return user
+        }
 
         const fetchContests = async () => {
             const url = `https://${serverIp}/${contest}/api/contests`
@@ -89,6 +104,19 @@ export default function ReportPage() {
 
         const fetchPoints = async () => {
 
+            const foundUser = await checkUserExists()
+            .then(user => {
+                if (!user || !user.email || 'error' in user) {
+                    setPointsForAllTasks('user not found')
+                    return false
+                }
+                return true
+            })
+
+            if (!foundUser) {
+                return
+            }
+            
             const contestList = await fetchContests()
 
             const pointsDict : TaskDict = {}
@@ -131,6 +159,15 @@ export default function ReportPage() {
                 spacing='70px'
                 alignItems='center'
             >
+                { pointsForAllTasks == 'user not found' &&
+                    <Typography 
+                        variant='h1' 
+                        fontSize='50px' 
+                        fontWeight='bold'
+                        >
+                        Пользователь не найден
+                    </Typography>
+                }
                 { pointsForAllTasks !== 'user not found' &&
                     <Typography 
                         variant='h1' 
