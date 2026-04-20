@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 
 type Student = {
     email : string
+    firstName : string
+    lastName : string
 }
 
 export default function TeacherReportPage() {
@@ -37,17 +39,19 @@ export default function TeacherReportPage() {
                 })
 
                 const studentsData = await studentsList.json()
+                    .then(data => data as any[])
+                    .then( data => data.map(({ email, firstName, lastName } : Student) => { return { email, firstName, lastName } as Student }))
 
-                console.log(JSON.stringify(studentsData))
+                
 
-                if (!Array.isArray(students)) {
+                if (!Array.isArray(studentsData)) {
                     throw new Error('Error from server')
                 }
 
                 setStudents(studentsData)
             }
-            catch {
-                // setStudents([])
+            catch (error : any) {
+                console.log(error)
             }
         }
 
@@ -75,6 +79,8 @@ export default function TeacherReportPage() {
         );        
     }
 
+    
+
     return (
         <Stack spacing='150px'>
             <Navbar />
@@ -90,13 +96,15 @@ export default function TeacherReportPage() {
 
             <Stack
                 spacing='25px'
+                width='70%'
+                alignSelf='center'
                 alignItems='center'
             >
                 {
-                    students && students.map(({ email }) => (
+                    students && students.map(({ email, lastName, firstName }) => (
                         <StudentLink
                             key={email}
-                            title={email}
+                            title={`${lastName} ${firstName}`}
                             link={`/report?userId=${email}`}
                         />
                     ))
