@@ -1,29 +1,26 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useServerConnection } from "./ServerConnectionContext";
 import { decodeToken, getLogin } from "./decode";
 
-
-// 1. Типы для контекста
 interface AuthContextType {
-  accessToken ?: string;
-  isTokenValid : () => boolean,
-  getLogin : () => string | undefined,
-  isUserValidTeacher : () => boolean,
-  setAccessToken: (token ?: string) => void;
+  accessToken?: string;
+  isTokenValid: () => boolean,
+  getLogin: () => string | undefined,
+  isUserValidTeacher: () => boolean,
+  setAccessToken: (token?: string) => void;
 }
 
-// 2. Создаём контекст с дефолтным значением
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-// 3. Провайдер контекста
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [accessToken, setAccessToken] = useState<string | undefined>(() => {
-    
     return localStorage.getItem('accessToken') || undefined
   });
+  const { serverIp, auth } = useServerConnection()
 
   function isUserValidTeacher() {
     if (!accessToken || !isTokenValid()) {
@@ -33,7 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const login = getLogin(accessToken)
 
     if (!login) {
-        return false
+      return false
     }
 
     return login.endsWith('@hse.ru')
@@ -45,13 +42,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     const decoded = decodeToken(accessToken);
-    if (!decoded || !decoded.exp) return false; // нет данных
-  
-    const now = Date.now() / 1000; // текущее время в секундах
+    if (!decoded || !decoded.exp) return false;
+
+    const now = Date.now() / 1000;
     return decoded.exp >= now;
   }
-  
-  // При изменении токена сохраняем его в localStorage
+
   useEffect(() => {
     if (accessToken) {
       localStorage.setItem('accessToken', accessToken);
@@ -60,44 +56,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }, [accessToken]);
 
-  /*
   useEffect(() => {
     const fetchRefresh = async () => {
       if (!accessToken || isTokenValid()) {
         return
       }
 
-      
-      const url = `http://${serverIp}:3003/api/refresh`
+      try {
+        const url = `https://${serverIp}/${auth}/api/refresh`
+        const response = await fetch(url, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization' : 'Bearer: ' + accessToken
-        },
-        credentials : 'include'
-      })
-      .then(resp => resp.json()) 
+        if (!response.ok) {
+          if (response.status === 401) {
+            setAccessToken(undefined)
+          }
 
-      if ('accessToken' in response && typeof response.accessToken == 'string') {
-        setAccessToken(response.accessToken)
-      } 
-      else {
-        console.log(JSON.stringify(response))
+          return
+        }
+
+        const result = await response.json()
+
+        if ('accessToken' in result) {
+          setAccessToken(result.accessToken)
+        }
       }
+      catch {}
     }
 
     fetchRefresh();
   }, [])
-  */
 
-  const context : AuthContextType = { 
-    accessToken, 
+  const context: AuthContextType = {
+    accessToken,
     setAccessToken,
-    getLogin : () => getLogin(accessToken),
-    isUserValidTeacher, 
-    isTokenValid 
+    getLogin: () => getLogin(accessToken),
+    isUserValidTeacher,
+    isTokenValid
   }
 
   return (
@@ -107,7 +107,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   );
 };
 
-// 4. Кастомный хук для удобного доступа к контексту
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {

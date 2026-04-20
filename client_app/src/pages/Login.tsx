@@ -42,6 +42,7 @@ export default () => {
 
         const response = await fetch(url, {
             method: method,
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
             },
