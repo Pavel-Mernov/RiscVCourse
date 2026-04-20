@@ -62,7 +62,7 @@ describe('auth CORS (functional)', () => {
       });
 
     expect(res.status).toBe(200);
-    expect(res.headers['set-cookie'][0]).toContain('Secure');
-    expect(res.headers['set-cookie'][0]).toContain('SameSite=None');
+    expect((res.headers['set-cookie']!)[0]).toContain('Secure');
+    expect((res.headers['set-cookie']!)[0]).toContain('SameSite=None');
   });
 });
