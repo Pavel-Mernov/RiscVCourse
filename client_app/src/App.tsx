@@ -13,6 +13,7 @@ import EditTaskPage from './pages/EditTaskPage';
 import { ServerConnectionProvider } from './context/ServerConnectionContext';
 import ReportPage from './pages/ReportPage';
 import TeacherReportPage from './pages/TeacherReportPage';
+import PlaygroundPage from './pages/PlaygroundPage';
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/report" element={<ReportPage />} />
             <Route path="/report/teacher" element={<TeacherReportPage />} />
+            <Route path="/playground" element={<PlaygroundPage />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

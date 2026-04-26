@@ -13,6 +13,8 @@ const Navbar = () => {
 
   const [reportBtnIsEntered, setReportBtnEntered] = useState(false)
 
+  const [playgroundBtnIsEntered, setPlaygroundBtnEntered] = useState(false)
+
   const [loginBtnIsEntered, setLoginBtnEntered] = useState(false)
 
   const { setAccessToken, isTokenValid, isUserValidTeacher } = useAuth()
@@ -85,6 +87,20 @@ const Navbar = () => {
             }}
           >
             Контесты
+          </Button>
+
+          <Button
+            onClick={() => navigate('/playground')}
+            onMouseEnter={() => setPlaygroundBtnEntered(true)}
+            onMouseLeave={() => setPlaygroundBtnEntered(false)}
+            sx={{ 
+              color: 'white', 
+              textTransform: 'none', 
+              fontSize : '20px', 
+              transform: playgroundBtnIsEntered ? 'scale(1.04)' : 'scale(1)',
+            }}
+          >
+            Песочница
           </Button>
 
           {
