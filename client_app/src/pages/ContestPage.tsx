@@ -61,7 +61,9 @@ export default () => {
 
     const [contestState, setContest] = useState<Contest | { error : any } | null>(null)
 
-    const [ tasks, setTasks ] = useState<Task[]>([])
+    const [theoryBlocks, setTheoryBlocks] = useState<Task[]>([])
+
+    const [tasks, setTasks] = useState<Task[]>([])
 
     const navigate = useNavigate()
 
@@ -106,9 +108,12 @@ export default () => {
             })
             .then(resp => resp.json()) 
             
+            const responseTasks = response.filter((item : any) => item.answer_type && item.answer_type !== 'theory' ) as Task[]
             
+            const responseTheoryBlocks = response.filter((item : any) => !item.answer_type || item.answer_type === 'theory' ) as Task[]
 
-            setTasks(response)
+            setTasks(responseTasks)
+            setTheoryBlocks(responseTheoryBlocks)
         }
 
         fetchTasks()
@@ -216,7 +221,28 @@ export default () => {
                     { contestState.description }
                 </Typography>
             }
-        
+
+            { theoryBlocks.length != 0 && 
+                <Typography
+                    sx={{ marginTop : '50px', alignSelf : 'center' }}
+                    variant="h4"
+                    fontWeight='bold'
+                    fontSize='50px'
+                >
+                    Теория
+                </Typography> 
+            }
+            <Stack
+                width='70%'
+                spacing='20px'
+                alignSelf='center'
+                marginTop='20px'
+            >
+                {
+                    theoryBlocks.map(({ name, id }, i) => <TaskLink key={`link_${i}`} title={ name } link={ `/tasks/${id}` } />)
+                }
+            </Stack>
+
             { tasks.length != 0 && 
                 <Typography
                     sx={{ marginTop : '50px', alignSelf : 'center' }}

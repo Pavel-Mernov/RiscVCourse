@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext"
 import type { CodeData, Test } from "../pages/CreateTaskPage"
 import SubmissionsTable from "./submissionsTable"
 import { useServerConnection } from "../context/ServerConnectionContext"
+import { useLocalStorage } from "../localStorage/useLocalStorage"
 
 type Verdict = 'OK' | 'WA' | 'RE' | 'TL'
 
@@ -92,7 +93,7 @@ type CodeError = '' | 'Код не может быть пустым' | 'Прев
 export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memory_limit_kb, attempts, points, tests_shown, input_data_format, output_data_format }, 
         tests } : Props) => {
 
-    const [textAnswer, setTextAnswer] = useState('')
+    const [textAnswer, setTextAnswer] = useLocalStorage(`tasks:${taskId}:textAnswer`, '')
 
     const [fileAnswer, setFileAnswer] = useState('')
 
@@ -138,7 +139,7 @@ export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memo
 
             const sortedSubmissions = submissionsData.sort((a, b) => ( +(new Date(b.timestamp)) - +new Date(a.timestamp) ))
 
-            if (sortedSubmissions.length > 0 && textAnswer.length == 0) {
+            if (sortedSubmissions.length > 0 && textAnswer.length == 0 && !textAnswer) {
                 setTextAnswer(sortedSubmissions[0].text as string)
             }
 

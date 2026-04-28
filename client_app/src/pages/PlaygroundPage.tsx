@@ -5,6 +5,7 @@ import { useServerConnection } from "../context/ServerConnectionContext"
 import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
 import Navbar from "../components/navbar"
+import { useLocalStorage } from "../localStorage/useLocalStorage"
 
 type Verdict = 'OK' | 'WA' | 'RE' | 'TL'
 
@@ -71,7 +72,7 @@ type CodeError = '' | 'Код не может быть пустым' | 'Прев
 
 export default () => {
 
-    const [textAnswer, setTextAnswer] = useState('')
+    const [textAnswer, setTextAnswer] = useLocalStorage('playground:textAnswer', '')
 
     const [fileAnswer, setFileAnswer] = useState('')
 
@@ -89,7 +90,7 @@ export default () => {
 
     const [codeInputMode, setCodeInputMode] = useState<'here' | 'file'>('here')
 
-    const [input, setInput] = useState('')
+    const [input, setInput] = useLocalStorage('playground:input', '')
 
     const [output, setOutput] = useState('')
 

@@ -4,6 +4,7 @@ import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
 import { Navigate, useNavigate } from "react-router-dom"
 import { useServerConnection } from "../context/ServerConnectionContext"
+import { useLocalStorage } from "../localStorage/useLocalStorage"
 
 const isValidDate = (dateStr: string) => {
     // Регулярное выражение для двух форматов: с временем и без
@@ -63,16 +64,16 @@ function toTimestampTz(dateStr: string): string | null {
 export default () => {
     const { isTokenValid, isUserValidTeacher } = useAuth()
 
-    const [title, setTitle] = useState('')
+    const [title, setTitle] = useLocalStorage('newContest:title', '')
     const [titleError, setTitleError] = useState(false)
 
-    const [description, setDescription] = useState<string | undefined>(undefined)
-    const [authorized_only, setAuthorizedOnly] = useState<boolean>(false)
+    const [description, setDescription] = useLocalStorage<string | undefined>('newContest:description', undefined)
+    const [authorized_only, setAuthorizedOnly] = useLocalStorage('newContest:authorized_only', false)
 
-    const [deadline, setDeadline] = useState<string>('')
+    const [deadline, setDeadline] = useLocalStorage('newContest:deadline', '')
     const [deadLineError, setDeadlineError] = useState('')
 
-    const [is_active, setActive] = useState(true)
+    const [is_active, setActive] = useLocalStorage('newContest:is_active', true)
 
     const { accessToken } = useAuth()
 
@@ -169,6 +170,12 @@ export default () => {
                             deadline : deadlineTimestampTz,
                             is_active
                         }
+
+                        setTitle('')
+                        setDescription(undefined)
+                        setAuthorizedOnly(false)
+                        setDeadline('')
+                        setActive(true)
 
                         const url = `https://${serverIp}/${contest}/api/contests`
 

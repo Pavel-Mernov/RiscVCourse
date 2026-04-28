@@ -118,6 +118,11 @@ export default () => {
                     }} 
                     label="Введите пароль" 
                     placeholder="Введите пароль"
+                    onKeyDown={(event) => {
+                        if (event.key === 'Enter') {
+                            fetchLogin()
+                        }
+                    }}
                     error={loginError}    
                 />
 

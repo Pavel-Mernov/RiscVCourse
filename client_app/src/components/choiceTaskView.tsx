@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext"
 import SubmissionsTable from "./submissionsTable"
 import type { Submission } from "./codeTaskView"
 import { useServerConnection } from "../context/ServerConnectionContext"
+import { useLocalStorage } from "../localStorage/useLocalStorage"
 
 function Correct() {
     return (
@@ -71,7 +72,7 @@ interface Props {
 
 export default ({ taskId, taskName, deadline, 'taskData' : { answers, correct_answer, points } } : Props) => {
 
-    const [selectedAnswer, setselectedAnswer] = useState(-1)
+    const [selectedAnswer, setselectedAnswer] = useLocalStorage(`tasks:${taskId}:answer`, -1)
 
     const [isCorrectAnswerShown, setCorrectAnswerShown] = useState(false)
 
