@@ -5,6 +5,7 @@ import Navbar from "../components/navbar";
 import { useAuth } from "../context/AuthContext";
 import DeletionDialog from "../components/deletionDialog";
 import { useServerConnection } from "../context/ServerConnectionContext";
+import { useLocalStorage } from "../localStorage/useLocalStorage";
 
 const isValidDate = (dateStr: string) => {
     // Регулярное выражение для двух форматов: с временем и без
@@ -94,18 +95,19 @@ export default () => {
 
     const { isTokenValid, isUserValidTeacher, accessToken } = useAuth()
 
-    const [title, setTitle] = useState('')
+    const [title, setTitle, removeTitle] = useLocalStorage(`contests:${id}:title`, '')
     const [titleError, setTitleError] = useState(false)
 
-    const [description, setDescription] = useState<string>('')
-    const [authorized_only, setAuthorizedOnly] = useState<boolean>(false)
+    const [description, setDescription, removeDescription] = useLocalStorage(`contests:${id}:description`, '')
+    const [authorized_only, setAuthorizedOnly, removeAuthorizedOnly] 
+        = useLocalStorage<boolean | null>(`contests:${id}:authorized_only`, null)
 
-    const [deadline, setDeadline] = useState<string>('')
+    const [deadline, setDeadline, removeDeadline] = useLocalStorage(`contests:${id}:deadline`, '')
     const [deadLineError, setDeadlineError] = useState('')
 
     const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false)
 
-    const [is_active, setActive] = useState(true)
+    const [is_active, setActive, removeActive] = useLocalStorage<boolean | undefined>(`contests:${id}:is_active`, undefined)
 
     const navigate = useNavigate()
 
@@ -135,11 +137,22 @@ export default () => {
 
             // setDeadline(response.deadline || '')
 
-            setTitle(response.title)
-            setDescription(response.description || '')
-            setAuthorizedOnly(response.authorized_only)
-            setDeadline(toInputDate(response.deadline))
-            setActive(response.is_active)
+            if (!title) {
+                setTitle(response.title)
+            }
+            if (!description) setDescription(response.description || '')
+
+            if (authorized_only == null) {
+                setAuthorizedOnly(response.authorized_only)
+            }
+
+            if (!deadline) {
+                setDeadline(toInputDate(response.deadline))
+            }
+
+            if (is_active === undefined) {
+                setActive(response.is_active)
+            }
         }
 
         fetchContest()
@@ -247,6 +260,12 @@ export default () => {
                         }) 
                         .then(resp => resp.json()) 
 
+                        removeTitle()
+                        removeDescription()
+                        removeAuthorizedOnly()
+                        removeDeadline()
+                        removeActive()
+
                         navigate(-1)
                     }
 
@@ -265,6 +284,12 @@ export default () => {
                             
                         }) 
                         // .then(resp => resp.json()) 
+
+                        removeDescription()
+                        removeTitle()
+                        removeAuthorizedOnly()
+                        removeDeadline()
+                        removeActive()
 
                         navigate('/contests')
                     }
@@ -326,7 +351,7 @@ export default () => {
                         Только для авторизованных пользователей:
                     </Typography>
                     <Checkbox
-                        checked={authorized_only}
+                        checked={!!authorized_only}
                         onChange={(e) => { setAuthorizedOnly(e.target.checked) }}
                     />
                 </Stack>

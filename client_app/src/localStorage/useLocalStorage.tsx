@@ -27,5 +27,7 @@ export function useLocalStorage<T, >(key : string, defaultValue : T) {
     } catch {}
   }, [key, state]);
 
-  return [state, setState] as const;
+  const removeFromLocalStorage = () => localStorage.removeItem(key)
+
+  return [state, setState, removeFromLocalStorage] as const;
 }

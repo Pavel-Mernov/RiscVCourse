@@ -8,6 +8,7 @@ import MultichoiceEditor from "../components/multichoiceEditor"
 import TextAnswersEditor from "../components/textAnswersEditor"
 import CodeTaskEditor from "../components/codeTaskEditor"
 import { useServerConnection } from "../context/ServerConnectionContext"
+import { useLocalStorage } from "../localStorage/useLocalStorage"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -107,17 +108,17 @@ export default () => {
     const [contestFound, setContestFound] = useState(false)
     const [isContestForAuthorizedOnly, setContestForAuthorizedOnly] = useState(false)
 
-    const [name, setName] = useState('')
+    const [name, setName, removeName] = useLocalStorage('newTask:name', '')
     const [nameError, setNameError] = useState(false)
 
-    const [text, setText] = useState('')
+    const [text, setText, removeText] = useLocalStorage('newTask:text', '')
     const [textError, setTextError] = useState(false)
 
-    const [answer_type, setAnswerType] = useState<AnswerType>('theory')
+    const [answer_type, setAnswerType, removeAnswerType] = useLocalStorage<AnswerType>('newTask:answer_type', 'theory')
 
-    const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>(defaultTaskAnswers)
+    const [taskAnswers, setTaskAnswers, removeTaskAnswers] = useLocalStorage<TaskAnswers>('newTask:taskAnswers', defaultTaskAnswers)
 
-    const [tests, setTests] = useState<Test[]>([])
+    const [tests, setTests, removeTests] = useLocalStorage<Test[]>('newTask:tests', [])
 
     const { serverIp, contest } = useServerConnection()
 
@@ -285,6 +286,11 @@ export default () => {
                         
                         console.log(JSON.stringify(addedTask))
 
+                        removeName()
+                        removeText()
+                        removeAnswerType()
+                        removeTaskAnswers()
+
                         if (answer_type == 'code') {
                             tests.forEach(async test => {
 
@@ -302,6 +308,8 @@ export default () => {
                                 .then( resp => resp.json() )
                             })
                         }
+
+                        removeTests()
 
                         navigate(-1)
                     }

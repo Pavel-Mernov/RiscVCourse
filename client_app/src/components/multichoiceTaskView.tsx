@@ -109,6 +109,14 @@ export default ({ taskId, taskName, deadline, 'taskData' : { answers, points } }
 
 
             setSubmissions(sortedSubmissions)
+
+            if (sortedSubmissions.length > 0) {
+                const lastSubmission = sortedSubmissions[0]
+
+                const lastSubmissionAnswers = lastSubmission.text as string[]
+                
+                setSelectedAnswers(answers.map(({ answer }) => lastSubmissionAnswers.includes(answer)))
+            }
         }
 
         fetchSubmissions()

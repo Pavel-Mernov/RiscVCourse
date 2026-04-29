@@ -8,6 +8,7 @@ import WrongIcon from "@mui/icons-material/Cancel"
 import type { Submission } from "./codeTaskView"
 import SubmissionsTable from "./submissionsTable"
 import { useServerConnection } from "../context/ServerConnectionContext"
+import { useLocalStorage } from "../localStorage/useLocalStorage"
 
 function Correct() {
     return (
@@ -71,7 +72,7 @@ interface Props {
 
 export default ({ taskId, taskName, deadline, 'taskData' : { correct_answers, attempts, points } } : Props) => {
 
-    const [answer, setAnswer] = useState('')
+    const [answer, setAnswer] = useLocalStorage(`tasks:${taskId}:textAnswer`, '')
 
     const [isCorrectAnswerShown, setCorrectAnswerShown] = useState(false)
 

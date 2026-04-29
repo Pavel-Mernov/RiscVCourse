@@ -11,6 +11,7 @@ import MultichoiceEditor from "../components/multichoiceEditor"
 import TextAnswersEditor from "../components/textAnswersEditor"
 import CodeTaskEditor from "../components/codeTaskEditor"
 import { useServerConnection } from "../context/ServerConnectionContext"
+import { useLocalStorage } from "../localStorage/useLocalStorage"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
@@ -44,26 +45,28 @@ export default () => {
     const { id } = useParams()
     const [taskFound, setTaskFound] = useState(false)
 
-    const [name, setName] = useState('')
+    const [name, setName, removeName] = useLocalStorage(`tasks:${id}:name`, '')
     const [nameError, setNameError] = useState(false)
 
-    const [text, setText] = useState('')
+    const [text, setText, removeText] = useLocalStorage(`tasks:${id}:text`, '')
     const [textError, setTextError] = useState(false)
 
     const [contest_id, setContestId] = useState('')
 
 
-    const [isContestForAuthorizedOnly, setContestForAuthorizedOnly] = useState(false)
+    const [isContestForAuthorizedOnly, setContestForAuthorizedOnly, removeContestForAuthorizedOnly] 
+        = useLocalStorage<boolean | undefined>(`contests:${id}:authorized_only`, undefined)
 
     const [isDeletionDialogOpen, setDeletionDialogOpen] = useState(false)
 
-    const [answer_type, setAnswerType] = useState<AnswerType>('theory')
+    const [answer_type, setAnswerType, removeAnswerType] = useLocalStorage<AnswerType>(`tasks:${id}:answer_type`, 'theory')
 
-    const [taskAnswers, setTaskAnswers] = useState<TaskAnswers>( defaultTaskAnswers )
+    const [taskAnswers, setTaskAnswers, removeTaskAnswers] 
+        = useLocalStorage<TaskAnswers>(`tasks:${id}:taskAnswers`, defaultTaskAnswers)
 
-    const [tests, setTests] = useState<Test[]>([])
+    const [tests, setTests, removeTests] = useLocalStorage<Test[]>(`tasks:${id}:tests`, [])
 
-    const [deletedTests, setDeletedTests] = useState<Test[]>([])
+    const [deletedTests, setDeletedTests, removeDeletedTests] = useLocalStorage<Test[]>(`tasks:${id}:deletedTests`, [])
 
     const { serverIp, contest } = useServerConnection()
 
@@ -342,6 +345,14 @@ export default () => {
                             })
                         })
 
+                        removeName()
+                        removeText()
+                        removeAnswerType()
+                        removeTaskAnswers()
+                        removeTests()
+                        removeDeletedTests()
+                        removeContestForAuthorizedOnly()
+
                         navigate(-1)
                     }
 
@@ -375,6 +386,8 @@ export default () => {
                             console.log(response)
                         })
 
+
+
                         tests.forEach(async ({ id }) => {
                             const url = `https://${serverIp}/${contest}/api/tests/${id}`
 
@@ -389,6 +402,14 @@ export default () => {
                             
                             console.log(response)
                         })
+
+                        removeName()
+                        removeText()
+                        removeAnswerType()
+                        removeTaskAnswers()
+                        removeTests()
+                        removeDeletedTests()
+                        removeContestForAuthorizedOnly()
 
                         navigate(-2)
                     }
@@ -468,7 +489,7 @@ export default () => {
                     (answer_type == 'choice') &&
                         <ChoiceAnswersEditor 
                             setChoiceAnswers={setChoiceAnswers}
-                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            enableSetPointsAndAttempts={ !!isContestForAuthorizedOnly }
                             choiceAnswers={taskAnswers.choice} 
                         />
                 }
@@ -477,7 +498,7 @@ export default () => {
                     (answer_type == 'multichoice') &&
                         <MultichoiceEditor 
                             setAnswers={setMultichoiceAnswers}
-                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            enableSetPointsAndAttempts={ !!isContestForAuthorizedOnly }
                             multichoiceAnswers={taskAnswers.multichoice} 
                         />
                 }
@@ -486,7 +507,7 @@ export default () => {
                     (answer_type == 'text') &&
                         <TextAnswersEditor
                             setAnswers={setTextAnswers}
-                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            enableSetPointsAndAttempts={ !!isContestForAuthorizedOnly }
                             answers={taskAnswers.text} 
                         />
                 }
@@ -496,7 +517,7 @@ export default () => {
                         <CodeTaskEditor
                             taskData={taskAnswers.code}
                             setData={setCodeData}
-                            enableSetPointsAndAttempts={ isContestForAuthorizedOnly }
+                            enableSetPointsAndAttempts={ !!isContestForAuthorizedOnly }
                             tests={tests}
                             setTests={setTests}
                             deleteTest={(test : Test) => { 

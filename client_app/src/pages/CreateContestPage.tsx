@@ -64,16 +64,16 @@ function toTimestampTz(dateStr: string): string | null {
 export default () => {
     const { isTokenValid, isUserValidTeacher } = useAuth()
 
-    const [title, setTitle] = useLocalStorage('newContest:title', '')
+    const [title, setTitle, removeTitle] = useLocalStorage('newContest:title', '')
     const [titleError, setTitleError] = useState(false)
 
-    const [description, setDescription] = useLocalStorage<string | undefined>('newContest:description', undefined)
-    const [authorized_only, setAuthorizedOnly] = useLocalStorage('newContest:authorized_only', false)
+    const [description, setDescription, removeDescription] = useLocalStorage<string | undefined>('newContest:description', undefined)
+    const [authorized_only, setAuthorizedOnly, removeAuthorizedOnly] = useLocalStorage('newContest:authorized_only', false)
 
-    const [deadline, setDeadline] = useLocalStorage('newContest:deadline', '')
+    const [deadline, setDeadline, removeDeadline] = useLocalStorage('newContest:deadline', '')
     const [deadLineError, setDeadlineError] = useState('')
 
-    const [is_active, setActive] = useLocalStorage('newContest:is_active', true)
+    const [is_active, setActive, removeActive] = useLocalStorage('newContest:is_active', true)
 
     const { accessToken } = useAuth()
 
@@ -171,11 +171,11 @@ export default () => {
                             is_active
                         }
 
-                        setTitle('')
-                        setDescription(undefined)
-                        setAuthorizedOnly(false)
-                        setDeadline('')
-                        setActive(true)
+                        removeTitle()
+                        removeDescription()
+                        removeAuthorizedOnly()
+                        removeDeadline()
+                        removeActive()
 
                         const url = `https://${serverIp}/${contest}/api/contests`
 
