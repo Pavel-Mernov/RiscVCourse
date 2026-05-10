@@ -147,7 +147,7 @@ export default ({ taskId, taskName, deadline, 'taskData' : { answers, correct_an
             })
             .then(resp => resp.text())
 
-            // console.log(text)
+            
 
             const data = JSON.parse(text)
 

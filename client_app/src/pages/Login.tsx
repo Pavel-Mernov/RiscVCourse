@@ -60,7 +60,7 @@ export default () => {
                 
                 setAccessToken(result.accessToken)
 
-                console.log('Auth successful')
+                
                 navigate(-1)
             }
         } catch (error) {

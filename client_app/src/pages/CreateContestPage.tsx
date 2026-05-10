@@ -161,8 +161,6 @@ export default () => {
 
                         const deadlineTimestampTz = toTimestampTz(deadline)
 
-                        console.log(deadlineTimestampTz)
-
                         const newContest = {
                             title,
                             description,

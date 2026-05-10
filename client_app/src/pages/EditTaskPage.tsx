@@ -133,8 +133,7 @@ export default () => {
             })
             .then(resp => resp.json())
             
-            // console.log('Response contest: ' + JSON.stringify(response))
-
+            
             if ('error' in response) {
                 return
             }
@@ -177,7 +176,7 @@ export default () => {
             }
             else {
 
-                console.log(response.contest_id)
+                
 
                 setTaskFound(true)
 
@@ -362,7 +361,7 @@ export default () => {
 
                         const url = `https://${serverIp}/${contest}/api/tasks/${id}`
 
-                        const response = await fetch(url, {
+                        await fetch(url, {
                             method: 'DELETE',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -371,12 +370,12 @@ export default () => {
                             
                         })  
                         
-                        console.log(JSON.stringify(response))
+                        
 
                         deletedTests.forEach(async ({ id }) => {
                             const url = `https://${serverIp}/${contest}/api/tests/${id}`
 
-                            const response = await fetch(url, {
+                            await fetch(url, {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -385,7 +384,7 @@ export default () => {
                                 
                             })
                             
-                            console.log(response)
+                            
                         })
 
 
@@ -393,7 +392,7 @@ export default () => {
                         tests.forEach(async ({ id }) => {
                             const url = `https://${serverIp}/${contest}/api/tests/${id}`
 
-                            const response = await fetch(url, {
+                            await fetch(url, {
                                 method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -402,7 +401,6 @@ export default () => {
                                 
                             })
                             
-                            console.log(response)
                         })
 
                         removeName()

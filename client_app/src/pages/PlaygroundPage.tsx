@@ -151,8 +151,7 @@ export default () => {
                 })
                 .then(resp => resp.json())
 
-                console.log(data)
-
+                
                 if ('output' in data && 'error' in data) {
                     setOutput(data.output)
 

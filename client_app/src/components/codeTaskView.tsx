@@ -203,7 +203,7 @@ export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memo
             })
             .then(resp => resp.text())
 
-            // console.log(text)
+            
 
             const data = JSON.parse(text)
 
@@ -220,13 +220,6 @@ export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memo
 
         
         for (const { input, expected_output } of tests) {
-            
-
-            // console.log(input)
-
-            
-
-            
 
             const body = {
                 input,
@@ -247,13 +240,13 @@ export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memo
                 })
                 .then(resp => resp.json())
 
-                // console.log(data)
+                
 
                 if ('output' in data && 'error' in data) {
                     if (data.output.trim() !== expected_output) {
                         setVerdict('WA')
                         localVerdict = 'WA'
-                        console.log('Verdict: WA')
+                        
                     }
                 }
                 else {
@@ -274,7 +267,7 @@ export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memo
         }
 
 
-        // console.log('Local verdict: ' + localVerdict)
+        
 
         if (!localVerdict) {
             setVerdict('OK')
@@ -288,10 +281,6 @@ export default ({ taskId, taskName, deadline, 'taskData' : { time_limit_ms, memo
 
             const submissionUrl = `https://${serverIp}/${submission}/api/submissions/${lastSubmissionId}/verdict`
             const submissionMethod = 'PUT'
-
-            console.log(localVerdict)
-
-            // console.log(points)
 
             const submissionBody = {
                 verdict : localVerdict || 'OK',

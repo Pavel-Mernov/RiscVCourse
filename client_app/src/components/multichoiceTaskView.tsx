@@ -132,7 +132,7 @@ export default ({ taskId, taskName, deadline, 'taskData' : { answers, points } }
         setSelectedAnswers(newAnswers)
     }
 
-    // useEffect(() => console.log(selectedAnswers), [selectedAnswers])
+    
 
     const isAnswerCorrect = () => answers.every(({ is_correct }, i) => selectedAnswers[i] == is_correct)
 
@@ -167,8 +167,6 @@ export default ({ taskId, taskName, deadline, 'taskData' : { answers, points } }
                 body : JSON.stringify(submissionBody)
             })
             .then(resp => resp.text())
-
-            // console.log(text)
 
             const data = JSON.parse(text)
 

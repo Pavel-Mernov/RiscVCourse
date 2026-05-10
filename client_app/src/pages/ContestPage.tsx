@@ -166,8 +166,6 @@ export default () => {
         )        
     }
 
-    // console.log(JSON.stringify(contest), contest.title, JSON.stringify(tasks))
-
     const { title } = contestState as Contest
 
     return (

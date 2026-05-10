@@ -81,7 +81,7 @@ function toInputDate(dateStr : string) {
 
         const date = new Date(dateStr).toLocaleString(undefined, options).replace(',', '')
 
-        // console.log(date)
+        
 
         return date
     }
@@ -132,10 +132,6 @@ export default () => {
                 console.error('Error fetch: ' + response.error)
                 return
             }
-
-            // console.log(id, JSON.stringify(response))
-
-            // setDeadline(response.deadline || '')
 
             if (!title) {
                 setTitle(response.title)

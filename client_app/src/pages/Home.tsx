@@ -46,7 +46,7 @@ export default () => {
                     return
                 }
 
-                // console.log('Fetch Task. Id: ' + taskId + ' Result: ' + JSON.stringify(response))
+                
 
                 setTask(response)
         }

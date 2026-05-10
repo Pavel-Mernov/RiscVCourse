@@ -28,7 +28,7 @@ const Navbar = () => {
         const url = `https://${serverIp}/${auth}/api/logout`
         const method = 'POST'
 
-        const response = await fetch(url, {
+        await fetch(url, {
             method: method,
             credentials: 'include',
             headers: {
@@ -37,9 +37,9 @@ const Navbar = () => {
             
         })
 
-        const text = await response.text()
+        // const text = await response.text()
 
-        console.log(text)
+        
     } 
     catch {}   
   }

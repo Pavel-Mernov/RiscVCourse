@@ -288,7 +288,7 @@ export default () => {
 
                         const taskId = addedTask.id
                         
-                        console.log(JSON.stringify(addedTask))
+                        
 
                         removeName()
                         removeText()

@@ -31,7 +31,6 @@ const CodeTaskEditor: React.FC<Props> = ({ taskData, setData, enableSetPointsAnd
 
         const updated = tests.filter((_, i) => i !== index);
 
-        // console.log('Updated tests after delete: ' + JSON.stringify(updated.map(({ input, expected_output }) => ({ input, output : expected_output }))))
         setTests(updated);
     };
 

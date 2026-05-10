@@ -79,8 +79,6 @@ export default () => {
         setContests(filteredContests)
     }
 
-    // console.log(JSON.stringify(contests))
-
     return <Stack
     
     >
