@@ -277,6 +277,15 @@ router.post('/contests/:contestId/tasks', authenticateTeacher, async (req, res) 
         return res.status(400).json({ error })
   }
 
+  if (body.number_in_contest != undefined && 
+    (typeof body.number_in_contest !== 'number' || (typeof body.number_in_contest == 'number' && body.number_in_contest < 0))) {
+
+        const error = 'Task number in contest should be empty or a non-negative number'
+
+        logger.error(requestString + '. Number in Contest: ' + body.number_in_contest + '. ' + error)
+        return res.status(400).json({ error })
+  }
+
   const task: Task = { id: uuid(), contest_id : contestId, ...body }
   
   await createTask(task)
@@ -333,6 +342,16 @@ router.put('/tasks/:taskId', authenticateTeacher, async (req, res) => {
     
     logger.error(requestString + '. ' + error)
     return res.status(404).json({ error })
+  }
+
+  if (req.body.number_in_contest != undefined &&
+    (typeof req.body.number_in_contest !== 'number' ||
+      (typeof req.body.number_in_contest == 'number' && req.body.number_in_contest < 0))) {
+
+    const error = 'Task number in contest should be empty or a non-negative number'
+
+    logger.error(requestString + '. Number in Contest: ' + req.body.number_in_contest + '. ' + error)
+    return res.status(400).json({ error })
   }
 
   Object.assign(task, req.body)

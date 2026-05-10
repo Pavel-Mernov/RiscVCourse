@@ -18,6 +18,7 @@ interface Contest {
 interface Task {
     id : string,
     name : string,
+    number_in_contest ?: number,
 }
 
 function Title(props : { title : string }) {
@@ -108,9 +109,19 @@ export default () => {
             })
             .then(resp => resp.json()) 
             
-            const responseTasks = response.filter((item : any) => item.answer_type && item.answer_type !== 'theory' ) as Task[]
+            const responseTasks = (response.filter((item : any) => item.answer_type && item.answer_type !== 'theory' ) as Task[])
+                .sort((a, b) => {
+                    if (a.number_in_contest == undefined) return 1
+                    if (b.number_in_contest == undefined) return -1
+                    return a.number_in_contest - b.number_in_contest
+                })
             
-            const responseTheoryBlocks = response.filter((item : any) => !item.answer_type || item.answer_type === 'theory' ) as Task[]
+            const responseTheoryBlocks = (response.filter((item : any) => !item.answer_type || item.answer_type === 'theory' ) as Task[])
+                .sort((a, b) => {
+                    if (a.number_in_contest == undefined) return 1
+                    if (b.number_in_contest == undefined) return -1
+                    return a.number_in_contest - b.number_in_contest
+                })
 
             setTasks(responseTasks)
             setTheoryBlocks(responseTheoryBlocks)
@@ -239,7 +250,8 @@ export default () => {
                 marginTop='20px'
             >
                 {
-                    theoryBlocks.map(({ name, id }, i) => <TaskLink key={`link_${i}`} title={ name } link={ `/tasks/${id}` } />)
+                    theoryBlocks.map(({ name, id, number_in_contest }, i) => 
+                        <TaskLink key={`link_${i}`} title={ `${number_in_contest ? `${number_in_contest}. ` : ''}${name}` } link={ `/tasks/${id}` } />)
                 }
             </Stack>
 
@@ -260,7 +272,8 @@ export default () => {
                 marginTop='20px'
             >
                 {
-                    tasks.map(({ name, id }, i) => <TaskLink key={`link_${i}`} title={ name } link={ `/tasks/${id}` } />)
+                    tasks.map(({ name, id, number_in_contest }, i) => 
+                        <TaskLink key={`link_${i}`} title={ `${number_in_contest != undefined ? `${number_in_contest}. ` : ''}${name}` } link={ `/tasks/${id}` } />)
                 }
             </Stack>
 

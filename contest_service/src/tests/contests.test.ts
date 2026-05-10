@@ -410,6 +410,10 @@ describe('DELETE /contests/:contestId', () => {
 
 describe('POST contests/:id/tasks', () => {
 
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
   test('Should create task successfully', async () => {
     mockedGetContests.mockResolvedValue([{
       id: '1',
@@ -440,6 +444,34 @@ describe('POST contests/:id/tasks', () => {
       text: 'Read this',
       answer_type: 'theory'
     })
+  })
+
+  test('Should create task successfully with number_in_contest', async () => {
+    mockedGetContests.mockResolvedValue([{
+      id: '1',
+      title: '',
+      is_active : true
+    }])
+    mockedCreateTask.mockResolvedValue()
+
+    const res = await request(app)
+      .post('/contests/1/tasks')
+      .send({
+        name: 'Task A',
+        number_in_contest: 3,
+        text: 'Read this',
+        answer_type: 'theory'
+      })
+
+    expect(res.status).toBe(201)
+    expect(res.body.number_in_contest).toBe(3)
+    expect(mockedCreateTask).toHaveBeenCalledWith(expect.objectContaining({
+      contest_id: '1',
+      name: 'Task A',
+      number_in_contest: 3,
+      text: 'Read this',
+      answer_type: 'theory'
+    }))
   })
 
 
@@ -571,6 +603,30 @@ describe('POST contests/:id/tasks', () => {
     expect(res.status).toBe(400)
   })
 
+  test.each([
+    ['negative', -1],
+    ['string', '1']
+  ])('should return 400 when number_in_contest is %s', async (_, number_in_contest) => {
+    mockedGetContests.mockResolvedValue([{
+      id: '1',
+      title: '',
+      is_active : true
+    }])
+
+    const res = await request(app)
+      .post('/contests/1/tasks')
+      .send({
+        name: 'Task',
+        number_in_contest,
+        text: 'Text',
+        answer_type: 'theory'
+      })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBe('Task number in contest should be empty or a non-negative number')
+    expect(mockedCreateTask).not.toHaveBeenCalled()
+  })
+
 
   })
 
@@ -670,6 +726,26 @@ describe('PUT /tasks/:taskId', () => {
     expect(logger.info).toHaveBeenCalled()
   })
 
+  test('should update number_in_contest to a non-negative number', async () => {
+    const existingTask = { id: '1', name: 'Old', contest_id: '1', text: '', answer_type: 'theory' as const }
+
+    mockedGetTasks.mockResolvedValue([existingTask])
+    mockedUpdateTask.mockResolvedValue()
+
+    const res = await request(app)
+      .put('/tasks/1')
+      .send({ number_in_contest: 2 })
+
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual({ ...existingTask, number_in_contest: 2 })
+
+    expect(mockedUpdateTask).toHaveBeenCalledTimes(1)
+    expect(mockedUpdateTask).toHaveBeenCalledWith({
+      ...existingTask,
+      number_in_contest: 2
+    })
+  })
+
   test('должен вернуть 404 если задача не найдена', async () => {
     mockedGetTasks.mockResolvedValue([])
 
@@ -682,6 +758,23 @@ describe('PUT /tasks/:taskId', () => {
 
     expect(mockedUpdateTask).not.toHaveBeenCalled()
     expect(logger.error).toHaveBeenCalled()
+  })
+
+  test.each([
+    ['negative', -1],
+    ['string', '1']
+  ])('should return 400 when PUT number_in_contest is %s', async (_, number_in_contest) => {
+    const existingTask = { id: '1', name: 'Old', contest_id: '1', text: '', answer_type: 'theory' as const }
+
+    mockedGetTasks.mockResolvedValue([existingTask])
+
+    const res = await request(app)
+      .put('/tasks/1')
+      .send({ number_in_contest })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBe('Task number in contest should be empty or a non-negative number')
+    expect(mockedUpdateTask).not.toHaveBeenCalled()
   })
 
   test('должен вернуть 500 если updateTask бросает ошибку', async () => {

@@ -64,6 +64,9 @@ export default () => {
     const [taskAnswers, setTaskAnswers, removeTaskAnswers] 
         = useLocalStorage<TaskAnswers>(`tasks:${id}:taskAnswers`, defaultTaskAnswers)
 
+    const [number_in_contest, setNumberInContest, removeNumberInContest] 
+        = useLocalStorage<number | undefined>(`tasks:${id}:number_in_contest`, undefined)
+
     const [tests, setTests, removeTests] = useLocalStorage<Test[]>(`tasks:${id}:tests`, [])
 
     const [deletedTests, setDeletedTests, removeDeletedTests] = useLocalStorage<Test[]>(`tasks:${id}:deletedTests`, [])
@@ -278,12 +281,13 @@ export default () => {
                             text,
                             contest_id,
                             answer_type,
+                            number_in_contest,
                             task_data : taskAnswers[answer_type as Exclude<AnswerType, 'theory'>]
                         }
 
                         const url = `https://${serverIp}/${contest}/api/tasks/${id}`
 
-                        const response = await fetch(url, {
+                        await fetch(url, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -293,9 +297,6 @@ export default () => {
                             
                         })  
                         
-                        console.log(JSON.stringify(response))
-
-                        console.log(JSON.stringify(tests))
 
                         tests.filter(test => !test.id).forEach(async (test) => {
                             
@@ -349,6 +350,7 @@ export default () => {
                         removeText()
                         removeAnswerType()
                         removeTaskAnswers()
+                        removeNumberInContest()
                         removeTests()
                         removeDeletedTests()
                         removeContestForAuthorizedOnly()
@@ -433,6 +435,17 @@ export default () => {
                 >
                     Назад
                 </Button>
+
+                <TextField
+                    label="Номер задачи"
+                    value={number_in_contest ?? ""}
+                    onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '')
+                        const numberValue = value ? Number(value) : undefined
+                        setNumberInContest(numberValue)
+                    }}
+                    inputProps={{ inputMode: "numeric" }}
+                />
 
                 <TextField 
                     sx={{marginTop: '50px', background : 'white'}} 

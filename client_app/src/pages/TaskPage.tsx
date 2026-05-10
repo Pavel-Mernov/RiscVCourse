@@ -76,8 +76,6 @@ export default () => {
                 })
                 .then(resp => resp.json()) 
 
-                console.log(JSON.stringify(contestsResponse))
-
                 setAuthorizedOnly(contestsResponse.authorized_only)
                 setActive(contestsResponse.is_active)
                 setDeadline(contestsResponse.deadline)
@@ -157,6 +155,8 @@ export default () => {
         )  
     }
 
+    const { name, number_in_contest, contest_id, text  } = task
+
     return (
         <Stack>
             <Navbar />
@@ -182,10 +182,10 @@ export default () => {
                     variant="h2"
                     marginTop='150px'
                 >
-                    {'Задача. ' + task.name}
+                    { (number_in_contest != null ? `${number_in_contest}. ` : '') + 'Задача. ' + name }
                 </Typography>  
 
-                <ContestNavPanel curTaskId={id} contestId={ task.contest_id } />
+                <ContestNavPanel curTaskId={id} contestId={ contest_id } />
 
                 {
                     /*
@@ -201,14 +201,14 @@ export default () => {
                     */
 
                     <UrlText>
-                        { task.text }
+                        { text }
                     </UrlText>
                 }
 
                 {
                     task.answer_type == 'choice' && task.task_data 
                         && ('answers' in task.task_data ) && ('correct_answer' in task.task_data) &&
-                            <ChoiceTaskView deadline={deadline} taskId={ task.id } taskName={task.name} taskData={ task.task_data } />
+                            <ChoiceTaskView deadline={deadline} taskId={ task.id } taskName={name} taskData={ task.task_data } />
                     
                 }
 

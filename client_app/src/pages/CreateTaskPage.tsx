@@ -108,6 +108,9 @@ export default () => {
     const [contestFound, setContestFound] = useState(false)
     const [isContestForAuthorizedOnly, setContestForAuthorizedOnly] = useState(false)
 
+    const [number_in_contest, setNumberInContest, removeNumberInContest] 
+        = useLocalStorage<number | undefined>('newTask:number_in_contest', undefined)
+
     const [name, setName, removeName] = useLocalStorage('newTask:name', '')
     const [nameError, setNameError] = useState(false)
 
@@ -261,6 +264,7 @@ export default () => {
                             name,
                             text,
                             contest_id: contestId,
+                            number_in_contest,
                             answer_type,
                             task_data : taskAnswers[answer_type as Exclude<AnswerType, 'theory'>]
                         }
@@ -290,6 +294,7 @@ export default () => {
                         removeText()
                         removeAnswerType()
                         removeTaskAnswers()
+                        removeNumberInContest()
 
                         if (answer_type == 'code') {
                             tests.forEach(async test => {
@@ -333,6 +338,17 @@ export default () => {
                 >
                     Назад
                 </Button>
+
+                <TextField
+                    label="Номер задачи"
+                    value={number_in_contest ?? ""}
+                    onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '')
+                        const numberValue = value ? Number(value) : undefined
+                        setNumberInContest(numberValue)
+                    }}
+                    inputProps={{ inputMode: "numeric" }}
+                />
 
                 <TextField 
                     sx={{marginTop: '50px', background : 'white'}} 

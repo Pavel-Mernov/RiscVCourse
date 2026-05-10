@@ -36,7 +36,7 @@ const getStudents: RequestHandler = async (req, res) => {
   try {
     const adminAccessToken = await getAdminAccessToken();
 
-    console.log(adminAccessToken)
+    
 
     const users: KeycloakUser[] = [];
     const max = 100;
