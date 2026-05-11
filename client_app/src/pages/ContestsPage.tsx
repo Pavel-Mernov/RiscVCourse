@@ -152,6 +152,7 @@ export default () => {
             <Stack
                 width='70%'
                 spacing='20px'
+                paddingBottom='50px'
             >
                 {
                     contests
@@ -161,7 +162,9 @@ export default () => {
                             
                             return contest.is_active && !contest.authorized_only
                         })
-                        .map(({ title, id }, i) => <ContestLink key={`link_${i}`} title={ title } link={ `/contests/${id}` } />)
+                        .map(({ title, id, number }, i) => 
+                            <ContestLink key={`link_${i}`} title={ `${number != null ? `${number}. ` : ''}${title}` } 
+                                link={ `/contests/${id}` } />)
                 }
             </Stack>
 

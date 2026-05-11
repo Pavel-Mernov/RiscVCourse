@@ -158,7 +158,7 @@ export default () => {
         )        
     }
 
-    const { title } = contestState as Contest
+    const { title, number } = contestState as Contest
 
     return (
         <Stack
@@ -211,7 +211,7 @@ export default () => {
                 </Button>
             }            
 
-            <Title title={ title } /> 
+            <Title title={ (number ? `${ number }. ` : '') + title } /> 
 
             {
                 contestState && contestState.description &&

@@ -240,6 +240,7 @@ export default () => {
                             id,
                             title,
                             description,
+                            number,
                             authorized_only,
                             deadline : deadlineTimestampTz
                         }
@@ -318,7 +319,7 @@ export default () => {
                 </Button>
 
                 <TextField
-                    label="Номер задачи"
+                    label="Номер контеста"
                     value={number ?? ""}
                     onChange={(e) => {
                         const value = e.target.value.replace(/[^0-9]/g, '')
@@ -389,7 +390,7 @@ export default () => {
                         Сделать контест активным:
                     </Typography>
                     <Checkbox
-                        checked={is_active}
+                        checked={!!is_active}
                         onChange={(e) => { setActive(e.target.checked) }}
                     />
                 </Stack>
