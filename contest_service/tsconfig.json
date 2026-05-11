@@ -9,7 +9,6 @@
     // See also https://aka.ms/tsconfig/module
     "module": "esnext",
     "moduleResolution": "node",
-    "ignoreDeprecations" : "6.0",
     "target": "esnext",
     "esModuleInterop": true,
     "types": ["node", "jest"],
