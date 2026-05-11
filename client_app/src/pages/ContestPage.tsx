@@ -5,13 +5,7 @@ import { useEffect, useState } from "react"
 import TaskLink from "../components/titleLink"
 import { useAuth } from "../context/AuthContext"
 import { useServerConnection } from "../context/ServerConnectionContext"
-import type { Contest } from "../types/types"
-
-interface Task {
-    id : string,
-    name : string,
-    number_in_contest ?: number,
-}
+import type { Contest, Task } from "../types/types"
 
 function Title(props : { title : string }) {
     const { title } = props

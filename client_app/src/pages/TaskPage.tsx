@@ -5,26 +5,14 @@ import { useEffect, useState } from "react"
 import { ContestNavPanel } from "../components/contestNavPanel"
 import { useAuth } from "../context/AuthContext"
 import UrlText from "../components/urlText"
-import type { ChoiceAnswers, CodeData, MultichoiceAnswers, Test, TextAnswer } from "./CreateTaskPage"
 import ChoiceTaskView from "../components/choiceTaskView"
 import MultichoiceTaskView from "../components/multichoiceTaskView"
 import TextAnswersTaskView from "../components/textAnswersTaskView"
 import CodeTaskView from "../components/codeTaskView"
 import { useServerConnection } from "../context/ServerConnectionContext"
+import type { Task, Test } from "../types/types"
 
-type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 
-interface Task {
-  id: string
-  contest_id: string
-  name: string
-  number_in_contest?: number
-  text: string
-  
-  answer_type: AnswerType
-  
-  task_data ?: CodeData | ChoiceAnswers | MultichoiceAnswers | TextAnswer
-}
 
 
 

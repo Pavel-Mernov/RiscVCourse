@@ -1,6 +1,6 @@
 import { Box, Checkbox, TextField, IconButton, Button, colors, Typography } from "@mui/material";
-import type { MultichoiceAnswer, MultichoiceAnswers } from "../pages/CreateTaskPage";
 import CloseIcon from "@mui/icons-material/Close";
+import type { MultichoiceAnswer, MultichoiceAnswers } from "../types/types";
 
 interface Props {
   multichoiceAnswers: MultichoiceAnswers;

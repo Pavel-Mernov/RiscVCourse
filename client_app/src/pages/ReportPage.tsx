@@ -3,9 +3,9 @@ import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/navbar";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { Contest } from "./ContestsPage";
 import { useServerConnection } from "../context/ServerConnectionContext";
 import ReportTable from "../components/ReportTable";
+import type { Contest } from "../types/types";
 
 export interface TaskDict {
     [contestId : string] : {

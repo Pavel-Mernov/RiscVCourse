@@ -85,6 +85,8 @@ export interface TaskCreate {
   task_data ?: CodeData | ChoiceAnswers | MultichoiceAnswers | TextAnswer
 }
 
+export type Task = TaskCreate & { id : string }
+
 export interface Test {
     id ?: string
     input ?: string

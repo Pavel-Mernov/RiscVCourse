@@ -1,6 +1,6 @@
 import { Box, Button, colors, FormControlLabel, IconButton, Radio, RadioGroup, TextField } from "@mui/material"
-import type { ChoiceAnswers } from "../pages/CreateTaskPage"
 import CloseIcon from "@mui/icons-material/Close"
+import type { ChoiceAnswers } from "../types/types";
 
 
 interface Props {

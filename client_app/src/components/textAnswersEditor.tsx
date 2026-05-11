@@ -1,6 +1,6 @@
 import { Box, TextField, IconButton, Button, colors } from "@mui/material";
-import type { TextAnswer } from "../pages/CreateTaskPage";
 import CloseIcon from "@mui/icons-material/Close"
+import type { TextAnswer } from "../types/types";
 
 interface Props {
   answers: TextAnswer;
