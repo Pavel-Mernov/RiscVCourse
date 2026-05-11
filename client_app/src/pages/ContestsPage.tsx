@@ -5,13 +5,7 @@ import ContestLink from "../components/titleLink"
 import { useAuth } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import { useServerConnection } from "../context/ServerConnectionContext"
-
-export interface Contest {
-    id : string,
-    title : string,
-    authorized_only ?: boolean,
-    is_active : boolean,
-}
+import type { Contest } from "../types/types"
 
 export default () => {
     const { isTokenValid, isUserValidTeacher } = useAuth()

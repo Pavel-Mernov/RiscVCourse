@@ -5,13 +5,13 @@ import { useNavigate, useParams, Navigate } from "react-router-dom"
 import Navbar from "../components/navbar"
 import { useAuth } from "../context/AuthContext"
 import DeletionDialog from "../components/deletionDialog"
-import { defaultTaskAnswers, type ChoiceAnswers, type CodeData, type MultichoiceAnswers, type TaskAnswers, type Test, type TextAnswer } from "./CreateTaskPage"
 import ChoiceAnswersEditor from "../components/choiceAnswersEditor"
 import MultichoiceEditor from "../components/multichoiceEditor"
 import TextAnswersEditor from "../components/textAnswersEditor"
 import CodeTaskEditor from "../components/codeTaskEditor"
 import { useServerConnection } from "../context/ServerConnectionContext"
 import { useLocalStorage } from "../localStorage/useLocalStorage"
+import { defaultTaskAnswers, type ChoiceAnswers, type CodeData, type MultichoiceAnswers, type TaskAnswers, type Test, type TextAnswer } from "../types/types"
 
 type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
 

@@ -1,6 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close"
 import { Box, TextField, IconButton, Button, colors, Stack } from "@mui/material";
-import type { CodeData, Test } from "../pages/CreateTaskPage";
+import type { CodeData, Test } from "../types/types";
+
 
 
 interface Props {

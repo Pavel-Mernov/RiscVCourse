@@ -2,13 +2,13 @@ import { Stack, Typography, Button, colors, Checkbox } from "@mui/material"
 import { green, red } from "@mui/material/colors"
 import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import type { MultichoiceAnswers } from "../pages/CreateTaskPage"
 
 import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
 import type { Submission } from "./codeTaskView"
 import SubmissionsTable from "./submissionsTable"
 import { useServerConnection } from "../context/ServerConnectionContext"
+import type { MultichoiceAnswers } from "../types/types"
 
 function Correct() {
     return (

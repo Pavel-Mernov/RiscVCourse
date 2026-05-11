@@ -74,6 +74,13 @@ router.post('/contests', authenticateTeacher, async (req, res) => {
     return res.status(400).json({ error })
   }
 
+  if (body.number != undefined && (typeof body.number !== 'number' || (typeof body.number == 'number' && body.number < 0))) {
+    const error = 'Contest number should be empty or a non-negative number'
+
+    logger.error(requestString + '. Number: ' + body.number + '. ' + error)
+    return res.status(400).json({ error })
+  }
+
   const contest: Contest = { id: uuid(), ...body }
 
 

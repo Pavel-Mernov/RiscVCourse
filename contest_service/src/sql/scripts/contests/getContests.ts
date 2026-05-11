@@ -4,7 +4,7 @@ import { sqlPool } from "../../sqlPool";
 
 const script = `
 
-SELECT id, deadline, title, description, authorized_only, is_active
+SELECT id, deadline, title, description, authorized_only, number, is_active
 FROM contests;
 
 `

@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS contests (
   title             TEXT NOT NULL,
   description       TEXT,
   authorized_only   BOOLEAN,
-  is_active         BOOLEAN NOT NULL
+  is_active         BOOLEAN NOT NULL,
+  number            INTEGER
 );
 
 

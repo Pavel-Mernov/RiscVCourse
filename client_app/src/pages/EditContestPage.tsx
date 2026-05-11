@@ -95,6 +95,8 @@ export default () => {
 
     const { isTokenValid, isUserValidTeacher, accessToken } = useAuth()
 
+    const [number, setNumber, removeNumber] = useLocalStorage<number | undefined>(`contests:${id}:number`, undefined)
+
     const [title, setTitle, removeTitle] = useLocalStorage(`contests:${id}:title`, '')
     const [titleError, setTitleError] = useState(false)
 
@@ -261,6 +263,7 @@ export default () => {
                         removeAuthorizedOnly()
                         removeDeadline()
                         removeActive()
+                        removeNumber()
 
                         navigate(-1)
                     }
@@ -286,6 +289,7 @@ export default () => {
                         removeAuthorizedOnly()
                         removeDeadline()
                         removeActive()
+                        removeNumber()
 
                         navigate('/contests')
                     }
@@ -312,6 +316,17 @@ export default () => {
                 >
                     Назад
                 </Button>
+
+                <TextField
+                    label="Номер задачи"
+                    value={number ?? ""}
+                    onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '')
+                        const numberValue = value ? Number(value) : undefined
+                        setNumber(numberValue)
+                    }}
+                    inputProps={{ inputMode: "numeric" }}
+                />
 
                 <TextField 
                     sx={{marginTop: '50px', background : 'white'}} 

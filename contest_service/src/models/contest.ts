@@ -5,6 +5,7 @@ export interface Contest {
   authorized_only ?: boolean
   title: string
   description?: string
+  number ?: number
   is_active : boolean
 }
 

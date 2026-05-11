@@ -9,36 +9,7 @@ import TextAnswersEditor from "../components/textAnswersEditor"
 import CodeTaskEditor from "../components/codeTaskEditor"
 import { useServerConnection } from "../context/ServerConnectionContext"
 import { useLocalStorage } from "../localStorage/useLocalStorage"
-
-type AnswerType = 'theory' | 'choice' | 'multichoice' | 'text' | 'code'
-
-type AnswerTypeNames = {
-    [answer_type in AnswerType] : string
-}
-
-export type TaskAnswers = {
-    choice : ChoiceAnswers,
-    multichoice : MultichoiceAnswers
-    text : TextAnswer
-    code : CodeData
-}
-
-export const defaultTaskAnswers : TaskAnswers = {
-    choice : {
-        correct_answer: 0,
-        answers: [''],
-    },
-    multichoice : {
-        answers: [{
-            answer: "",
-            is_correct: false
-        }]
-    },
-    text : {
-        correct_answers : ['']
-    },
-    code : {}
-} as const
+import { defaultTaskAnswers, type AnswerType, type AnswerTypeNames, type ChoiceAnswers, type CodeData, type MultichoiceAnswers, type TaskAnswers, type TaskCreate, type Test, type TextAnswer } from "../types/types"
 
 const answerTypeNames : AnswerTypeNames = {
     theory: "Теория",
@@ -46,59 +17,6 @@ const answerTypeNames : AnswerTypeNames = {
     multichoice : 'Выбор нескольких ответов',
     text : 'Ввод текстового ответа',
     code : 'Задача на программирование'
-}
-
-export interface ChoiceAnswers {
-  correct_answer : number,
-  answers : [string, ...string[]], // все ответы
-  points?: number
-}
-
-export interface MultichoiceAnswer {
-    answer : string
-    is_correct : boolean
-}
-
-export interface MultichoiceAnswers {
-  answers : [
-    MultichoiceAnswer,
-    ...MultichoiceAnswer[]],
-    
-  points?: number
-}
-
-export interface CodeData {
-  time_limit_ms?: number
-  memory_limit_kb?: number
-  points?: number
-  attempts?: number
-  tests_shown?: number
-  input_data_format ?: string
-  output_data_format ?: string
-}
-
-export interface TextAnswer {
-  correct_answers : [string, ...string[]]
-  points?: number
-  attempts?: number
-}
-
-interface TaskCreate {
-
-  contest_id: string
-  name: string
-  number_in_contest?: number
-  text: string
-  
-  answer_type: AnswerType
-  
-  task_data ?: CodeData | ChoiceAnswers | MultichoiceAnswers | TextAnswer
-}
-
-export interface Test {
-    id ?: string
-    input ?: string
-    expected_output : string
 }
 
 export default () => {

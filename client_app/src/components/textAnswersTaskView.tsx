@@ -2,13 +2,13 @@ import { Stack, Typography, Button, colors, TextField } from "@mui/material"
 import { green, red } from "@mui/material/colors"
 import { useEffect, useState } from "react"
 import { useAuth } from "../context/AuthContext"
-import type { TextAnswer } from "../pages/CreateTaskPage"
 import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
 import type { Submission } from "./codeTaskView"
 import SubmissionsTable from "./submissionsTable"
 import { useServerConnection } from "../context/ServerConnectionContext"
 import { useLocalStorage } from "../localStorage/useLocalStorage"
+import type { TextAnswer } from "../types/types"
 
 function Correct() {
     return (

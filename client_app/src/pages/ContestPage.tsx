@@ -5,15 +5,7 @@ import { useEffect, useState } from "react"
 import TaskLink from "../components/titleLink"
 import { useAuth } from "../context/AuthContext"
 import { useServerConnection } from "../context/ServerConnectionContext"
-
-interface Contest {
-  id: string
-  deadline?: string
-  title: string
-  description?: string
-  authorized_only ?: boolean
-  is_active : boolean
-}
+import type { Contest } from "../types/types"
 
 interface Task {
     id : string,

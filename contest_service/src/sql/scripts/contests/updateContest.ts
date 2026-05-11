@@ -10,14 +10,15 @@ SET
   title = $3,
   description = $4,
   authorized_only = $5,
-  is_active = $6
+  number = $6,
+  is_active = $7
 WHERE id = $1
 RETURNING *;
 
 `
 
 export async function updateContest(contest : Contest, connection : Client | Pool = sqlPool,) {
-    const { id, deadline, title, description, authorized_only, is_active } = contest
+    const { id, deadline, title, description, authorized_only, number, is_active } = contest
 
-    await connection.query(query, [id, deadline, title, description, authorized_only, is_active])
+    await connection.query(query, [id, deadline, title, description, authorized_only, number, is_active])
 }

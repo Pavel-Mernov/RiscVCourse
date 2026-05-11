@@ -5,6 +5,8 @@ import { useAuth } from "../context/AuthContext"
 import { Navigate, useNavigate } from "react-router-dom"
 import { useServerConnection } from "../context/ServerConnectionContext"
 import { useLocalStorage } from "../localStorage/useLocalStorage"
+import type { Contest } from "../types/types"
+
 
 const isValidDate = (dateStr: string) => {
     // Регулярное выражение для двух форматов: с временем и без
@@ -42,8 +44,8 @@ const isValidDate = (dateStr: string) => {
     return true;
 }
 
-function toTimestampTz(dateStr: string): string | null {
-    if (!isValidDate(dateStr)) return null;
+function toTimestampTz(dateStr: string): string | undefined {
+    if (!isValidDate(dateStr)) return undefined;
 
     const regex = /^(\d{2})\.(\d{2})\.(\d{4})(?: (\d{2}):(\d{2}))?$/;
     const match = dateStr.match(regex)!;
@@ -63,6 +65,8 @@ function toTimestampTz(dateStr: string): string | null {
 
 export default () => {
     const { isTokenValid, isUserValidTeacher } = useAuth()
+
+    const [number, setNumber, removeNumber] = useLocalStorage<number | undefined>('newContest:number', undefined)
 
     const [title, setTitle, removeTitle] = useLocalStorage('newContest:title', '')
     const [titleError, setTitleError] = useState(false)
@@ -161,10 +165,11 @@ export default () => {
 
                         const deadlineTimestampTz = toTimestampTz(deadline)
 
-                        const newContest = {
+                        const newContest : Omit<Contest, 'id'> = {
                             title,
                             description,
                             authorized_only,
+                            number,
                             deadline : deadlineTimestampTz,
                             is_active
                         }
@@ -174,6 +179,7 @@ export default () => {
                         removeAuthorizedOnly()
                         removeDeadline()
                         removeActive()
+                        removeNumber()
 
                         const url = `https://${serverIp}/${contest}/api/contests`
 
@@ -211,6 +217,17 @@ export default () => {
                 >
                     Назад
                 </Button>
+
+                <TextField
+                    label="Номер контеста"
+                    value={number ?? ""}
+                    onChange={(e) => {
+                        const value = e.target.value.replace(/[^0-9]/g, '')
+                        const numberValue = value ? Number(value) : undefined
+                        setNumber(numberValue)
+                    }}
+                    inputProps={{ inputMode: "numeric" }}
+                />
 
                 <TextField 
                     sx={{marginTop: '50px', background : 'white'}} 

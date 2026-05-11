@@ -4,15 +4,15 @@ import { sqlPool } from "../../sqlPool";
 
 const script = `
 
-INSERT INTO contests (id, deadline, title, description, authorized_only, is_active)
-VALUES ($1, $2, $3, $4, $5, $6);
+INSERT INTO contests (id, deadline, title, description, authorized_only, number, is_active)
+VALUES ($1, $2, $3, $4, $5, $6, $7);
 
 `
 
 export async function createContest(connection : Client | Pool = sqlPool, contest : Contest) {
-    const { id, deadline, title, description, authorized_only, is_active } = contest
+    const { id, deadline, title, description, authorized_only, number, is_active } = contest
 
     
 
-    await connection.query(script, [id, deadline, title, description, authorized_only, is_active])
+    await connection.query(script, [id, deadline, title, description, authorized_only, number, is_active])
 }

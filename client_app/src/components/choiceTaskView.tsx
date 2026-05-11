@@ -1,5 +1,4 @@
 import { Button, colors, FormControlLabel, Radio, RadioGroup, Stack, Typography } from "@mui/material"
-import type { ChoiceAnswers } from "../pages/CreateTaskPage"
 import { useEffect, useState } from "react"
 import CorrectIcon from "@mui/icons-material/Done"
 import WrongIcon from "@mui/icons-material/Cancel"
@@ -9,6 +8,7 @@ import SubmissionsTable from "./submissionsTable"
 import type { Submission } from "./codeTaskView"
 import { useServerConnection } from "../context/ServerConnectionContext"
 import { useLocalStorage } from "../localStorage/useLocalStorage"
+import type { ChoiceAnswers } from "../types/types"
 
 function Correct() {
     return (

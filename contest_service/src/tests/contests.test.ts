@@ -81,6 +81,16 @@ describe('Contest API', () => {
     expect(res.body).toEqual([{ id: '1', title: 'Test', is_active : true }])
   })
 
+  test('GET /contests returns contest number', async () => {
+    const contests = [{ id: '1', title: 'Test', number: 2, is_active : true }]
+    mockedGetContests.mockResolvedValue(contests)
+
+    const res = await request(app).get('/contests')
+
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual(contests)
+  })
+
   test('GET /contests handles server error', async () => {
     mockedGetContests.mockRejectedValue(new Error('DB error'))
 
@@ -103,6 +113,39 @@ describe('Contest API', () => {
     expect(res.status).toBe(201)
     expect(res.body.title).toBe('New Contest')
     expect(res.body.id).toBeDefined()
+  })
+
+  test('POST /contests creates contest with number', async () => {
+    mockedCreateContest.mockResolvedValue()
+
+    const res = await request(app)
+      .post('/contests')
+      .send({ title: 'New Contest', number: 7, is_active : true })
+
+    expect(res.status).toBe(201)
+    expect(res.body.title).toBe('New Contest')
+    expect(res.body.number).toBe(7)
+    expect(res.body.id).toBeDefined()
+    expect(mockedCreateContest).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      title: 'New Contest',
+      number: 7,
+      is_active : true
+    }))
+  })
+
+  test.each([
+    ['negative', -1],
+    ['string', '1']
+  ])('POST /contests rejects invalid number: %s', async (_, number) => {
+    mockedCreateContest.mockClear()
+
+    const res = await request(app)
+      .post('/contests')
+      .send({ title: 'Contest', number, is_active : true })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toBe('Contest number should be empty or a non-negative number')
+    expect(mockedCreateContest).not.toHaveBeenCalled()
   })
 
   test('POST /contests creates a non-active contest', async () => {
@@ -168,6 +211,15 @@ describe('Contest API', () => {
     expect(res.body.is_active).toBe(true)
   })
 
+  test('GET /contests/:id returns contest number', async () => {
+    mockedGetContests.mockResolvedValue([{ id: '123', title: 'Contest', number: 4, is_active : true }])
+
+    const res = await request(app).get('/contests/123')
+
+    expect(res.status).toBe(200)
+    expect(res.body.number).toBe(4)
+  })
+
   test('GET /contests/:id returns 404 if not found', async () => {
     mockedGetContests.mockResolvedValue([])
 
@@ -199,6 +251,24 @@ describe('Contest API', () => {
 
     expect(res.status).toBe(200)
     expect(res.body.title).toBe('New Title')
+  })
+
+  test('PUT /contests/:id updates contest number', async () => {
+    mockedGetContests.mockResolvedValue([{ id: '1', title: 'Old', number: 1, is_active : true }])
+    mockedUpdateContest.mockResolvedValue(undefined)
+
+    const res = await request(app)
+      .put('/contests/1')
+      .send({ number: 5 })
+
+    expect(res.status).toBe(200)
+    expect(res.body.number).toBe(5)
+    expect(mockedUpdateContest).toHaveBeenCalledWith({
+      id: '1',
+      title: 'Old',
+      number: 5,
+      is_active : true
+    })
   })
 
   test('PUT /contests/:id returns 404 for nonexistent contest', async () => {
