@@ -33,7 +33,14 @@ export default () => {
         .then(resp => resp.json())
         .then(resp => resp as any[])
         .then(resp => resp.map((c : any) => c as Contest))
-        
+        .then(resp => resp
+            .filter(contest => {
+                if (isUserValidTeacher()) return true
+                if (isTokenValid()) return contest.is_active
+                            
+                return contest.is_active && !contest.authorized_only
+            })
+        )
 
         return contestList
     }
@@ -156,12 +163,21 @@ export default () => {
             >
                 {
                     contests
-                        .filter(contest => {
-                            if (isUserValidTeacher()) return true
-                            if (isTokenValid()) return contest.is_active
-                            
-                            return contest.is_active && !contest.authorized_only
-                        })
+                        .filter(({ number }) => number != null)
+                        .map(({ title, id, number }, i) => 
+                            <ContestLink key={`link_${i}`} title={ `${number != null ? `${number}. ` : ''}${title}` } 
+                                link={ `/contests/${id}` } />)
+                }
+            </Stack>
+
+            <Stack
+                width='70%'
+                spacing='20px'
+                paddingBottom='50px'
+            >
+                {
+                    contests
+                        .filter(({ number }) => number == null)
                         .map(({ title, id, number }, i) => 
                             <ContestLink key={`link_${i}`} title={ `${number != null ? `${number}. ` : ''}${title}` } 
                                 link={ `/contests/${id}` } />)

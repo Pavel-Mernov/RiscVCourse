@@ -249,16 +249,40 @@ export default () => {
                     Задачи
                 </Typography> 
             }
-            <Stack
-                width='70%'
-                spacing='20px'
-                alignSelf='center'
-                marginTop='20px'
-            >
-                {
-                    tasks.map(({ name, id, number_in_contest }, i) => 
-                        <TaskLink key={`link_${i}`} title={ `${number_in_contest != undefined ? `${number_in_contest}. ` : ''}${name}` } link={ `/tasks/${id}` } />)
-                }
+            <Stack 
+                spacing='50px'
+                sx={{
+                    marginTop : '30px'
+                }}
+                >
+
+                <Stack
+                    width='70%'
+                    spacing='20px'
+                    alignSelf='center'
+                    marginTop='20px'
+                >
+                    {
+                        tasks
+                        .filter(({ number_in_contest }) => number_in_contest != undefined)
+                        .map(({ name, id, number_in_contest }, i) => 
+                            <TaskLink key={`link_${i}`} title={ `${number_in_contest}. ${name}` } link={ `/tasks/${id}` } />)
+                    }
+                </Stack>
+
+                <Stack
+                    width='70%'
+                    spacing='20px'
+                    alignSelf='center'
+                    marginTop='20px'
+                >
+                    {
+                        tasks
+                        .filter(({ number_in_contest }) => number_in_contest == undefined)
+                        .map(({ name, id }, i) => 
+                            <TaskLink key={`link_${i}`} title={ name } link={ `/tasks/${id}` } />)
+                    }
+                </Stack>
             </Stack>
 
             {

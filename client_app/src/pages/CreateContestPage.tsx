@@ -213,7 +213,10 @@ export default () => {
                     variant="outlined"
                     
                     sx={{ maxWidth : '300px', fontWeight : 'bold', fontSize : '18px' }}
-                    onClick={() => { navigate(-1) }}
+                    onClick={() => {                       
+
+                        navigate(-1) 
+                    }}
                 >
                     Назад
                 </Button>
