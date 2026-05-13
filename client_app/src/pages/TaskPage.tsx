@@ -4,13 +4,14 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { ContestNavPanel } from "../components/contestNavPanel"
 import { useAuth } from "../context/AuthContext"
-import UrlText from "../components/urlText"
+
 import ChoiceTaskView from "../components/choiceTaskView"
 import MultichoiceTaskView from "../components/multichoiceTaskView"
 import TextAnswersTaskView from "../components/textAnswersTaskView"
 import CodeTaskView from "../components/codeTaskView"
 import { useServerConnection } from "../context/ServerConnectionContext"
 import type { Task, Test } from "../types/types"
+import UrlText from "../components/urlText"
 
 
 
