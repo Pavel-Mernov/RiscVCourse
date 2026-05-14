@@ -11,7 +11,7 @@ import TextAnswersTaskView from "../components/textAnswersTaskView"
 import CodeTaskView from "../components/codeTaskView"
 import { useServerConnection } from "../context/ServerConnectionContext"
 import type { Task, Test } from "../types/types"
-import UrlText from "../components/urlText"
+import UrlText from "../components/UrlText"
 
 
 
