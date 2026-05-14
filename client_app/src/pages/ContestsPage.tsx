@@ -1,7 +1,7 @@
 import { Button, colors, createTheme, Stack, TextField, ThemeProvider, Typography } from "@mui/material"
 import Navbar from "../components/navbar"
 import { useEffect, useState } from "react"
-import ContestLink from "../components/titleLink"
+import ContestLink from "../components/TitleLink"
 import { useAuth } from "../context/AuthContext"
 import { useNavigate } from "react-router-dom"
 import { useServerConnection } from "../context/ServerConnectionContext"

@@ -1,6 +1,6 @@
 import { Stack, Typography } from "@mui/material";
 import Navbar from "../components/navbar";
-import StudentLink from "../components/titleLink"
+import StudentLink from "../components/TitleLink"
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { useServerConnection } from "../context/ServerConnectionContext";
