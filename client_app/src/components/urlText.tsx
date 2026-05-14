@@ -27,7 +27,7 @@ export default ({ children } : Props) => {
         }
         else if ('ul' in para) {
 
-          console.log('before', para.ul)
+          // console.log('before', para.ul)
 
           const parts = para.ul.map(li => 
             typeof li === 'string' 
@@ -41,7 +41,7 @@ export default ({ children } : Props) => {
             li 
           );
 
-          console.log('after', parts)
+          // console.log('after', parts)
 
           return (
             <Typography
