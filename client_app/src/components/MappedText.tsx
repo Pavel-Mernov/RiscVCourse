@@ -14,7 +14,7 @@ export default ({ li, splitParts } : MappedTextProps) => {
   const children = splitParts.map((part, i) => {
 
     if (typeof part == 'object' && 'code' in part) {
-        return <CodeInTextView inline>{ part.code }</CodeInTextView>
+        return <CodeInTextView key={ i } inline>{ part.code }</CodeInTextView>
     }
     else if (typeof part == 'string') {
         if (urlRegex.test(part)) {

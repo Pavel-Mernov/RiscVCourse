@@ -94,7 +94,7 @@ export default () => {
                 return
             }
 
-            const url = `https://${serverIp}/${contest}/api/contests/${contestId}/tasks`    
+            const url = `https://${serverIp}/${contest}/api/contests/${contestId}`    
             const method = 'GET'
 
             const response = await fetch(url, {
@@ -115,6 +115,7 @@ export default () => {
                 setContestFound(true)
 
                 if ('authorized_only' in response && response.authorized_only) {
+
                     setContestForAuthorizedOnly(true)
                 } 
 

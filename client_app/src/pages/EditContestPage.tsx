@@ -102,7 +102,7 @@ export default () => {
 
     const [description, setDescription, removeDescription] = useLocalStorage(`contests:${id}:description`, '')
     const [authorized_only, setAuthorizedOnly, removeAuthorizedOnly] 
-        = useLocalStorage<boolean | null>(`contests:${id}:authorized_only`, null)
+        = useLocalStorage<boolean | undefined>(`contests:${id}:authorized_only`, undefined)
 
     const [deadline, setDeadline, removeDeadline] = useLocalStorage(`contests:${id}:deadline`, '')
     const [deadLineError, setDeadlineError] = useState('')
@@ -135,12 +135,16 @@ export default () => {
                 return
             }
 
+            if (!number) {
+                setNumber(response.number)
+            }
+
             if (!title) {
                 setTitle(response.title)
             }
             if (!description) setDescription(response.description || '')
 
-            if (authorized_only == null) {
+            if (authorized_only == undefined) {
                 setAuthorizedOnly(response.authorized_only)
             }
 

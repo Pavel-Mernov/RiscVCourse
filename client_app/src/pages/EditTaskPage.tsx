@@ -180,6 +180,8 @@ export default () => {
 
                 setTaskFound(true)
 
+                setNumberInContest(response.number_in_contest)
+
                 setName(response.name || '')
                 setText(response.text || '')
 

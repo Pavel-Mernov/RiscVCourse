@@ -11,8 +11,6 @@ interface Props {
 
 export default function ChoiceAnswersEditor({ choiceAnswers, enableSetPointsAndAttempts, setChoiceAnswers }: Props) {
 
-  
-
   const updateAnswer = (index: number, value: string) => {
     const updated = [...choiceAnswers.answers];
     updated[index] = value;
