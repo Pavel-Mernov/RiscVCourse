@@ -9,7 +9,7 @@
       "publicClient": false,
       "directAccessGrantsEnabled": true,
       "redirectUris": [
-        "http://130.49.150.32:3000/*"
+        "http://31.31.201.43:3000/*"
       ]
     }
   ]

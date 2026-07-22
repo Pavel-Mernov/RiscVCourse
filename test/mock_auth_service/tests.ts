@@ -25,7 +25,7 @@ const tests : LoginRequestBody[] = [
 ]
 
 tests.forEach(async (test) => {
-    const serverIp = '130.49.150.32'
+    const serverIp = '31.31.201.43'
     const res = await sendRequest('http://' + serverIp + ':3001/login', test, 'POST')
 
     // console.log(res)
