@@ -13,14 +13,14 @@ interface Task {
 
 export default () => {
 
-    const id_s = [
-        '8895b056-6892-4374-9d62-e0c319a46713', 
+    const id_s = [] as string[]
+        /* [ '8895b056-6892-4374-9d62-e0c319a46713', 
         '751e35e8-7d78-4e10-855f-b795244dee0a',
         '14b60a3b-a237-4322-b8d4-68c9ea02a15a',
         '936722a1-a0ea-4ca8-ba00-a073867d2b4e',
         '2ab56204-7f59-4a16-9dd4-ae86c382578c',
-        '59e305d9-daf7-4caf-ab8f-ea8d7505ef16',
-    ]
+        '59e305d9-daf7-4caf-ab8f-ea8d7505ef16', 
+    ] */
 
 
     const [tasks, setTasks] = useState<Task[]>([])
