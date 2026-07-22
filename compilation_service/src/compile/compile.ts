@@ -27,7 +27,7 @@ export async function compile(req : CodeRequest, res : Response) {
         filename, 
         timeout
         // type 
-    } = req.body;
+    } = req.body ?? {};
     
     const requestMessage = `POST /api/compile. Code: ${code}. Input: ${input}. Filename: ${filename}. Timeout: ${timeout}`
 

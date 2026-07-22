@@ -17,6 +17,6 @@ COPY . .
 RUN npm run build
 
 
-CMD ["node", "dist/index.js"]  # Запуск скомпилированного JavaScript
+CMD ["node", "dist/index.js"]
 
 EXPOSE 3004

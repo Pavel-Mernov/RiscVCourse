@@ -50,7 +50,7 @@ const getRefreshCookieOptions = (req : Request) : CookieOptions => {
 }
 
 const login = async (req : Request<LoginBody>, res : Response) => {
-  const { login, password } = req.body;
+  const { login, password } = req.body ?? {};
 
   if (!login || !login.trim()) {
     const error = 'Login cannot be empty'

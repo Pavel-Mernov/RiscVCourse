@@ -10,7 +10,7 @@ app.use(express.json());
 
 
 app.post("/run", async (req, res) => {
-  const { code, input, filename, timeout = 10000 } = req.body;
+  const { code, input, filename, timeout = 10000 } = req.body ?? {};
 
   if (!code) {
     return res.status(400).json({ error: "Нет кода в теле запроса" });

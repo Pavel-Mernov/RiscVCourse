@@ -19,6 +19,6 @@ COPY . .
 RUN npm run build
 
 # Запускаем приложение
-CMD ["node", "dist/server.js"]  # Запуск скомпилированного JavaScript
+CMD ["node", "dist/server.js"]
 
 EXPOSE 3005

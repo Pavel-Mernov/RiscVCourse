@@ -29,7 +29,7 @@ const login = async (req : LoginRequest, res : any) => {
   const {
     login,
     password
-  } = req.body
+  } = req.body ?? {}
 
   logger.info('POST /api/login ' + (login ?? ''))
 

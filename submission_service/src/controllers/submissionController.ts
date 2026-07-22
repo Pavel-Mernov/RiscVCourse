@@ -105,7 +105,7 @@ export const getPointsHandler = async (req : any, res : any) => {
 export const PostSubmissionHandler = async (req : any, res : any) => {
 
   try {
-      const body: SubmissionCreate = req.body;
+      const body = req.body ?? {};
       const { task_id, student_id, text, verdict, points } = body;
 
       const queryMessage = 'POST /api/submissions. Body: ' + JSON.stringify(body)
@@ -169,7 +169,7 @@ export const PostSubmissionHandler = async (req : any, res : any) => {
 // PUT /api/submissions/{id}/verdict
 export const putSubmission = async (req: any, res: Response) => {
   const submission_id = req.params.id;
-  const { verdict, points } = req.body as { verdict?: Verdict, points ?: string | number };
+  const { verdict, points } = (req.body ?? {}) as { verdict?: Verdict, points ?: string | number };
 
   const requestMessage = 'PUT /submissions/' + submission_id + '/verdict. Verdict: ' + verdict
   logger.info(requestMessage)
