@@ -55,7 +55,7 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: pavel_mernov_admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: pavel_mernov_admin
 
-      KC_HOSTNAME: localhost
+      KC_HOSTNAME: 31.31.201.43
       KC_HTTP_ENABLED: "true"
     ports:
       - "8080:8080"
