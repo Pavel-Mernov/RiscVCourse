@@ -54,7 +54,6 @@ keycloak:
     KC_HTTP_ENABLED: "true"
     KC_PROXY_HEADERS: xforwarded
 
-    KC_HOSTNAME: auth.example.com
 
     KC_BOOTSTRAP_ADMIN_USERNAME: pavel_mernov_admin
     KC_BOOTSTRAP_ADMIN_PASSWORD: pavel_mernov_admin
