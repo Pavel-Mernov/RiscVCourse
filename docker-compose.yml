@@ -59,6 +59,9 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: pavel_mernov_admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: pavel_mernov_admin
 
+    expose:
+      - "8080"
+
     labels:
       - traefik.enable=true
       - traefik.http.routers.keycloak.rule=Host(`auth.riscvcourse.ru`)
