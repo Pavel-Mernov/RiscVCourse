@@ -54,13 +54,14 @@ services:
       KC_HTTP_ENABLED: "true"
       KC_PROXY_HEADERS: xforwarded
 
+      KC_HOSTNAME: https://auth.riscvcourse.ru
 
       KC_BOOTSTRAP_ADMIN_USERNAME: pavel_mernov_admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: pavel_mernov_admin
 
     labels:
       - traefik.enable=true
-      - traefik.http.routers.keycloak.rule=Host(`auth.example.com`)
+      - traefik.http.routers.keycloak.rule=Host(`auth.riscvcourse.ru`)
       - traefik.http.routers.keycloak.entrypoints=websecure
       - traefik.http.routers.keycloak.tls.certresolver=myresolver
       - traefik.http.services.keycloak.loadbalancer.server.port=8080
