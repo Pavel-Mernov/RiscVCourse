@@ -43,7 +43,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    command: start --optimized
+    command: start
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
