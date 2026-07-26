@@ -17,7 +17,7 @@ export default function TeacherReportPage() {
 
     const [students, setStudents] = useState<Student[] | undefined>(undefined)
 
-    const { serverIp, auth } = useServerConnection()
+    const { serverIp, mockAuth } = useServerConnection()
 
     const { accessToken } = useAuth()
 
@@ -28,7 +28,7 @@ export default function TeacherReportPage() {
 
         const fetchStudents = async () => {
             try {
-                const url = `https://${serverIp}/${auth}/api/students`
+                const url = `https://${serverIp}/${mockAuth}/api/students`
 
                 const studentsList = await fetch(url, {
                     method : 'GET',

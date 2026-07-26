@@ -19,13 +19,13 @@ const Navbar = () => {
 
   const { setAccessToken, isTokenValid, isUserValidTeacher } = useAuth()
 
-  const { serverIp, auth } = useServerConnection()
+  const { serverIp, mockAuth } = useServerConnection()
 
   const logout = async () => {
     setAccessToken(undefined)
 
     try {
-        const url = `https://${serverIp}/${auth}/api/logout`
+        const url = `https://${serverIp}/${mockAuth}/api/logout`
         const method = 'POST'
 
         await fetch(url, {

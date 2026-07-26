@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [accessToken, setAccessToken] = useState<string | undefined>(() => {
     return localStorage.getItem('accessToken') || undefined
   });
-  const { serverIp, auth } = useServerConnection()
+  const { serverIp, mockAuth } = useServerConnection()
 
   function isUserValidTeacher() {
     if (!accessToken || !isTokenValid()) {
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
 
       try {
-        const url = `https://${serverIp}/${auth}/api/refresh`
+        const url = `https://${serverIp}/${mockAuth}/api/refresh`
         const response = await fetch(url, {
           method: 'POST',
           credentials: 'include',

@@ -14,7 +14,7 @@ export default () => {
 
     const { setAccessToken } = useAuth()
 
-    const { serverIp, auth } = useServerConnection()
+    const { serverIp, mockAuth } = useServerConnection()
 
     const navigate = useNavigate()
 
@@ -34,7 +34,7 @@ export default () => {
         }
 
         try {
-            const url = `https://${serverIp}/${auth}/api/login`
+            const url = `https://${serverIp}/${mockAuth}/api/login`
             const formData = new URLSearchParams({
                 login : loginText,
                 password : passwordText,

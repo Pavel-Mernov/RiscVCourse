@@ -19,7 +19,7 @@ export interface TaskDict {
 export default function ReportPage() {
   
     const { getLogin, isUserValidTeacher, isTokenValid, accessToken } = useAuth()
-    const { serverIp, contest, submission, auth } = useServerConnection()
+    const { serverIp, contest, submission, mockAuth } = useServerConnection()
 
 
     const [pointsForAllTasks, setPointsForAllTasks] = useState<TaskDict | undefined | 'user not found'>(undefined)
@@ -38,7 +38,7 @@ export default function ReportPage() {
 
 
         const checkUserExists = async () => {
-            const url = `https://${serverIp}/${auth}/api/users/${login}`
+            const url = `https://${serverIp}/${mockAuth}/api/users/${login}`
 
             const user = await fetch(url, {
                 method : 'GET',

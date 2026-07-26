@@ -1,18 +1,18 @@
 import bcrypt from "bcryptjs"
 import logger from "../logger"
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from "../dotenv"
+import { JWT_SECRET, PWD1, PWD_ADMIN } from "../dotenv"
 
-export const accounts = // это заглушка специально для дисциплины ПИПО. В ВКР будет
+export const accounts = 
 [
     {
-        login : 'pkmernov@edu.hse.ru',
-        password : bcrypt.hashSync('12121212', 10),
+        login : 'iiivanov@edu.hse.ru',
+        password : bcrypt.hashSync(PWD1, 10),
     },
     {
-        login : 'kpashigorev@hse.ru',
-        password : bcrypt.hashSync('06010601', 10),
-    },
+        login : 'admin@hse.ru',
+        password : bcrypt.hashSync(PWD_ADMIN, 10),
+    }
 ]
 
 type LoginRequest = {
