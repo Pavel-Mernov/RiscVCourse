@@ -2,7 +2,6 @@ import { AppBar, Toolbar, Button, Box } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useServerConnection } from '../context/ServerConnectionContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -19,11 +18,12 @@ const Navbar = () => {
 
   const { setAccessToken, isTokenValid, isUserValidTeacher } = useAuth()
 
-  const { serverIp, mockAuth } = useServerConnection()
+  // const { serverIp, mockAuth } = useServerConnection()
 
   const logout = async () => {
     setAccessToken(undefined)
 
+    /*
     try {
         const url = `https://${serverIp}/${mockAuth}/api/logout`
         const method = 'POST'
@@ -41,7 +41,8 @@ const Navbar = () => {
 
         
     } 
-    catch {}   
+    catch {}
+    */   
   }
 
   return (
