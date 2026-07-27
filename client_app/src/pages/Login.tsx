@@ -35,7 +35,7 @@ export default () => {
 
         try {
             const url = `https://${serverIp}/${mockAuth}/api/login`
-            const formData = new URLSearchParams({
+            const body = JSON.stringify({
                 login : loginText,
                 password : passwordText,
             })
@@ -43,7 +43,7 @@ export default () => {
             const response = await fetch(url, {
                 method: 'POST',
                 credentials: 'include',
-                body: formData,
+                body,
             })
             
             if (!response.ok) {
