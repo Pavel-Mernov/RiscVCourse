@@ -12,7 +12,7 @@ export default () => {
 
     const [passwordText, setPasswordText] = useState('')
 
-    const { setAccessToken, isUserValidTeacher } = useAuth()
+    const { setAccessToken } = useAuth()
 
     const { serverIp, mockAuth } = useServerConnection()
 
@@ -36,8 +36,8 @@ export default () => {
         try {
             const url = `https://${serverIp}/${mockAuth}/api/login`
             const body = JSON.stringify({
-                login : loginText,
-                password : passwordText,
+                login : loginText.trim(),
+                password : passwordText.trim(),
             })
 
             const response = await fetch(url, {
@@ -62,9 +62,6 @@ export default () => {
             if ('accessToken' in result) {
                 
                 setAccessToken(result.accessToken)
-
-                console.log('login: ' + loginText, 'isTeacher: ' + isUserValidTeacher())
-
                 
                 navigate(-1)
             }
