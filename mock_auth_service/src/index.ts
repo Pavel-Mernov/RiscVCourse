@@ -5,8 +5,10 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import logger from './logger'
 
+import { PORT } from './dotenv'
+
 import authController from './controllers/authController'
-import { configDotenv, PORT } from './dotenv'
+
 import { getMetrics, metricsMiddleware } from './metrics'
 
 
@@ -17,10 +19,6 @@ const redis = new Redis({
   port: 6379
 })
 */
-
-
-
-configDotenv() 
 
 
 
