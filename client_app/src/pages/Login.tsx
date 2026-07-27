@@ -12,7 +12,7 @@ export default () => {
 
     const [passwordText, setPasswordText] = useState('')
 
-    const { setAccessToken } = useAuth()
+    const { setAccessToken, isUserValidTeacher } = useAuth()
 
     const { serverIp, mockAuth } = useServerConnection()
 
@@ -62,6 +62,8 @@ export default () => {
             if ('accessToken' in result) {
                 
                 setAccessToken(result.accessToken)
+
+                console.log('login: ' + loginText, 'isTeacher: ' + isUserValidTeacher())
 
                 
                 navigate(-1)
