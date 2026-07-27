@@ -11,6 +11,13 @@ export async function authenticateTeacher(req : any, res : any, next : any) {
     
     logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
 
+    if (!payload || typeof payload !== 'object') {
+      const error = 'Invalid token payload'
+
+      logger.error('Authenticate teacher. ' + error)
+      return res.status(403).json({ error })
+    }
+
     const login = payload.email as string
 
     console.log('Login: ' + login)

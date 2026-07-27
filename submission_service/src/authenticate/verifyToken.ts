@@ -1,10 +1,14 @@
-import jwt from 'jsonwebtoken';
+import jwt, { type JwtPayload } from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
+import { JWT_SECRET } from '../index';
 
+/*
 const client = jwksClient({
   jwksUri: 'http://keycloak:8080/realms/pavel_mernov_realm/protocol/openid-connect/certs'
 });
+*/
 
+/*
 function getKey(header: any, callback: any) {
   console.log('KID:', header.kid);
 
@@ -25,29 +29,18 @@ function getKey(header: any, callback: any) {
     callback(null, signingKey);
   });
 }
+  */
 
-export function verifyToken(token: string) : Promise<any> {
-    
-        return new Promise((resolve, reject) => {
-            try {
-                jwt.verify(token, getKey, {
-                    issuer: 'http://localhost:8080/realms/pavel_mernov_realm', 
-                    // audience: 'pavel_mernov'
-                    }, 
-                    (err, decoded) => {
-                        if (err) {
-                            console.log('Error:\n' + JSON.stringify(err))
-                            reject(err);
-                        } 
-                        else {
-                            // console.log(JSON.stringify(decoded)) 
-                            resolve(decoded); 
-                        }
-                });
-            }
-            catch (err : any) {
-                console.log(JSON.stringify(err))
-                reject(err)
-            }
-        });
+export async function verifyToken(token: string): Promise<JwtPayload | null> {
+    try {
+        const payload = jwt.verify(token, JWT_SECRET);
+
+        if (typeof payload === "string") {
+            return null;
+        }
+
+        return payload;
+    } catch {
+        return null;
+    }
 }
