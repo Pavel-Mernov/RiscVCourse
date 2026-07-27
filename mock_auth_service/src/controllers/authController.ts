@@ -15,6 +15,15 @@ export const accounts =
     }
 ]
 
+// temporary log for debugging
+console.log("PWD_ADMIN:", PWD_ADMIN);
+
+// temporary log for debugging
+console.log(
+    "compare:",
+    bcrypt.compareSync(PWD_ADMIN, accounts[1]?.password ?? '')
+);
+
 type LoginRequest = {
     body : {
         login ?: string,
@@ -24,10 +33,6 @@ type LoginRequest = {
 
 // POST /api/login
 const login = async (req : LoginRequest, res : any) => {
-  
-  // temporary
-  console.log(typeof req.body);
-  console.log(req.body);
 
   const {
     login,
