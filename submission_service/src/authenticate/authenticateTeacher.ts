@@ -18,7 +18,7 @@ export async function authenticateTeacher(req : any, res : any, next : any) {
       return res.status(403).json({ error })
     }
 
-    const login = payload.email as string
+    const login = payload.login as string
 
     console.log('Login: ' + login)
 
