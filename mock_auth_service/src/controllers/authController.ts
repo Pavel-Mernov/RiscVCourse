@@ -25,6 +25,9 @@ type LoginRequest = {
 // POST /api/login
 const login = async (req : LoginRequest, res : any) => {
   
+  // temporary
+  console.log(typeof req.body);
+  console.log(req.body);
 
   const {
     login,
