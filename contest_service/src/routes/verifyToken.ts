@@ -7,7 +7,7 @@ const client = jwksClient({
 });
 
 function getKey(header: any, callback: any) {
-  console.log('KID:', header.kid);
+  
 
   client.getSigningKey(header.kid, (err, key) => {
     if (err) {
@@ -18,8 +18,6 @@ function getKey(header: any, callback: any) {
     if (!key) {
       return callback(new Error('No signing key found'), null);
     }
-
-    console.log('Key found:', !!key);
 
     const signingKey = key?.getPublicKey();
 

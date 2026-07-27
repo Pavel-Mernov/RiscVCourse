@@ -1,6 +1,5 @@
 
 import jwt, { type JwtPayload } from 'jsonwebtoken'
-import { JWT_SECRET } from '../index.js'
 import logger from '../logger/logger.js'
 import { verifyToken } from './verifyToken.js'
 
@@ -21,7 +20,7 @@ export function authenticate(req : any, res : any, next : any) {
 
     console.log(JSON.stringify(payload))
 
-    const login = payload.email as string
+    const login = payload.login as string
 
     if (!(login.endsWith('@edu.hse.ru') || login.endsWith('@hse.ru'))) {
       throw new Error('Invalid login')
