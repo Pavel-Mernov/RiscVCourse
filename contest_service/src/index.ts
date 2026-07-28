@@ -1,6 +1,10 @@
 import dotenv from 'dotenv'
 
-dotenv.config()
+const result = dotenv.config()
+
+// temporary fix 
+console.log(JSON.stringify(result))
+
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
 import express from 'express'
