@@ -1,9 +1,11 @@
+import logger from './logger/logger'
+
 import dotenv from 'dotenv'
 
 const result = dotenv.config()
 
 // temporary fix 
-console.log(JSON.stringify(result))
+logger.info(JSON.stringify(result))
 
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
@@ -12,7 +14,7 @@ import contestsRouter from './routes/contests'
 import { Client, Pool } from 'pg'
 import { initDB } from './sql/scripts/initdb'
 import cors from 'cors'
-import logger from './logger/logger'
+
 
 import { sqlPool } from './sql/sqlPool'
 import { getMetrics, requestCounterFunction } from './routes/metrics'
