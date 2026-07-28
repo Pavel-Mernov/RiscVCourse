@@ -2,10 +2,7 @@ import logger from './logger/logger'
 
 import dotenv from 'dotenv'
 
-const result = dotenv.config()
-
-// temporary fix 
-logger.info(JSON.stringify(result))
+dotenv.config()
 
 export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
