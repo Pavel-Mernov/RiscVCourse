@@ -9,7 +9,7 @@ export async function authenticateTeacher(req : any, res : any, next : any) {
   try {
     const payload = await verifyToken(token)
     
-    logger.info('Authenticate teacher. payload retrieved. Payload = ' + JSON.stringify(payload))
+    logger.info('Authenticate teacher. payload retrieved.')
 
     if (!payload || typeof payload !== 'object') {
       const error = 'Invalid token payload'
