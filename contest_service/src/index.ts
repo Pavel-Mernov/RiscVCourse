@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'
 
+dotenv.config()
+export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
 
 import express from 'express'
 import contestsRouter from './routes/contests'
@@ -11,8 +13,7 @@ import logger from './logger/logger'
 import { sqlPool } from './sql/sqlPool'
 import { getMetrics, requestCounterFunction } from './routes/metrics'
 
-dotenv.config()
-export const JWT_SECRET = process.env.JWT_SECRET ?? 'jwt-secret'
+
 
 const app = express()
 
