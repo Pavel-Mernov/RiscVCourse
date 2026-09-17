@@ -239,6 +239,15 @@ services:
       image: redis
       container_name: redis
 
+    veloclub-bot:
+      build:
+        context: ./VeloclubHSEBot
+        dockerfile: Dockerfile
+      container_name: veloclub-bot
+      restart: unless-stopped
+      env_file:
+        - ./VeloclubHSEBot/.env
+
 volumes:
   submission_volumes:
   contest_volumes:
